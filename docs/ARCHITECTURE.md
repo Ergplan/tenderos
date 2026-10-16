@@ -47,7 +47,9 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
    NDJSON stream with progress lines, and the browser builds the tender conditions table from it.
 5. `POST /api/bid/dispatch15` runs the 15-minute dispatch for every PPA year and offers a ZIP.
 6. The financial model runs in the browser. `POST /api/bid/model` (a Next route) writes the Excel
-   workbook.
+   workbook, with the Live model tab rebuilding that model as Excel formulas
+   (`web/lib/liveModel.js`, checked against the app by `tools/check_live_model.mjs` with
+   LibreOffice).
 
 ## Tests
 

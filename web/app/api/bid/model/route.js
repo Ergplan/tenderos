@@ -4,13 +4,15 @@ import ExcelJS from "exceljs";
 import { currentUserWithAccess, handler, HttpError } from "@/lib/auth";
 import { requireTenderAccess } from "@/lib/tenders";
 import { logEvent } from "@/lib/activity";
+import { addLiveModel, liveModelInput } from "@/lib/liveModel";
 
 export const dynamic = "force-dynamic";
 
 // Tender to Bid: the bid's financial model as an Excel workbook. The browser computes the model
 // (web/src/rtc/engine.js) and sends it here with the inputs, the tender conditions and the plant;
-// this route only lays it out: cover page, tender conditions, inputs, plant and capex, revenue
-// and costs by stream, and the full year-by-year financial model.
+// this route lays it out: cover page, the Live model (the whole financial model as Excel formulas,
+// web/lib/liveModel.js), tender conditions, inputs, plant and capex, and the app's own numbers by
+// year (revenue and costs by stream, the full financial model) for reference.
 
 const FMT = { cr: "#,##0.00", mu: "#,##0", tariff: "0.000", pct: "0.00%", x: "0.00", mw: "#,##0", int: "0", text: "@" };
 const INK = "FF111111";
@@ -41,11 +43,13 @@ function addLogo(wb, ws) {
   return 3;
 }
 
-/** label / value rows; value may be a number with a format key, or text. */
-function pairs(ws, items) {
+/** label / value rows; value may be a number with a format key, or text. A link key names the
+ * Live model cell the value comes from: the cell is then a formula on that sheet. */
+function pairs(ws, items, links = {}) {
   for (const item of items || []) {
-    const [label, value, fmt, note] = item;
+    const [label, value, fmt, note, link] = item;
     const row = ws.addRow([str(label, 120), typeof value === "number" ? value : str(value), str(note, 300)]);
+    if (link && links[link]) row.getCell(2).value = { formula: links[link], result: typeof value === "number" ? value : str(value) };
     if (typeof value === "number") row.getCell(2).numFmt = FMT[fmt] || FMT.cr;
     row.getCell(2).alignment = { horizontal: "right" };
   }
@@ -60,18 +64,24 @@ export const POST = handler(async (req) => {
   const years = rows.map((r) => r.year);
 
   const wb = new ExcelJS.Workbook();
-  wb.creator = "FDRE · Tender to Bid";
+  wb.creator = "TenderOS · Tender to Bid";
   wb.created = new Date();
+  // the formulas are recalculated when the file is opened; each one also carries its value
+  wb.calcProperties = { fullCalcOnLoad: true };
 
   // ---- cover page: what is bid, the key results and the key inputs
   const cover = wb.addWorksheet("Cover", { properties: { tabColor: { argb: ACCENT } } });
+  // ---- the live model: every number a formula (second tab)
+  const liveInput = liveModelInput(body.live);
+  const live = liveInput ? addLiveModel(wb, { ...liveInput, title: str(body.title, 200) }) : null;
   addLogo(wb, cover);
   cover.addRow([str(body.title, 200) || "Bid financial model"]).font = { bold: true, size: 16 };
   cover.addRow([str(body.subtitle, 300)]).font = { color: { argb: "FF555555" } };
-  cover.addRow([`Prepared ${new Date().toISOString().slice(0, 10)} by ${user.name || user.email} · Tender to Bid (FDRE)`]).font = { italic: true, color: { argb: "FF777777" } };
+  cover.addRow([`Prepared ${new Date().toISOString().slice(0, 10)} by ${user.name || user.email} · Tender to Bid (TenderOS)`]).font = { italic: true, color: { argb: "FF777777" } };
+  if (live) cover.addRow(["The key results below are linked to the Live model tab: change an input there (blue cells) and they follow."]).font = { italic: true, color: { argb: "FF0000FF" } };
   cover.addRow([]);
   band(cover.addRow([]), "Key results");
-  pairs(cover, body.cover?.outputs);
+  pairs(cover, body.cover?.outputs, live?.cells);
   cover.addRow([]);
   band(cover.addRow([]), "Plant");
   pairs(cover, body.cover?.plant);
@@ -140,8 +150,9 @@ export const POST = handler(async (req) => {
     ws.views = [{ state: "frozen", xSplit: withTotal ? 3 : 2, ySplit: 1 }];
     return ws;
   };
-  yearSheet("Revenue and costs", body.streams, true);
-  const model = yearSheet("Financial model", body.statements, true);
+  // the app's own numbers, as computed in TenderOS when the workbook was made (values, not formulas)
+  yearSheet("Revenue and costs (values)", body.streams, true);
+  const model = yearSheet("Financial model (values)", body.statements, true);
 
   // equity and project cash flows with year 0 (the capex), as used for the IRRs
   model.addRow([]);

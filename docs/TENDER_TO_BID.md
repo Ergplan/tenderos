@@ -217,14 +217,43 @@ the tab computed:
 * **Cover**: the bid tariff, equity and project IRR, equity NPV, minimum and average DSCR,
   payback, project cost, debt and equity, levelised cost, year-1 supply and market sale, and how
   many tender conditions are met; the plant (sizes, fixed or optimised, year-1 energy); the key
-  inputs; the tender's terms; and notes on where the numbers come from.
+  inputs; the tender's terms; and notes on where the numbers come from. The key results are
+  formulas on the Live model tab, so they follow any input changed there.
+* **Live model**: the whole financial model as Excel formulas (`web/lib/liveModel.js`), one
+  column per year, every cell linked:
+  * *Key results*: the tariff, IRRs, NPVs, DSCRs, levelised cost and tariff, payback, project
+    cost, debt, equity and revenue, each beside the app's number with the difference and "Same as
+    app?"; and how to price the bid again with Goal Seek (set "Equity IRR less the target" to 0
+    by changing the bid tariff).
+  * *Inputs* in blue on yellow: tariff and escalation; capex by source, evacuation and
+    pre-operative cost; O&M, insurance, other fixed cost, biomass fuel, hydro and thermal charges
+    and RECs, the transmission charge between separate sites; market sale (Yes / No) and its
+    price, the supply floor and shortfall penalty; battery augmentation (annual / oneTime /
+    none), fade, year and price decline; debt share, interest, tenor, repayment (annuity /
+    equal), target IRR, discount rate; tax, tax depreciation (wdv / slm), WDV rate, book life,
+    salvage and receivable days. Choices are drop-down lists. Each input says where it came from
+    (your input, industry benchmark, model default, tender).
+  * *From the optimiser* in green: the sizes, and by year the contracted, delivered and sold
+    energy, the realised hourly market price, biomass, hydro and thermal energy and the energy
+    sent between sites. These come from the HiGHS dispatch; changing a size moves its cost, not
+    its energy (size again in TenderOS for that).
+  * *Formulas* in black: project cost and funding, escalation and discount factors, revenue,
+    operating costs by line, EBITDA, battery augmentation, book depreciation (with augmentation
+    over the years left), debt (opening, interest, principal, closing, debt service), tax
+    depreciation (WDV block), profit and loss with tax losses carried forward, cash flow (working
+    capital, CFADS, DSCR, salvage and receivables released in the final year), equity and
+    project cash flows from year 0, levelised cost, the returns, and model checks.
+  * `tools/check_live_model.mjs` builds the tab for three bids that between them reach every
+    branch, has LibreOffice work out every formula from no stored value and compares each cell
+    with the app's model; it then changes the tariff and a capex in the sheet and checks the
+    recalculated returns against the app run on the same inputs.
 * **Tender conditions**: each condition, what the tender says, its page and quote, what the plant
   and bid deliver, and met / not met.
 * **Inputs**: every input with its unit and source (your input, industry benchmark, model default).
 * **Plant and capex**: sizes, capex by source, transmission, pre-operative costs, debt and equity.
-* **Revenue and costs**: year by year, PPA supply revenue, market sale revenue, penalties, O&M,
+* **Revenue and costs (values)**: the app's numbers when the workbook was made; year by year, PPA supply revenue, market sale revenue, penalties, O&M,
   insurance, other fixed cost, biomass fuel, hydro and thermal costs (with RECs), augmentation.
-* **Financial model**: energy and tariff, revenue, operating costs, profit and loss, cash flow
+* **Financial model (values)**: the app's numbers; energy and tariff, revenue, operating costs, profit and loss, cash flow
   and debt for every year with totals, then the equity and project cash flows from year 0.
 
 ## Recently extracted tenders

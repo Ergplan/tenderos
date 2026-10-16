@@ -83,7 +83,7 @@ export default function FinanceStep({ state, patch, set, lockProps, goto, terms,
           <button type="button" className="primary" disabled={saving} data-testid="bid-download"
             onClick={async () => {
               setSaving(true); setSaveError("");
-              try { await downloadModel(modelExport({ state, terms, finance, costs, fin, prices })); } catch (err) { setSaveError(err.message); } finally { setSaving(false); }
+              try { await downloadModel(modelExport({ state, terms, finance, costs, fin, prices, bess, ops, dfrTarget: annualTarget })); } catch (err) { setSaveError(err.message); } finally { setSaving(false); }
             }}>
             {saving ? <Loader2 className="spin" size={14} /> : <Download size={14} />} Download financial model (Excel)
           </button>

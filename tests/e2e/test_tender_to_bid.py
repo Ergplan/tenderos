@@ -4,7 +4,8 @@
   screen (every scrolled line is on its page of the PDF, the key dates lock in with their page),
   then checks the capacity the tender allows, picks solar, wind and a battery, fills the benchmark
   costs, sizes the plant with HiGHS, checks every tender condition is met, opens the financial
-  model and downloads the Excel workbook.
+  model and downloads the Excel workbook; its Live model tab is formulas, linked from the Cover,
+  and LibreOffice (when installed) recalculates it to the tariff and equity IRR the app shows.
 * test_prefilled_simulation: the prefilled WBSEDCL tender opens straight in the workflow.
 * test_skip_and_reduced_motion: both reach the workflow without the animation.
 * test_bess_tender_goes_to_the_bess_tab: a standalone battery tender is handed to the BESS tab.
@@ -22,8 +23,12 @@ from __future__ import annotations
 import contextlib
 import os
 import re
+import shutil
+import subprocess
 import sys
+import zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 import pytest
 
@@ -173,6 +178,76 @@ def test_nhpc_tender_to_bid(tmp_path):
         out = shots / dl.value.suggested_filename
         dl.value.save_as(str(out))
         assert out.stat().st_size > 10_000
+        _check_live_model(out, tariff=_money(tariff.group(1)), irr=float(irr.group(1)) / 100, tmp=tmp_path)
+
+
+def _xlsx_sheets(path: Path) -> dict[str, dict[str, tuple[str | None, str | None]]]:
+    """Every sheet of an xlsx as {sheet: {cell: (formula, value)}}, read with the standard library."""
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+          "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}
+    with zipfile.ZipFile(path) as z:
+        shared = []
+        if "xl/sharedStrings.xml" in z.namelist():
+            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
+                shared.append("".join(t.text or "" for t in si.iter(f"{{{ns['m']}}}t")))
+        rels = {r.get("Id"): r.get("Target") for r in ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))}
+        out = {}
+        for sh in ET.fromstring(z.read("xl/workbook.xml")).find("m:sheets", ns):
+            target = rels[sh.get(f"{{{ns['r']}}}id")].lstrip("/")
+            target = target if target.startswith("xl/") else f"xl/{target}"
+            cells = {}
+            for c in ET.fromstring(z.read(target)).iter(f"{{{ns['m']}}}c"):
+                f = c.find("m:f", ns)
+                v = c.find("m:v", ns)
+                value = v.text if v is not None else None
+                if c.get("t") == "s" and value is not None:
+                    value = shared[int(value)]
+                elif c.get("t") == "inlineStr":
+                    value = "".join(t.text or "" for t in c.iter(f"{{{ns['m']}}}t"))
+                cells[c.get("r")] = (f.text if f is not None else None, value)
+            out[sh.get("name")] = cells
+    return out
+
+
+def _check_live_model(path: Path, *, tariff: float, irr: float, tmp: Path) -> None:
+    """The Live model tab: second, built of formulas, linked from the Cover, and recalculated by
+    LibreOffice (when installed) to the tariff and equity IRR the app shows."""
+    sheets = _xlsx_sheets(path)
+    names = list(sheets)
+    assert names[:2] == ["Cover", "Live model"], names
+    live = sheets["Live model"]
+    formulas = sum(1 for f, _ in live.values() if f)
+    assert formulas > 1000, formulas
+    label: dict[str, str] = {}  # the first row with each label: the Key results block
+    for addr, (_, v) in sorted(live.items(), key=lambda kv: int(re.sub(r"\D", "", kv[0]))):
+        if re.fullmatch(r"A\d+", addr) and v:
+            label.setdefault(v, addr)
+    row = lambda text: label[text][1:]  # noqa: E731
+    assert abs(float(live[f"C{row('Bid tariff')}"][1]) - tariff) < 0.0006, live[f"C{row('Bid tariff')}"]
+    assert abs(float(live[f"C{row('Equity IRR')}"][1]) - irr) < 0.0006
+    assert live[f"F{row('Equity IRR')}"][1] == "Yes", "the workbook's equity IRR is the app's"
+    assert live[f"C{row('Model checks')}"][1] == "OK"
+    cover_links = [f for f, _ in sheets["Cover"].values() if f and "Live model" in f]
+    assert len(cover_links) >= 10, cover_links
+    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    if not soffice:
+        return
+    profile = tmp / "lo-profile"
+    (profile / "user").mkdir(parents=True, exist_ok=True)
+    (profile / "user" / "registrymodifications.xcu").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?><oor:items xmlns:oor="http://openoffice.org/2001/registry" '
+        'xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+        '<item oor:path="/org.openoffice.Office.Calc/Formula/Load"><prop oor:name="OOXMLRecalcMode" oor:op="fuse">'
+        "<value>0</value></prop></item></oor:items>")
+    out_dir = tmp / "recalc"
+    subprocess.run([soffice, f"-env:UserInstallation=file://{profile}", "--headless", "--calc", "--convert-to", "xlsx",
+                    "--outdir", str(out_dir), str(path)], check=True, capture_output=True, timeout=300, env={**os.environ, "HOME": str(tmp)})
+    again = _xlsx_sheets(out_dir / path.name)["Live model"]
+    assert abs(float(again[f"C{row('Bid tariff')}"][1]) - tariff) < 0.0006
+    assert abs(float(again[f"C{row('Equity IRR')}"][1]) - irr) < 0.0006, again[f"C{row('Equity IRR')}"]
+    assert again[f"C{row('Model checks')}"][1] == "OK"
+    errors = [addr for addr, (_, v) in again.items() if isinstance(v, str) and v.startswith("#")]
+    assert not errors, errors[:10]
 
 
 def test_prefilled_simulation():

@@ -3,7 +3,8 @@
 TenderOS is a workspace for bidding Indian renewable power tenders. You upload a tender, and it
 reads what the tender requires, each item with its page and quote. You then enter the sources you
 have and their costs. HiGHS sizes the least-tariff plant that meets every tender condition, and the
-app produces the bid's financial model as an Excel workbook.
+app produces the bid's financial model as an Excel workbook, whose Live model tab is the whole
+model as Excel formulas (change an input and the returns follow).
 
 * The interface is the jouleWise design (renamed TenderOS) from `Ergplan/FDRE` branch `claude/intelligent-carson-mwonct`.
 * The tender reading is the extraction engine of `Ergplan/tender_engine` (main, `5c29b4e`), with the

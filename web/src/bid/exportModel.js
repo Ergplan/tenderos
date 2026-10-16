@@ -1,8 +1,10 @@
 // Tender to Bid: the financial-model workbook request (POST /api/bid/model builds the .xlsx).
 // Everything comes from what the tab computed: the tender's terms, the bidder's inputs (each
-// marked as typed, benchmark or default), the sized plant and the financial model's years.
+// marked as typed, benchmark or default), the sized plant and the financial model's years; and,
+// for the Live model sheet, the model's inputs and the optimiser's energy by year.
 import { BENCHMARK_NOTE, FINANCE_FIELDS, SOURCES, SOURCE_FIELDS, capacityPages, capacityWarnings, capexBySource, plantMw, solarMinMw } from "./model.js";
 import { buildChecklist } from "./Checklist.jsx";
+import { liveModelRequest } from "./liveModelRequest.js";
 
 const STATUS = { met: "Met", failed: "Not met", na: "Not required", info: "Noted" };
 const SIZE = { solar: "solarMw", wind: "windMw", hydro: "hydroMw", biomass: "biomassMw", thermal: "thermalMw", bess: "bessMw" };
@@ -12,7 +14,7 @@ const fmtDate = (v) => {
 };
 
 /** The workbook request for the bid that was sized and priced. */
-export function modelExport({ state, terms, finance, costs, fin, prices }) {
+export function modelExport({ state, terms, finance, costs, fin, prices, bess, ops, dfrTarget }) {
   const lp = state.lp;
   const values = state.tender?.result?.values || {};
   const total = plantMw(state, terms);
@@ -28,21 +30,21 @@ export function modelExport({ state, terms, finance, costs, fin, prices }) {
   const capex = capexBySource(lp.sizes, costs);
 
   const outputs = [
-    ["Bid tariff (₹/kWh)", finance.tariff, "tariff", `Tariff that gives the ${(fin.targetEquityIrr * 100).toFixed(2)}% target equity IRR`],
-    ["Equity IRR", finance.equityIrr, "pct"],
-    ["Project IRR", finance.projectIrr, "pct"],
-    ["Equity NPV at the target IRR (₹ cr)", finance.equityNpv, "cr"],
-    ["Minimum DSCR", finance.minDscr, "x"],
-    ["Average DSCR", finance.avgDscr, "x"],
-    ["Equity payback (year)", finance.payback ?? "beyond the term", "int"],
-    ["Project cost (₹ cr)", finance.capex.total, "cr", `₹${(finance.capex.total / (total || 1)).toFixed(2)} cr per contracted MW`],
-    ["Debt (₹ cr)", finance.debt, "cr"],
-    ["Equity (₹ cr)", finance.equity, "cr"],
-    ["Levelised cost of supply (₹/kWh)", finance.lcoe, "tariff", `at a ${(fin.discountRate * 100).toFixed(1)}% discount rate`],
+    ["Bid tariff (₹/kWh)", finance.tariff, "tariff", `Tariff that gives the ${(fin.targetEquityIrr * 100).toFixed(2)}% target equity IRR`, "tariff"],
+    ["Equity IRR", finance.equityIrr, "pct", "", "equityIrr"],
+    ["Project IRR", finance.projectIrr, "pct", "", "projectIrr"],
+    ["Equity NPV at the target IRR (₹ cr)", finance.equityNpv, "cr", "", "equityNpv"],
+    ["Minimum DSCR", finance.minDscr, "x", "", "minDscr"],
+    ["Average DSCR", finance.avgDscr, "x", "", "avgDscr"],
+    ["Equity payback (year)", finance.payback ?? "beyond the term", "int", "", "payback"],
+    ["Project cost (₹ cr)", finance.capex.total, "cr", `₹${(finance.capex.total / (total || 1)).toFixed(2)} cr per contracted MW`, "capexTotal"],
+    ["Debt (₹ cr)", finance.debt, "cr", "", "debt"],
+    ["Equity (₹ cr)", finance.equity, "cr", "", "equity"],
+    ["Levelised cost of supply (₹/kWh)", finance.lcoe, "tariff", `at a ${(fin.discountRate * 100).toFixed(1)}% discount rate`, "lcoe"],
     ["Least-tariff sizing (HiGHS, ₹/kWh)", lp.tariff, "tariff", "Screening tariff of the sizing; the bid tariff is from the full financial model"],
     ["Year-1 supply (MU)", y1.deliveredMu, "mu", `${(y1.dfr * 100).toFixed(1)}% of contracted`],
     ["Year-1 market sale (MU)", y1.excessMu, "mu"],
-    [`Revenue over ${finance.rows.length} years (₹ cr)`, finance.totals.revenue, "cr"],
+    [`Revenue over ${finance.rows.length} years (₹ cr)`, finance.totals.revenue, "cr", "", "revenueTotal"],
     ["Tender conditions", `${met} met, ${failed.length} not met`, "text", failed.map((c) => c.condition).join("; ")],
   ];
   const plant = [
@@ -153,6 +155,7 @@ export function modelExport({ state, terms, finance, costs, fin, prices }) {
     streams,
     statements,
     flows: { equity: finance.equityFlows, project: finance.projectFlows },
+    live: ops && bess ? liveModelRequest({ state, lp, finance, costs, fin, bess, ops, dfrTarget, sourceOf }) : null,
   };
 }
 
