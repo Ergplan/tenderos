@@ -192,6 +192,24 @@ assert.ok(Math.abs(fin.equityIrr - 0.14) < 1e-6, "bid tariff gives the bidder's 
 const cheaper = E.runFinancialModel(null, lp.sizes, { costs: { ...m.costs, plants: m.costs.plants.map((p) => (p.id === "thermal" ? { ...p, recRsPerKwh: 0 } : p)) }, fin: m.fin, bess: m.bess, dfrTarget: 0.8, ops, solveBy: "npv" });
 assert.ok(fin.tariff > cheaper.tariff, "RECs raise the bid tariff");
 
+// ---- solar and wind on separate sites: the transmission charge and loss are asked for, sent to
+// HiGHS, and the charge is an operating cost of the financial model
+assert.equal(payload.sites, undefined, "one site unless the bidder says otherwise");
+const split = { ...filled, sites: { split: true, chargeRsPerKwh: null, lossPct: null } };
+assert.deepEqual(missingInputs(split, terms), ["Separate sites: the transmission charge between the sites", "Separate sites: the transmission loss between the sites"]);
+const splitSet = { ...split, sites: { split: true, chargeRsPerKwh: 0.45, lossPct: 0.03 } };
+assert.deepEqual(missingInputs(splitSet, terms), []);
+assert.deepEqual(lpPayload(splitSet, terms, profiles).sites, { split: true, wheelingRsPerKwh: 0.45, wheelingLossPct: 0.03 });
+const splitNoWind = { ...splitSet, sources: { ...splitSet.sources, wind: false } };
+assert.equal(lpPayload(splitNoWind, terms, profiles).sites, undefined, "separate sites need solar, wind and a battery");
+assert.ok(!missingInputs(splitNoWind, terms).some((x) => x.startsWith("Separate sites")));
+const ms = modelInputs(splitSet, terms);
+const opsSplit = opsFromLp({ ...lp, lifetime: lp.lifetime.map((r) => ({ ...r, wheeledMwh: 2e5 })) }, ms.fin, ms.bess);
+const finSplit = E.runFinancialModel(null, lp.sizes, { costs: ms.costs, fin: ms.fin, bess: ms.bess, dfrTarget: 0.8, ops: opsSplit, solveBy: "npv" });
+assert.ok(Math.abs(finSplit.rows[0].wheeling - (2e5 * 0.45) / 1e4) < 1e-9, "₹0.45/kWh on 200 GWh sent = ₹9 cr a year");
+assert.ok(finSplit.tariff > fin.tariff, "the transmission charge raises the bid tariff");
+assert.equal(fin.rows[0].wheeling, 0, "one site: no transmission charge");
+
 // energy mix splits direct delivery over every source's generation
 const hourly = { solar: [60, 0], wind: [20, 50], biomass: [0, 0], hydro: [20, 0], thermal: [0, 50], direct: [100, 80], discharge: [0, 20], charge: [0, 0], export: [0, 0], curtail: [0, 20], demand: [100, 100] };
 const mix = energyMix(hourly);

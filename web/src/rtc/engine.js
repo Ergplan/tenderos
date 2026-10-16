@@ -1465,7 +1465,9 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
       plantCost[`${pl.id}Mu`] = (op[`${pl.id}MWh`] || 0) / 1000;
       plantsTotal += fixed + energy;
     }
-    const opex = om + insurance + other + fuel + plantsTotal;
+    // separate sites (Tender to Bid): transmission charge on the energy sent between them; 0 otherwise
+    const wheeling = (op.wheeledMWh || 0) * (fin.wheelingRsPerKwh || 0) * RS_CR_PER_MWH_AT_1RS;
+    const opex = om + insurance + other + fuel + plantsTotal + wheeling;
     const ebitda = revenue - opex;
     // book depreciation (SLM), augmentation depreciated over remaining life
     if (aug[y] > 0) augBookDep += aug[y] / Math.max(1, years - y + 1);
@@ -1543,6 +1545,8 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
       insurance,
       other,
       fuel,
+      wheeling,
+      wheeledMu: (op.wheeledMWh || 0) / 1000,
       biomassMu: (op.biomassMWh || 0) / 1000,
       ...plantCost,
       opex,

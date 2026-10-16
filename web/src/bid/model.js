@@ -144,6 +144,9 @@ export function defaultBidState() {
     costs: { preopPct: null, evacuationCr: null },
     // sale of what the tender lets the supplier sell (asked only when it allows a sale)
     market: { sell: null, source: "GDAM", escalation: 0, flatPrice: null },
+    // solar and wind on separate sites, each with its own battery; a battery charging from the
+    // other site's output pays the transmission charge and loses a share on the way
+    sites: { split: false, chargeRsPerKwh: null, lossPct: null },
     tariffLocked: false,
     locks: {},
     lp: null, // last sizing (without the hourly dispatch)
@@ -155,7 +158,7 @@ export function mergeBidState(saved) {
   const base = defaultBidState();
   if (!saved || saved.version !== 4) return base;
   const merged = { ...base, ...saved };
-  for (const k of ["bid", "sources", "fin", "costs", "market", "locks", "accepted", "filled", "prebid"]) merged[k] = { ...base[k], ...(saved[k] || {}) };
+  for (const k of ["bid", "sources", "fin", "costs", "market", "sites", "locks", "accepted", "filled", "prebid"]) merged[k] = { ...base[k], ...(saved[k] || {}) };
   merged.src = Object.fromEntries(SOURCE_IDS.map((id) => [id, { ...base.src[id], ...(saved.src?.[id] || {}), capacity: { ...base.src[id].capacity, ...(saved.src?.[id]?.capacity || {}) } }]));
   if (!STEP_IDS.includes(merged.step)) merged.step = "tender";
   return merged;
@@ -249,6 +252,11 @@ export function sourceIssues(state, id, terms) {
 }
 
 /** Everything that stops the sizing, as messages (empty when it can run). */
+/** Separate sites apply when the bid has solar, wind and a battery. */
+export function splitSitesOn(state) {
+  return Boolean(state.sites?.split && state.sources.solar && state.sources.wind && state.sources.bess);
+}
+
 export function missingInputs(state, terms) {
   const out = [...capacityIssues(state, terms)];
   const on = SOURCE_IDS.filter((id) => state.sources[id]);
@@ -260,6 +268,10 @@ export function missingInputs(state, terms) {
   for (const f of FINANCE_FIELDS) if (!isNum(state[f.section][f.key])) out.push(`Financing: ${f.label.toLowerCase()}`);
   if (terms?.sale && terms.sale !== "not_allowed" && state.market.sell === null) out.push("Say whether to sell in the market what the tender allows");
   if (state.market.sell && state.market.source === "flat" && !isNum(state.market.flatPrice)) out.push("Market: enter the flat sale price");
+  if (splitSitesOn(state)) {
+    if (!isNum(state.sites.chargeRsPerKwh)) out.push("Separate sites: the transmission charge between the sites");
+    if (!isNum(state.sites.lossPct)) out.push("Separate sites: the transmission loss between the sites");
+  }
   if (!terms?.rules?.length) out.push("The tender sets no supply floor to size for");
   return out;
 }
@@ -405,6 +417,8 @@ export function modelInputs(state, terms) {
     biomassFuelEscalation: on("biomass") ? s.biomass.fuelEscalation : 0,
     solarDegradation: on("solar") ? s.solar.degradation : 0,
     windDegradation: 0,
+    // separate sites: the charge on energy sent between them (the financial model's opex)
+    wheelingRsPerKwh: splitSitesOn(state) ? state.sites.chargeRsPerKwh || 0 : 0,
   };
   const duration = s.bess.duration === "free" ? null : Number(s.bess.duration) || null;
   const bess = {
@@ -506,6 +520,7 @@ export function lpPayload(state, terms, { solarCf, windCf }, prices = null) {
       payload.ctx.extraExportMw = m.vars.solarMw.locked ? m.vars.solarMw.value : m.vars.solarMw.max;
     }
   }
+  if (splitSitesOn(state)) payload.sites = { split: true, wheelingRsPerKwh: state.sites.chargeRsPerKwh, wheelingLossPct: state.sites.lossPct };
   if (rules.some((r) => r.hours === "peak")) payload.peakMask = Array.from(peakMask(terms.peak));
   else if (rules.some((r) => r.hours === "any") && terms.peak?.windows?.length) payload.peakMask = Array.from(anyMask(terms.peak));
   return payload;
@@ -624,6 +639,7 @@ export function opsFromLp(lp, fin, bess) {
       biomassMWh: row.biomassMwh || 0,
       hydroMWh: row.hydroMwh || 0,
       thermalMWh: row.thermalMwh || 0,
+      wheeledMWh: row.wheeledMwh || 0, // sent between separate sites to charge a battery
       // surplus sale revenue at the hourly market price, when the sizing used one
       ...(lp.market && row.exportRevenueCr !== undefined ? { surplusRevenueCr: row.exportRevenueCr } : {}),
     };

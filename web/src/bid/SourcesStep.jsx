@@ -5,7 +5,7 @@ import { LiveChart } from "../rtc/charts";
 import { DATA_COLORS } from "../chartTheme";
 import { Field, Section, SelectBox, nf } from "../rtc/ui";
 import * as E from "../rtc/engine";
-import { AUTO_MAX, BENCHMARK_NOTE, BIOMASS_COLOR, FINANCE_FIELDS, HYDRO_COLOR, MARKETS, SOURCES, SOURCE_FIELDS, THERMAL_COLOR, capacityLimit, fillBenchmarks, missingInputs, plantMw, solarMinMw, sourceIssues } from "./model";
+import { AUTO_MAX, BENCHMARK_NOTE, BIOMASS_COLOR, FINANCE_FIELDS, HYDRO_COLOR, MARKETS, SOURCES, SOURCE_FIELDS, THERMAL_COLOR, capacityLimit, fillBenchmarks, missingInputs, plantMw, solarMinMw, sourceIssues, splitSitesOn } from "./model";
 import { SourceChip } from "./RequirementsStep";
 
 export const SOURCE_COLORS = { solar: DATA_COLORS.solar, wind: DATA_COLORS.wind, hydro: HYDRO_COLOR, biomass: BIOMASS_COLOR, thermal: THERMAL_COLOR, bess: DATA_COLORS.bess };
@@ -148,6 +148,8 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
   const total = plantMw(state, terms);
   const saleAllowed = terms.sale && terms.sale !== "not_allowed";
   const setMarket = (values) => setState((s) => ({ ...s, market: { ...s.market, ...values }, lp: null }));
+  const setSites = (values) => setState((s) => ({ ...s, sites: { ...s.sites, ...values }, lp: null }));
+  const splitPossible = Boolean(state.sources.solar && state.sources.wind && state.sources.bess);
   return (
     <>
       <Section index="3" title="Supply sources" note={`Switch on the sources you have; every value is yours${total ? ` · sizing for ${nf(total, 0)} MW` : ""}`} actions={fillButton}>
@@ -157,8 +159,36 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
         </div>
       </Section>
 
+      <Section index="3.1" title="Solar and wind sites" note="On one site, or on separate sites with a battery at each">
+        <div className="rtc-grid rtc-grid-3">
+          <div className="rtc-field" data-testid="bid-sites">
+            <div className="rtc-field-top"><span>Where are solar and wind?</span></div>
+            <div className="bid-choice">
+              <button type="button" className={!state.sites?.split ? "active" : ""} onClick={() => setSites({ split: false })} data-testid="bid-sites-one">One site</button>
+              <button type="button" className={state.sites?.split ? "active" : ""} onClick={() => setSites({ split: true })} disabled={!splitPossible} data-testid="bid-sites-split">Separate sites</button>
+            </div>
+            <small>{splitPossible ? "Separate sites: a battery at the solar site and one at the wind site" : "Needs solar, wind and a battery in the bid"}</small>
+          </div>
+          {splitSitesOn(state) && (
+            <div data-testid="bid-wheel-charge">
+              <Field label="Transmission charge between the sites" unit="₹/kWh" value={state.sites.chargeRsPerKwh} onChange={(v) => setSites({ chargeRsPerKwh: v })} step={0.05} min={0}
+                hint="On every kWh sent from one site to charge the other site's battery" />
+            </div>
+          )}
+          {splitSitesOn(state) && (
+            <div data-testid="bid-wheel-loss">
+              <Field label="Transmission loss between the sites" pct value={state.sites.lossPct} onChange={(v) => setSites({ lossPct: v })} step={0.1} min={0} max={49}
+                hint="Share of the energy sent that does not arrive" />
+            </div>
+          )}
+        </div>
+        {splitSitesOn(state) && (
+          <p className="rtc-note">HiGHS sizes both batteries and decides, hour by hour, whether a battery charges from its own site's output or from the other site's. Energy sent between the sites pays the transmission charge and arrives less the loss. The battery size and duration you set apply to the two batteries together; each keeps the duration. Sizing two sites takes several minutes.</p>
+        )}
+      </Section>
+
       {saleAllowed && (
-        <Section index="3.1" title="Sale in the market" note={terms.sale === "mandated_solar" ? "The tender lets the mandated solar be scheduled in the market" : "The tender allows sales outside the PPA"}>
+        <Section index="3.2" title="Sale in the market" note={terms.sale === "mandated_solar" ? "The tender lets the mandated solar be scheduled in the market" : "The tender allows sales outside the PPA"}>
           <p className="rtc-note">{terms.provenance["market.sale"]?.display} <SourceChip source={terms.provenance["market.sale"]} compact /> The PPA is supplied first in every hour; only what it cannot take is sold.</p>
           <div className="rtc-grid rtc-grid-3">
             <div className="rtc-field" data-testid="bid-sell">
@@ -181,7 +211,7 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
         </Section>
       )}
 
-      <Section index="3.2" title="Financing and project costs" note="Your terms; they set the tariff the optimizer minimises">
+      <Section index="3.3" title="Financing and project costs" note="Your terms; they set the tariff the optimizer minimises">
         <div className="rtc-grid rtc-grid-4" data-testid="bid-financing">
           {FINANCE_FIELDS.map((f) => (
             <Field key={`${f.section}.${f.key}`} label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={state[f.section][f.key]}

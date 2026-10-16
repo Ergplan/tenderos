@@ -260,6 +260,47 @@ A dispatchable renewable generator with its own size and hourly output:
 
 Biomass may charge the battery; its surplus is curtailed (only what the tender allows is sold).
 
+## Solar and wind on separate sites
+
+On the Supply sources step, **Solar and wind sites → Separate sites** applies when the bid has
+solar, wind and a battery. It sizes a plant whose solar and wind are on different sites, each with
+its own battery. Once you choose it, two fields are asked for:
+
+* **Transmission charge between the sites**, in ₹/kWh. It applies to every kWh sent from one site
+  to charge the other site's battery.
+* **Transmission loss between the sites**, in %. It is the share of the energy sent that does not
+  arrive.
+
+There is no benchmark for either value, because both depend on the route between your sites.
+
+In the sizing LP (`engine/sizing/rtc_lp.py`, `payload.sites`), each modelled hour works like this:
+
+* **Charging.** The solar-site battery charges from solar (free), or from wind sent over the grid.
+  The wind-site battery charges from wind, or from solar sent over.
+* **Charge and loss.** Energy sent between the sites pays the charge on every MWh sent, and only
+  (1 − loss) of it reaches the battery.
+* **Site output.** Each site's charging stays within its own output.
+* **Delivery.** It counts both batteries' discharge.
+* **Other plants.** Biomass, hydro and thermal feed the delivery point and do not charge the
+  batteries in this mode.
+
+HiGHS sizes both batteries. That decides how much storage goes to each site, and when charging from
+the other site is worth its charge and loss.
+
+The battery range and duration you enter apply to the two batteries together; each battery keeps
+the duration. The transmission charge enters the financial model as an operating cost of
+energy sent × charge (`wheeling` in `runFinancialModel`, and a line in the Excel model). The Size
+step shows each site's battery and the energy sent between the sites.
+
+**Example.** On the NHPC FDRE-II RfS at ₹0.50/kWh and 3% loss, with solar, wind and battery at the
+benchmarks:
+* **The batteries:** 789 MW / 3,154 MWh at the solar site and 136 MW / 544 MWh at the wind site.
+* **Sent between the sites:** 7.2 MU in year 1.
+* **The tariff:** ₹5.436/kWh, against ₹5.435 on one site. All 7 conditions are met.
+* **Run time:** about 5.5 minutes, against about 50 s on one site.
+
+The 15-minute dispatch models one battery site and is not offered for separate sites yet.
+
 ## Surplus sold on IEX
 
 Where the tender allows a sale, the bidder chooses on the Supply sources step whether to sell; for
@@ -316,6 +357,15 @@ python tools/build_iex_prices.py --gdam GDAM.xlsx --dam DAM.xlsx --rtm RTM.xlsx 
 * `tools/check_bid_model.mjs` also checks the pre-bid queries: ten, each with clause, page,
   quote and parts; edits and left-out queries reach the copied text and the Word file rows.
 
+* `tests/engine/test_split_sites.py` (`make test-slow`, several minutes) checks separate sites:
+  * switched off, it gives exactly the one-site model;
+  * with no charge and no loss, the tariff equals one co-located battery;
+  * charges and losses only raise the tariff and cut the energy sent;
+  * each site's battery balances hour by hour;
+  * the charge and the loss are required.
+
+  `tools/check_bid_model.mjs` checks the two inputs, the request and the charge in the financial
+  model.
 * `tests/engine/test_preview.py`: the scan screen's preview. Every line is on its page, a job
   shows it before the result, and text uploads work.
 * `tools/check_scan_agents.mjs`: which agent reports which field, with its page; the "Not read"

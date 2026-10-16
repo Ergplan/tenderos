@@ -373,6 +373,21 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     init_soc = float(bess.get("initSoc") if bess.get("initSoc") is not None else 0.5)
     duration = float(bess.get("durationH") or 0) or None
 
+    # Optional split sites (Tender to Bid): solar and wind on separate sites, each with its own
+    # battery. A battery charges from its own site's output, or from the other site's output sent
+    # over the grid: that energy pays a transmission charge (Rs/kWh sent) and loses a share on
+    # the way. HiGHS sizes both batteries. The single battery columns are the solar site's.
+    sites = payload.get("sites") if isinstance(payload.get("sites"), dict) else {}
+    split = bool(sites.get("split"))
+    if split:
+        wheel_rs = float(sites.get("wheelingRsPerKwh") if sites.get("wheelingRsPerKwh") is not None else -1)
+        wheel_loss = float(sites.get("wheelingLossPct") if sites.get("wheelingLossPct") is not None else -1)
+        if wheel_rs < 0:
+            raise LpInputError("split sites need the transmission charge between the sites (Rs/kWh, 0 or more)")
+        if not 0 <= wheel_loss < 0.5:
+            raise LpInputError("split sites need the transmission loss between the sites (0 to 50%)")
+        arrive = 1 - wheel_loss  # share of the energy sent that reaches the other site's battery
+
     s_lo, s_hi, _ = _bounds(variables.get("solarMw"), 5 * plant)
     w_lo, w_hi, _ = _bounds(variables.get("windMw"), 5 * plant)
     p_lo, p_hi, _ = _bounds(variables.get("bessMw"), 2 * plant)
@@ -493,6 +508,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     for pl in plants:  # plant MW columns, after biomass
         pl["col"] = n_size
         n_size += 1
+    if split:  # the wind site's battery MW (and MWh when the duration is free), after the plants
+        PB_COL = n_size
+        n_size += 1
+        EB_COL = n_size if free_e else PB_COL
+        if free_e:
+            n_size += 1
     blocks = 5 if sell else 4
     BIO_BLOCK = blocks  # per-year biomass output block, after dir, ch, dis, soc, [ex]
     if has_bio:
@@ -501,6 +522,11 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         pl["block"] = blocks
         pl["cols"] = []
         blocks += 1
+    if split:
+        # per-year blocks, after the plants: wind sent to the solar-site battery (wA), wind into the
+        # wind-site battery (lB), solar sent to the wind-site battery (sB), its discharge and charge level
+        SPLIT_BLOCK = blocks
+        blocks += 5
     per_year = blocks * HOURS
     n_col = n_size + per_year * len(rep)
     col_lo = np.zeros(n_col)
@@ -513,6 +539,13 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         col_lo[BM_COL], col_hi[BM_COL] = bm_lo, bm_hi
     for pl in plants:
         col_lo[pl["col"]], col_hi[pl["col"]] = pl["lo"], pl["hi"]
+    if split:
+        # each battery within the battery range; their total within it too (a row, below)
+        col_lo[2], col_hi[2] = 0.0, p_hi
+        col_lo[PB_COL], col_hi[PB_COL] = 0.0, p_hi
+        if free_e:
+            col_lo[3], col_hi[3] = 0.0, e_hi
+            col_lo[EB_COL], col_hi[EB_COL] = 0.0, e_hi
     E_COL = 3 if free_e else 2
     e_scale = 1.0 if free_e else duration  # battery MWh = e_scale * column E_COL
 
@@ -524,7 +557,8 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     n_row = 0
     t = np.arange(HOURS)
     ones = np.ones(HOURS)
-    deliver_cols: list[np.ndarray] = []  # (dir, dis) columns per year, for reporting
+    deliver_cols: list[list[np.ndarray]] = []  # delivering columns per year (dir, dis[, wind-site dis])
+    wheel_cols: list[tuple[np.ndarray, np.ndarray]] = []  # (wA, sB) per year: energy sent between the sites
     dfr_rows: list[tuple[int, int, int, str]] = []  # (row, year, month or -1, rule id or "dfr")
     demand_by_year = []
     bio_cols: list[np.ndarray] = []  # biomass output columns per modelled year
@@ -571,17 +605,23 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             bio_cols.append(c_bio)
         for pl in plants:
             pl["cols"].append(base + pl["block"] * HOURS + t)
+        if split:
+            c_wA, c_lB, c_sB, c_disB, c_socB = (base + (SPLIT_BLOCK + b) * HOURS + t for b in range(5))
+            wheel_cols.append((c_wA, c_sB))
         dem = demand * f["demandFactor"] / poi  # at the bus
         target = np.minimum(dem, plant / poi)
         demand_by_year.append(dem)
-        deliver_cols.append((c_dir, c_dis))
+        deliver_cols.append([c_dir, c_dis] + ([c_disB] if split else []))
         sgen = solar_cf * f["solarFactor"] * loss
         wgen = wind_cf * f["windFactor"] * loss
         bf = f["bessFactor"]
 
-        # generation: dir + ch + ex - s*S - w*W [- biomass] <= 0
+        # generation: dir + ch + ex - s*S - w*W [- biomass] <= 0 (split sites: every charging flow
+        # is taken from generation, whichever battery it goes to)
         r = n_row + t
         add(r, c_dir, ones); add(r, c_ch, ones)
+        if split:
+            add(r, c_wA, ones); add(r, c_lB, ones); add(r, c_sB, ones)
         if sell:
             add(r, c_ex, ones)
         add(r, np.zeros(HOURS, int), -sgen); add(r, np.ones(HOURS, int), -wgen)
@@ -614,7 +654,18 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
                 add(np.array([n_row]), np.array([pl["col"]]), np.array([-1e-3 * share * idx.size]))
                 row_lo.append(np.array([-np.inf])); row_hi.append(np.array([0.0]))
                 n_row += 1
-        if non_green:
+        if split:
+            # each site's charging within its own output: solar into the solar-site battery and solar
+            # sent to the wind site (ch + sB <= s*S); wind into the wind-site battery and wind sent
+            # to the solar site (lB + wA <= w*W). Batteries charge from solar and wind only.
+            for cols_, size_col, gen in (((c_ch, c_sB), 0, sgen), ((c_lB, c_wA), 1, wgen)):
+                r = n_row + t
+                for c in cols_:
+                    add(r, c, ones)
+                add(r, np.full(HOURS, size_col), -gen)
+                row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
+                n_row += HOURS
+        if non_green and not split:
             # the battery charges from renewable output only (RE-RTC: "Charges through RE only"):
             # ch - s*S - w*W [- biomass] - green plants <= 0
             r = n_row + t
@@ -638,9 +689,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
             n_row += HOURS
         if solar_only:
-            # sales come from solar output only: ex - s*S <= 0
+            # sales come from solar output only: ex - s*S <= 0 (split sites: solar used for charging
+            # is not sold, ex + ch + sB - s*S <= 0)
             r = n_row + t
             add(r, c_ex, ones); add(r, np.zeros(HOURS, int), -sgen)
+            if split:
+                add(r, c_ch, ones); add(r, c_sB, ones)
             row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
             n_row += HOURS
         if has_bio:
@@ -664,17 +718,24 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         # delivery: dir + dis <= min(demand, plant); with sales the export shares the connection
         r = n_row + t
         add(r, c_dir, ones); add(r, c_dis, ones)
+        if split:
+            add(r, c_disB, ones)
         row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(target)
         n_row += HOURS
         if sell:
             r = n_row + t
             add(r, c_dir, ones); add(r, c_dis, ones); add(r, c_ex, ones)
+            if split:
+                add(r, c_disB, ones)
             row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.full(HOURS, (plant + extra) / poi))
             n_row += HOURS
-        # battery power: ch - P <= 0, dis - P <= 0
+        # battery power: ch - P <= 0, dis - P <= 0 (split sites: what reaches the solar-site battery,
+        # ch + arrive*wA, within its MW)
         for c in (c_ch, c_dis):
             r = n_row + t
             add(r, c, ones); add(r, np.full(HOURS, 2), -ones)
+            if split and c is c_ch:
+                add(r, c_wA, np.full(HOURS, arrive))
             row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
             n_row += HOURS
         # state of charge above the floor, u = soc - minSoc*E*bf >= 0 (a bound, not a row):
@@ -682,6 +743,8 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         r = n_row + t
         add(r, c_soc, ones); add(r[1:], c_soc[:-1], -ones[1:])
         add(r, c_ch, np.full(HOURS, -eta)); add(r, c_dis, np.full(HOURS, 1 / eta))
+        if split:
+            add(r, c_wA, np.full(HOURS, -eta * arrive))
         add(np.array([n_row]), np.array([E_COL]), np.array([-min(max(init_soc - min_soc, 0.0), max_soc - min_soc) * bf * e_scale]))
         row_lo.append(np.zeros(HOURS)); row_hi.append(np.zeros(HOURS))
         n_row += HOURS
@@ -690,12 +753,32 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         add(r, c_soc, ones); add(r, np.full(HOURS, E_COL), np.full(HOURS, -(max_soc - min_soc) * bf * e_scale))
         row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
         n_row += HOURS
+        if split:
+            # the wind-site battery: what reaches it (lB + arrive*sB) and its discharge within its MW,
+            # and its charge level as for the solar-site battery
+            for terms_ in (((c_lB, 1.0), (c_sB, arrive)), ((c_disB, 1.0),)):
+                r = n_row + t
+                for c, v in terms_:
+                    add(r, c, np.full(HOURS, v))
+                add(r, np.full(HOURS, PB_COL), -ones)
+                row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
+                n_row += HOURS
+            r = n_row + t
+            add(r, c_socB, ones); add(r[1:], c_socB[:-1], -ones[1:])
+            add(r, c_lB, np.full(HOURS, -eta)); add(r, c_sB, np.full(HOURS, -eta * arrive)); add(r, c_disB, np.full(HOURS, 1 / eta))
+            add(np.array([n_row]), np.array([EB_COL]), np.array([-min(max(init_soc - min_soc, 0.0), max_soc - min_soc) * bf * e_scale]))
+            row_lo.append(np.zeros(HOURS)); row_hi.append(np.zeros(HOURS))
+            n_row += HOURS
+            r = n_row + t
+            add(r, c_socB, ones); add(r, np.full(HOURS, EB_COL), np.full(HOURS, -(max_soc - min_soc) * bf * e_scale))
+            row_lo.append(np.full(HOURS, -np.inf)); row_hi.append(np.zeros(HOURS))
+            n_row += HOURS
         if non_green:
             # green share: non-RE output <= (1 - greenShareMin) x delivered over the year (GWh)
             for pl in non_green:
                 add(np.full(HOURS, n_row), pl["cols"][-1], np.full(HOURS, 1e-3))
-            add(np.full(HOURS, n_row), c_dir, np.full(HOURS, -1e-3 * (1 - green_min)))
-            add(np.full(HOURS, n_row), c_dis, np.full(HOURS, -1e-3 * (1 - green_min)))
+            for c in deliver_cols[-1]:
+                add(np.full(HOURS, n_row), c, np.full(HOURS, -1e-3 * (1 - green_min)))
             row_lo.append(np.array([-np.inf])); row_hi.append(np.array([0.0]))
             n_row += 1
         # DFR: delivered >= target share of demand (per year, or per month); with supply rules,
@@ -706,21 +789,29 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
                 idx = t[mask]
                 if idx.size == 0:
                     continue
-                add(np.full(idx.size, n_row), c_dir[idx], np.full(idx.size, 1e-3))  # GWh, for scaling
-                add(np.full(idx.size, n_row), c_dis[idx], np.full(idx.size, 1e-3))
+                for c in deliver_cols[-1]:  # GWh, for scaling
+                    add(np.full(idx.size, n_row), c[idx], np.full(idx.size, 1e-3))
                 row_lo.append(np.array([1e-3 * rule["target"] * dem[idx].sum()])); row_hi.append(np.array([np.inf]))
                 dfr_rows.append((n_row, year, m, rule["id"]))
                 n_row += 1
 
-    if free_e:  # duration window: minDur*P <= E <= maxDur*P
+    if free_e:  # duration window: minDur*P <= E <= maxDur*P (each battery)
         min_d = float(bess.get("minDurationH") or 0)
         max_d = float(bess.get("maxDurationH") or 24)
-        add(np.array([n_row, n_row]), np.array([3, 2]), np.array([1.0, -min_d]))
-        row_lo.append(np.array([0.0])); row_hi.append(np.array([np.inf]))
-        n_row += 1
-        add(np.array([n_row, n_row]), np.array([3, 2]), np.array([1.0, -max_d]))
-        row_lo.append(np.array([-np.inf])); row_hi.append(np.array([0.0]))
-        n_row += 1
+        for e_col, p_col in [(3, 2)] + ([(EB_COL, PB_COL)] if split else []):
+            add(np.array([n_row, n_row]), np.array([e_col, p_col]), np.array([1.0, -min_d]))
+            row_lo.append(np.array([0.0])); row_hi.append(np.array([np.inf]))
+            n_row += 1
+            add(np.array([n_row, n_row]), np.array([e_col, p_col]), np.array([1.0, -max_d]))
+            row_lo.append(np.array([-np.inf])); row_hi.append(np.array([0.0]))
+            n_row += 1
+    if split:
+        # the two batteries together within the battery range (MW, and MWh when it is free)
+        totals = [(2, PB_COL, p_lo, p_hi)] + ([(3, EB_COL, e_lo, e_hi)] if free_e else [])
+        for a_col, b_col, lo_, hi_ in totals:
+            add(np.array([n_row, n_row]), np.array([a_col, b_col]), np.array([1.0, 1.0]))
+            row_lo.append(np.array([lo_])); row_hi.append(np.array([hi_]))
+            n_row += 1
 
     A = sp.csc_matrix((np.concatenate(rows_v), (np.concatenate(rows_i), np.concatenate(rows_j))), shape=(n_row, n_col))
     A.sum_duplicates()
@@ -751,6 +842,16 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             cost_vec[3] = cost_e
         else:
             cost_vec[2] += cost_e * duration
+        if split:
+            # the wind-site battery costs what the solar-site one does per MW and MWh
+            cost_vec[PB_COL] = cost_vec[2]
+            if free_e:
+                cost_vec[EB_COL] = cost_vec[3]
+            # transmission charge on every MWh sent between the sites, in the years it stands for
+            wheel_w = RS_CR_PER_MWH_AT_1RS * wheel_rs * (weights.T @ opex_w)
+            for yi, (c_wA, c_sB) in enumerate(wheel_cols):
+                cost_vec[c_wA] = wheel_w[yi]
+                cost_vec[c_sB] = wheel_w[yi]
         if has_bio:
             cost_vec[BM_COL] = size_cost(float(costs.get("biomassCrPerMw") or 0), float(fin.get("biomassOmLakhPerMw") or 0))
             # fuel per MWh generated in each modelled year, carried to the years it stands for
@@ -765,9 +866,9 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             for yi, c_pl in enumerate(pl["cols"]):
                 cost_vec[c_pl] = var_w[yi]
         energy_vec = np.zeros(n_col)
-        for yi, (c_dir, c_dis) in enumerate(deliver_cols):
-            energy_vec[c_dir] = energy_w[yi] * poi  # billed at the meter
-            energy_vec[c_dis] = energy_w[yi] * poi
+        for yi, cols in enumerate(deliver_cols):
+            for c in cols:
+                energy_vec[c] = energy_w[yi] * poi  # billed at the meter
             if ppa_first:
                 # a sale is worth at most what the same MWh earns on the PPA (0.5% less, so the
                 # PPA wins a tie): supplying the PPA always comes first
@@ -783,6 +884,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
 
     def sizes_of(x: np.ndarray) -> dict:
         out = {"solarMw": float(x[0]), "windMw": float(x[1]), "bessMw": float(x[2]), "bessMwh": float(x[E_COL] * e_scale)}
+        if split:
+            # bessMw / bessMwh: both batteries together; and each site's
+            out["bessSolarSiteMw"], out["bessSolarSiteMwh"] = out["bessMw"], out["bessMwh"]
+            out["bessWindSiteMw"], out["bessWindSiteMwh"] = float(x[PB_COL]), float(x[EB_COL] * e_scale)
+            out["bessMw"] += out["bessWindSiteMw"]
+            out["bessMwh"] += out["bessWindSiteMwh"]
         if has_bio:
             out["biomassMw"] = float(x[BM_COL])
         for pl in plants:
@@ -791,7 +898,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
 
     def yearly(x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Delivered and exported MWh at the meter in every PPA year (interpolated between modelled years)."""
-        dl = np.array([x[c_dir].sum() + x[c_dis].sum() for c_dir, c_dis in deliver_cols]) * poi
+        dl = np.array([sum(x[c].sum() for c in cols) for cols in deliver_cols]) * poi
         ex = (np.array([x[c].sum() for c in ex_cols]) if sell else np.zeros(len(rep))) * poi
         return weights @ dl, weights @ ex
 
@@ -808,6 +915,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             return None
         return weights @ np.array([x[c].sum() for c in bio_cols])
 
+    def yearly_wheeled(x: np.ndarray) -> np.ndarray | None:
+        """MWh sent between the sites in every PPA year (interpolated), or None on one site."""
+        if not split:
+            return None
+        return weights @ np.array([x[a].sum() + x[b].sum() for a, b in wheel_cols])
+
     def yearly_plants(x: np.ndarray) -> dict:
         """MWh from each dispatchable plant in every PPA year (interpolated)."""
         return {pl["id"]: weights @ np.array([x[c].sum() for c in pl["cols"]]) for pl in plants}
@@ -818,6 +931,9 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             text += f"biomass {z['biomassMw']:.1f} MW, "
         for pl in plants:
             text += f"{pl['id']} {z[pl['id'] + 'Mw']:.1f} MW, "
+        if split:
+            return text + (f"BESS {z['bessSolarSiteMw']:.1f} MW / {z['bessSolarSiteMwh']:.1f} MWh at the solar site and "
+                           f"{z['bessWindSiteMw']:.1f} MW / {z['bessWindSiteMwh']:.1f} MWh at the wind site")
         return text + f"BESS {z['bessMw']:.1f} MW / {z['bessMwh']:.1f} MWh"
 
     build_s = time.perf_counter() - started
@@ -965,8 +1081,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     duals = np.asarray(h.getSolution().row_dual) if h.getSolution().dual_valid else None
     year_rows = []
     for yi, year in enumerate(rep):
-        c_dir, c_dis = deliver_cols[yi]
-        delivered = x[c_dir] + x[c_dis]
+        delivered = sum(x[c] for c in deliver_cols[yi])
         dem = demand_by_year[yi]
         monthly_dfr = [float(delivered[MONTH_OF_HOUR == m].sum() / max(1e-9, dem[MONTH_OF_HOUR == m].sum())) for m in range(12)]
         base = n_size + yi * per_year
@@ -990,6 +1105,10 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             row["divertedMu"] = float(np.minimum(x[ex_cols[yi]], room).sum() * poi / 1000)
         if rules:
             row["rules"] = [rule_outcome(rule, delivered, dem) for rule in rules]
+        if split:
+            c_wA, c_sB = wheel_cols[yi]
+            row["wheeledMu"] = float((x[c_wA].sum() + x[c_sB].sum()) / 1000)
+            row["wheelLossMu"] = row["wheeledMu"] * wheel_loss
         year_rows.append(row)
     dfr_price = None
     if duals is not None:
@@ -1031,6 +1150,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         "plants": [{"id": pl["id"], "green": pl["green"]} for pl in plants],
         "greenShareMin": green_min if non_green else None,
         "evacuationEfficiency": poi,
+        "sites": {"split": True, "wheelingRsPerKwh": wheel_rs, "wheelingLossPct": wheel_loss} if split else {"split": False},
         "seconds": round(seconds, 2),
         "log": lines,
     }
@@ -1040,6 +1160,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         bio_y = yearly_biomass(x)
         rev_y = yearly_export_revenue(x)
         plant_y = yearly_plants(x)
+        wheel_y = yearly_wheeled(x)
         if rev_y is None:
             rev_y = ex * surplus_price * RS_CR_PER_MWH_AT_1RS
         result["lifetime"] = [
@@ -1051,6 +1172,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
                 "exportRevenueCr": float(rev_y[y - 1]),
                 "biomassMwh": float(bio_y[y - 1]) if bio_y is not None else 0.0,
                 **{f"{pid}Mwh": float(v[y - 1]) for pid, v in plant_y.items()},
+                **({"wheeledMwh": float(wheel_y[y - 1])} if wheel_y is not None else {}),
             }
             for y in range(1, n + 1)
         ]
@@ -1066,12 +1188,27 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         pgen = {pl["id"]: x[pl["cols"][0]] for pl in plants}
         exp = x[base + 4 * HOURS + t] if sell else np.zeros(HOURS)
         h_ch, h_dis, h_dir = x[c_ch], x[c_dis], x[c_dir]
-        if rules:
+        if split:
+            # both batteries together: charge is what generation gave up for charging (energy sent
+            # between the sites counted before its loss), discharge and charge level are summed
+            c_wA, c_lB, c_sB, c_disB, c_socB = (base + (SPLIT_BLOCK + b) * HOURS + t for b in range(5))
+            site = {
+                "chargeSolarSite": x[c_ch] + arrive * x[c_wA], "chargeWindSite": x[c_lB] + arrive * x[c_sB],
+                "dischargeSolarSite": x[c_dis], "dischargeWindSite": x[c_disB],
+                "sentToSolarSite": x[c_wA], "sentToWindSite": x[c_sB],
+            }
+            h_ch = x[c_ch] + x[c_wA] + x[c_lB] + x[c_sB]
+            h_dis = x[c_dis] + x[c_disB]
+            e_mwh = sizes["bessMwh"]
+            soc_u = x[c_soc] + x[c_socB]
+        elif rules:
             # Tender to Bid: an hour that both charges and discharges (an LP tie: the energy would
             # be curtailed anyway) is shown as its net, with the same state of charge and delivery
             h_ch, h_dis, h_dir = net_battery(h_ch, h_dis, h_dir, eta)
         curtail = np.maximum(0.0, sgen + wgen + bgen + sum(pgen.values(), np.zeros(HOURS)) - h_dir - h_ch - exp)
-        soc = (x[c_soc] + min_soc * e_mwh * f["bessFactor"]) / e_mwh if e_mwh > 1e-9 else np.zeros(HOURS)
+        if not split:
+            soc_u = x[c_soc]
+        soc = (soc_u + min_soc * e_mwh * f["bessFactor"]) / e_mwh if e_mwh > 1e-9 else np.zeros(HOURS)
         r2 = lambda a: np.round(np.asarray(a, float), 2).tolist()
         result["hourly"] = {
             "year": rep[0],
@@ -1081,6 +1218,8 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             "export": r2(exp), "curtail": r2(curtail), "soc": np.round(soc, 4).tolist(),
             **{pid: r2(v) for pid, v in pgen.items()},
         }
+        if split:
+            result["hourly"].update({k: r2(v) for k, v in site.items()})
         if price_series is not None:
             result["hourly"]["price"] = np.round(price_series, 3).tolist()
     return result

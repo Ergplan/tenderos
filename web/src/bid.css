@@ -406,3 +406,4 @@
 .bid-scope h2 { display: flex; align-items: center; gap: 10px; font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -0.02em; }
 .bid-scope p { color: var(--ink-2); line-height: 1.55; }
 .bid-scope-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bid-split { margin-top: 12px; }

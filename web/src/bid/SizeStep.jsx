@@ -128,6 +128,22 @@ function rampStats(series, mw) {
 }
 
 /** Step 4: the least-tariff plant from the bidder's sources that meets every tender requirement. */
+/** Separate sites: each site's battery and the energy sent between the sites in year 1. */
+function SplitSites({ lp }) {
+  const z = lp.sizes;
+  const y1 = lp.perYear?.[0] || {};
+  const rs = lp.sites.wheelingRsPerKwh || 0;
+  const hours = (mwh, mw) => (mw > 0.5 ? ` · ${nf(mwh / mw, 1)} h` : "");
+  return (
+    <div className="rtc-grid rtc-grid-3 bid-split" data-testid="bid-split-sites">
+      <Stat label="Battery at the solar site" value={`${nf(z.bessSolarSiteMw, 0)} MW / ${nf(z.bessSolarSiteMwh, 0)} MWh`} detail={`charges from solar, or from wind sent over${hours(z.bessSolarSiteMwh, z.bessSolarSiteMw)}`} />
+      <Stat label="Battery at the wind site" value={`${nf(z.bessWindSiteMw, 0)} MW / ${nf(z.bessWindSiteMwh, 0)} MWh`} detail={`charges from wind, or from solar sent over${hours(z.bessWindSiteMwh, z.bessWindSiteMw)}`} />
+      <Stat label="Sent between the sites (year 1)" value={`${nf(y1.wheeledMu || 0, 1)} MU`}
+        detail={`${nf(y1.wheelLossMu || 0, 1)} MU lost (${pf(lp.sites.wheelingLossPct, 1)}) · ₹${nf(((y1.wheeledMu || 0) * 1e3 * rs) / 1e4, 1)} cr at ₹${nf(rs, 2)}/kWh`} />
+    </div>
+  );
+}
+
 export default function SizeStep({ state, terms, run, startSizing, stopSizing, startDispatch15, hourly, goto, prices, missing }) {
   const lp = state.lp;
   const mix = useMemo(() => energyMix(hourly), [hourly]);
@@ -188,6 +204,7 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
               {state.sources.bess && <Stat label="Battery" value={`${nf(lp.sizes.bessMw, 0)} MW / ${nf(lp.sizes.bessMwh, 0)} MWh`} detail={lp.sizes.bessMw > 0 ? `${nf(lp.sizes.bessMwh / lp.sizes.bessMw, 1)} h` : "none"} />}
               <Stat label="25-year tariff (HiGHS)" value={`₹${nf(lp.tariff, 3)}/kWh`} detail={`no design below ₹${nf(lp.lowerBound, 3)}`} />
             </div>
+            {lp.sites?.split && <SplitSites lp={lp} />}
             <ComplianceTable lp={lp} />
           </Section>
           <Checklist state={state} terms={terms} lp={lp} index="4.2" />
@@ -208,7 +225,8 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
           </Section>
         </>
       )}
-      {lp && <Dispatch15 lp={lp} start={startDispatch15} />}
+      {lp && !lp.sites?.split && <Dispatch15 lp={lp} start={startDispatch15} />}
+      {lp?.sites?.split && <p className="rtc-note bid-hint" data-testid="bid-d15-split">The 15-minute dispatch models one battery site; it is not available yet for separate solar and wind sites. The hourly sizing above models both sites.</p>}
       {!lp && !running && <p className="rtc-note bid-hint">Size the plant to see the least-tariff design, the tender conditions it meets and the dispatch.</p>}
     </>
   );

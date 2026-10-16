@@ -1,7 +1,7 @@
 # TenderOS. Local runs need Postgres, Python 3.12 and Node 22; see README.
 PY ?= .venv/bin/python
 
-.PHONY: install build test check-web e2e lint dev stop up down
+.PHONY: install build test test-slow check-web e2e lint dev stop up down
 
 install:
 	python3.12 -m venv .venv && $(PY) -m pip install -r engine/requirements-dev.txt
@@ -11,7 +11,11 @@ build:
 	cd web && npx next build
 
 test:
-	$(PY) -m pytest -q tests/engine tests/e2e/test_nhpc_tender.py
+	$(PY) -m pytest -q -m "not slow" tests/engine tests/e2e/test_nhpc_tender.py
+
+# the split-site sizing LP tests (several minutes)
+test-slow:
+	$(PY) -m pytest -q -m slow tests/engine
 
 check-web:
 	for f in tools/check_*.mjs; do case $$f in *nhpc*) continue;; esac; node $$f || exit 1; done
