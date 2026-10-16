@@ -33,8 +33,11 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
 
 ## Tender to Bid data flow
 
-1. Upload a tender. The upload goes to `POST /api/bid/tender/read` (a job) and then
-   `GET …/read/{id}`, and comes back as a reading where every value has a page and a quote.
+1. On the start screen, upload a tender, or open the prefilled simulation or a tender read before.
+   * An upload goes to `POST /api/bid/tender/read` (a job), then `GET …/read/{id}`.
+   * The scan screen shows the job's `preview`, the tender's own lines per agent, while the reading
+     runs.
+   * The reading comes back with a page and a quote for every value.
 2. `tenderMap.js` (`buildProposals`, `tenderTerms`) turns the reading into terms: capacity and bid
    limits, supply floors, peak hours, permitted and mandatory sources, market sale, PPA term and
    ceiling. A term is used only when its quote is located on the page; otherwise the reviewer
@@ -52,7 +55,7 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser end to end on the NHPC RfS against a running stack (`tests/e2e/test_tender_to_bid.py`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off |
 
 ## What is not here
 

@@ -1,8 +1,47 @@
 # Tender to Bid
 
 The main tab of TenderOS: it takes a power-sale tender to a priced bid. It is separate from Round the Clock,
-BESS tender and CfD bid, and does not change them. The WBSEDCL RE-RTC RfQ/RfP is loaded when the tab
-opens (its reading ships built in), so the work starts from what the tender requires.
+BESS tender and CfD bid, and does not change them.
+
+## The journey
+
+1. **Start screen** (`StartScreen.jsx`). The start screen offers four ways in:
+   * **Upload a tender:** any power tender (PDF, Word or text, up to 60 MB). The type is detected,
+     or you choose it.
+   * **Run the prefilled simulation:** WBSEDCL/PT&P/RE-RTC/2026/01, whose reading ships built
+     in. It opens straight in the workflow.
+   * **Continue** the tender in progress.
+   * **Open** a tender read before.
+
+   "New tender" in the workflow returns here.
+2. **Scan screen** (`ScanStage.jsx`, `scanAgents.js`). This runs while an upload is read.
+   * Five agents work side by side: Key dates, Eligibility & qualification, Capacity & supply
+     constraints, Commercial & finance inputs, and Tender risks.
+   * Each agent scrolls the tender's own lines on its subject, with the matched phrases marked.
+     The lines come from the engine's early preview (`engine/extraction/preview.py`), a verbatim
+     run of each page's text.
+   * When the reading is done, each agent locks in what it found as fields of the reading with
+     their page.
+   * A closing line gives the pages, the fields read and how many values were located on their
+     page.
+   * The screen runs for at least about 6 s and stays until the reading ends.
+   * **Skip animation** and `prefers-reduced-motion` show a plain progress view instead.
+   * Nothing on the screen is invented. An agent with no finding says "Not stated in this
+     document". If the rule-based reader did not look for the subject at all (eligibility, for
+     example), it says "Not read" instead.
+3. **The workflow** (the six steps below) opens on the new tender.
+
+**Any tender.** The sizing steps (bid capacity, supply sources, size, financials) apply to supply
+tenders: solar, wind, hybrid, FDRE, RE-RTC, generation and IPP (`sizingScope` in
+`tenderMap.js`). For other tender types, those steps show a notice (`ScopeNotice.jsx`) instead
+of a broken form:
+* **Standalone battery tender:** the notice offers "Open in the BESS tender tab", which hands the
+  uploaded file to that tab and reads it there.
+* **Transmission or EPC tender:** the notice says there is no plant to size. The Tender and Key
+  dates steps hold everything read.
+
+Wherever a tender does not state a term, the step says so, and no value is carried over from
+another tender.
 
 | Step | What happens | Where |
 | --- | --- | --- |
@@ -277,6 +316,16 @@ python tools/build_iex_prices.py --gdam GDAM.xlsx --dam DAM.xlsx --rtm RTM.xlsx 
 * `tools/check_bid_model.mjs` also checks the pre-bid queries: ten, each with clause, page,
   quote and parts; edits and left-out queries reach the copied text and the Word file rows.
 
+* `tests/engine/test_preview.py`: the scan screen's preview. Every line is on its page, a job
+  shows it before the result, and text uploads work.
+* `tools/check_scan_agents.mjs`: which agent reports which field, with its page; the "Not read"
+  coverage; and the sizing scope by tender type.
+* `tests/e2e/test_tender_to_bid.py` runs the journey in a browser:
+  * start screen → upload → scan → workflow, where every scrolled line is checked against the
+    PDF's page;
+  * the prefilled simulation and Continue;
+  * Skip and reduced motion;
+  * the BESS hand-off.
 * `tests/e2e/test_nhpc_tender.py` and `tools/check_nhpc_terms.mjs` — one real tender (NHPC FDRE-II)
   read, compared with its reviewed reading and turned into terms; `tests/e2e/test_tender_to_bid.py`
   runs the same tender through the browser to the Excel model (see `docs/E2E-NHPC.md`).

@@ -7,6 +7,7 @@ import OptimizerTheatre from "../rtc/Theatre";
 import SaveDialog from "../scenarios/SaveDialog";
 import { Field, Section, nf, pf } from "../rtc/ui";
 import { trackEvent } from "../activity";
+import { hasHandOff } from "../handoff";
 
 const STORAGE_KEY = "fdre.bess.v1";
 
@@ -56,6 +57,11 @@ export default function BessTab({ initialScenario = null }) {
   const [showSave, setShowSave] = useState(false);
   const feedRef = useRef(null);
   const answerRef = useRef(null);
+
+  // a tender handed over from Tender to Bid opens on the Tender chapter, which reads it
+  useEffect(() => {
+    if (hasHandOff()) setState((s) => ({ ...s, chapter: "tender" }));
+  }, []);
 
   useEffect(() => {
     sessionState = state;

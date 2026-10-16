@@ -20,6 +20,8 @@ from pathlib import Path
 from typing import Any
 
 from engine.extraction.extract import read_tender
+from engine.extraction.pages import read_pages
+from engine.extraction.preview import build_preview
 
 MAX_AGE_SECONDS = 24 * 3600
 # A running job whose file has not changed for this long lost its worker (a restart).
@@ -83,6 +85,7 @@ def start(name: str, payload: bytes, tender_type: str = "auto", mode: str = "aut
         "status": "queued",
         "progress": {"done": 0, "total": 0, "step": "Queued"},
         "error": None,
+        "preview": None,  # the scan screen's lines of the document, before the result
         "result": None,
         "created_at": _now(),
         "updated_at": _now(),
@@ -102,6 +105,15 @@ def start(name: str, payload: bytes, tender_type: str = "auto", mode: str = "aut
             job["status"] = "running"
             job["progress"] = {"done": 0, "total": 0, "step": "Reading pages"}
             _write(job)
+        try:
+            # the pages are cached, so the reading below does not read them again
+            preview = build_preview(read_pages(name, payload))
+        except Exception:  # noqa: BLE001 - an unreadable file is reported by read_tender
+            preview = None
+        if preview is not None:
+            with _lock:
+                job["preview"] = preview
+                _write(job)
         try:
             result = read_tender(name, payload, tender_type=tender_type, mode=mode, progress=progress, sdk=sdk)
         except Exception as exc:  # noqa: BLE001 - reported to the poller

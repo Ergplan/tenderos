@@ -11,7 +11,7 @@ app produces the bid's financial model as an Excel workbook.
 
 | Tab | |
 | --- | --- |
-| **Tender to Bid** | A tender, its key dates, the bid capacity, the supply sources, the HiGHS sizing with the tender conditions and a 15-minute dispatch, then the financials and the Excel model (`docs/TENDER_TO_BID.md`) |
+| **Tender to Bid** | Start by uploading any tender (read on a scan screen where five agents work through its text) or with the prefilled simulation. Then the tender, its key dates, the bid capacity, the supply sources, the HiGHS sizing with the tender conditions and a 15-minute dispatch, then the financials and the Excel model (`docs/TENDER_TO_BID.md`) |
 | Round the clock | RTC / FDRE sizing and finance from your own inputs |
 | BESS tender | Standalone battery tenders |
 | CfD bid | SECI CfD-I strike price (`docs/CFD.md`) |

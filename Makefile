@@ -16,7 +16,7 @@ test:
 check-web:
 	for f in tools/check_*.mjs; do case $$f in *nhpc*) continue;; esac; node $$f || exit 1; done
 
-# Needs a running stack and a user: TENDEROS_URL, TENDEROS_EMAIL, TENDEROS_PASSWORD
+# Needs a running stack: TENDEROS_URL and TENDEROS_EMAIL, TENDEROS_PASSWORD (or TENDEROS_DEMO=1)
 e2e:
 	$(PY) -m pytest -q -m slow tests/e2e/test_tender_to_bid.py
 

@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AlertTriangle, BatteryCharging, CheckCircle2, FileSearch, FileText, IndianRupee, Landmark, ListChecks, Loader2, Upload, XCircle } from "lucide-react";
 import * as B from "./engine";
+import { takeHandOff } from "../handoff";
 import { Field, LockButton, NumberInput, SelectBox, Stat, nf, pf } from "../rtc/ui";
 
 export const CHAPTERS = [
@@ -76,6 +77,12 @@ export function TenderChapter({ state, onParsed, lockProps }) {
       setBusy(false);
     }
   }
+
+  // a tender handed over from Tender to Bid is read as soon as the tab opens
+  useEffect(() => {
+    const handed = takeHandOff();
+    if (handed) onFile(handed);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="bess-tender">

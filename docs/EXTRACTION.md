@@ -113,7 +113,7 @@ a request only when the signed-in user may use a tab that needs that route famil
 | `GET …/status` | `{llm_available, provider, model, default_mode, require_llm, types, extraction}` |
 | `GET …/catalog?tender_type=fdre` | the sections and their fields; 422 for an unknown type |
 | `POST …/read` with body `{file: {name, content_base64}, tender_type, mode}` | 202 `{job_id, status, mode}`, or the result itself with `?sync=1` |
-| `GET …/read/{job_id}` | `{status, progress, error, result, …}` |
+| `GET …/read/{job_id}` | `{status, progress, error, preview, result, …}`. `preview` arrives about a second after the upload, before `result`: for each scan-screen agent, up to 40 lines of the document's own text with their page and the matched phrases (`preview.py`) |
 | `POST /api/bess/parse` | the BESS tab's adapter (`engine/bess/requirements.py`): `read_tender(tender_type="bess")` mapped to the BESS inputs |
 
 Read errors:

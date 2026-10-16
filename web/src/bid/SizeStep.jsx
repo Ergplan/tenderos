@@ -142,9 +142,11 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
           <span className="rtc-index">4</span>
           <h2>Least-tariff plant</h2>
           <p>
-            HiGHS sizes {on.map((s) => s.title.toLowerCase()).join(", ") || "nothing"} for {nf(total || 0, 0)} MW round the clock, hour by hour over the PPA years, so that
-            {" "}{terms.rules.map((r) => `${r.label.toLowerCase()} ≥ ${pf(r.target, 0)}`).join(", ") || "no floor"}{terms.greenMin && state.sources.thermal ? ` and green share ≥ ${pf(terms.greenMin, 0)}` : ""} hold every year,
-            at the lowest {terms.years || state.fin.years}-year tariff for a {pf(state.fin.targetEquityIrr || 0, 1)} equity IRR.
+            HiGHS sizes {on.map((s) => s.title.toLowerCase()).join(", ") || "nothing"} for {nf(total || 0, 0)} MW round the clock, hour by hour over the PPA years,
+            {terms.rules.length
+              ? <> so that {terms.rules.map((r) => `${r.label.toLowerCase()} ≥ ${pf(r.target, 0)}`).join(", ")}{terms.greenMin && state.sources.thermal ? ` and green share ≥ ${pf(terms.greenMin, 0)}` : ""} hold every year,</>
+              : " once the tender's supply floor is known (this tender states none the sizing can use),"}
+            {" "}at the lowest {terms.years || state.fin.years}-year tariff for a {pf(state.fin.targetEquityIrr || 0, 1)} equity IRR.
             {state.market.sell ? ` ${terms.sale === "mandated_solar" ? "Solar surplus" : "Surplus"} is sold at ${marketLabel(state, prices)} after the PPA.` : " Nothing is sold outside the PPA."}
           </p>
           {missing.length > 0 && <ul className="bid-warnings">{missing.slice(0, 6).map((m) => <li key={m}><TriangleAlert size={12} /> {m}</li>)}</ul>}

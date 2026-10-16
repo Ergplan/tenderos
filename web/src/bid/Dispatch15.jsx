@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle2, Download, Loader2, Play, TriangleAlert, XCircle } from "lucide-react";
 import { Section, nf, pf } from "../rtc/ui";
-import { getJson } from "./TenderStep";
+import { getJson } from "./readTender";
 
 const PLANT_TITLE = { biomass: "Biomass", thermal: "Thermal", hydro: "Hydro" };
 

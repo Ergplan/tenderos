@@ -1,10 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, CalendarDays, ChevronLeft, CircleDollarSign, FileSearch, Gavel, Layers, RotateCcw, Scale, X, Zap } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronLeft, CircleDollarSign, FilePlus2, FileSearch, Gavel, Layers, RotateCcw, Scale, X, Zap } from "lucide-react";
 import { trackEvent } from "../activity";
 import { nf } from "../rtc/ui";
 import { defaultBidMw, defaultBidState, dispatch15Request, loadMarketPrices, lpPayload, mergeBidState, missingInputs, capacityIssues, plantMw, resourceProfiles, runSizing } from "./model";
-import { mergeReadings, tenderDates, tenderTerms } from "./tenderMap";
-import TenderStep, { getJson } from "./TenderStep";
+import { mergeReadings, sizingScope, tenderDates, tenderTerms } from "./tenderMap";
+import ScopeNotice from "./ScopeNotice";
+import { handOff } from "../handoff";
+import TenderStep from "./TenderStep";
+import StartScreen, { PREFILLED_TENDER } from "./StartScreen";
+import ScanStage from "./ScanStage";
+import { getJson, openSavedTender, readTenderFile } from "./readTender";
 import CapacityStep from "./CapacityStep";
 import DatesStep from "./DatesStep";
 import SourcesStep from "./SourcesStep";
@@ -12,8 +17,6 @@ import SizeStep from "./SizeStep";
 import FinanceStep from "./FinanceStep";
 
 const STORAGE_KEY = "fdre.bid.v4";
-// the tender loaded when the tab opens: the WBSEDCL RE-RTC RfQ/RfP reading built into the app
-const DEFAULT_TENDER = "wbsedcl-re-rtc-2026-01";
 const STEPS = [
   { id: "tender", title: "Tender", icon: FileSearch, color: "#d4ff3f" },
   { id: "dates", title: "Key dates", icon: CalendarDays, color: "#ff8a5f" },
@@ -36,20 +39,43 @@ function loadState() {
 let sessionState = null;
 let sessionHourly = null;
 let sessionRun = null;
+// where the journey is (start screen, scan, workflow): the start screen first on each visit
+let sessionView = null;
+// the last uploaded file, in memory only (handed to the BESS tender tab on request)
+let lastUpload = null;
+
+/** The prefilled simulation's tender, with the latest model reading of it merged in when there is one. */
+async function loadPrefilled() {
+  const { tenders } = await getJson("/api/tenders");
+  const item = (tenders || []).find((t) => t.seed_key === PREFILLED_TENDER);
+  if (!item) throw new Error("The prefilled tender is not available on this server.");
+  // the latest model reading of the same tender fills the fields the rule-based reading has not
+  const modelItem = (tenders || []).filter((t) => t.mode === "llm" && t.tender_number && t.tender_number === item.tender_number)
+    .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0];
+  const tender = await openSavedTender(item.id);
+  const model = modelItem ? await openSavedTender(modelItem.id) : null;
+  const result = model ? mergeReadings(tender.result, model.result) : tender.result;
+  return { ...tender, result, baseResult: tender.result, modelId: model?.savedId || null, seedKey: PREFILLED_TENDER };
+}
 
 /**
- * Tender to Bid: the tender's requirements (WBSEDCL loaded ready), the capacity bid, the
+ * Tender to Bid: a start screen (upload any tender, or the prefilled simulation), the scan
+ * screen while a new tender is read, then the tender's requirements, the capacity bid, the
  * bidder's supply sources with their parameters and costs, the least-tariff sizing that meets
  * every requirement, and the bid's financial model.
  */
-export default function BidTab({ user = null }) {
+export default function BidTab({ user = null, openTab = null }) {
   const [state, setState] = useState(() => sessionState || loadState());
   const [hourly, setHourly] = useState(() => sessionHourly);
   const [run, setRun] = useState(() => sessionRun);
   const [message, setMessage] = useState("");
   const [prices, setPrices] = useState(null);
-  const [preloading, setPreloading] = useState(false);
+  const [view, setViewState] = useState(() => sessionView || "start");
+  const [scan, setScan] = useState(null); // { id, file, opts, job, outcome, error }
+  const [startError, setStartError] = useState("");
   const abortRef = useRef(null);
+  const scanId = useRef(0);
+  const setView = useCallback((v) => { sessionView = v; setViewState(v); window.scrollTo?.({ top: 0 }); }, []);
 
   const terms = useMemo(() => tenderTerms(state.tender?.result, state.accepted || {}), [state.tender, state.accepted]);
   const missing = useMemo(() => missingInputs(state, terms), [state, terms]);
@@ -58,32 +84,6 @@ export default function BidTab({ user = null }) {
   useEffect(() => {
     loadMarketPrices().then(setPrices).catch(() => setPrices(null));
   }, []);
-
-  // the WBSEDCL tender is ready when the tab opens: load its built-in reading
-  useEffect(() => {
-    if (state.tender) return;
-    let cancelled = false;
-    setPreloading(true);
-    (async () => {
-      try {
-        const { tenders } = await getJson("/api/tenders");
-        const item = (tenders || []).find((t) => t.seed_key === DEFAULT_TENDER);
-        if (!item) return;
-        // the latest model reading of the same tender fills the fields the rule-based reading has not
-        const modelItem = (tenders || []).filter((t) => t.mode === "llm" && t.tender_number && t.tender_number === item.tender_number)
-          .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0];
-        const { tender } = await getJson(`/api/tenders/${item.id}`);
-        const model = modelItem ? (await getJson(`/api/tenders/${modelItem.id}`)).tender : null;
-        const result = model ? mergeReadings(tender.result, model.result) : tender.result;
-        if (!cancelled) setState((s) => (s.tender ? s : { ...s, tender: { name: tender.file_name, readAt: tender.created_at, result, baseResult: tender.result, savedId: tender.id, modelId: model?.id || null, seedKey: DEFAULT_TENDER } }));
-      } catch {
-        /* the tender list is unavailable: the step offers reading one */
-      } finally {
-        if (!cancelled) setPreloading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [state.tender]);
 
   useEffect(() => {
     sessionState = state;
@@ -136,6 +136,41 @@ export default function BidTab({ user = null }) {
     setState((s) => ({ ...s, tender, accepted: {}, lp: null, step: "tender", bid: { ...s.bid, baseMw: defaultBidMw(fresh), greenshoe: fresh.greenshoeMw ? null : false } }));
     setHourly(null);
     setMessage("");
+  }
+
+  /** Read an uploaded tender on the scan screen; the scan opens the workflow when it closes. */
+  function startUpload(file, opts) {
+    const id = ++scanId.current;
+    lastUpload = file;
+    setStartError("");
+    setScan({ id, file, opts, job: null, outcome: null, error: null });
+    setView("scan");
+    const mine = (fn) => setScan((sc) => (sc && sc.id === id ? fn(sc) : sc));
+    readTenderFile(file, { mode: opts.mode, type: opts.type, onUpdate: (job) => mine((sc) => ({ ...sc, job })), isCancelled: () => scanId.current !== id })
+      .then((outcome) => { if (outcome) mine((sc) => ({ ...sc, outcome })); })
+      .catch((err) => mine((sc) => ({ ...sc, error: err.message })));
+  }
+
+  const scanRef = useRef(null);
+  scanRef.current = scan;
+  function finishScan() {
+    const sc = scanRef.current;
+    if (sc?.outcome) onRead({ name: sc.file.name, readAt: new Date().toISOString(), result: sc.outcome.result, savedId: sc.outcome.savedId });
+    setScan(null);
+    setView(sc?.outcome ? "work" : "start");
+  }
+
+  function cancelScan() {
+    scanId.current += 1;
+    setScan(null);
+    setView("start");
+  }
+
+  /** The start screen opens a tender read before: the prefilled simulation or a saved reading. */
+  async function openFromStart(item, how) {
+    const tender = how === "prefilled" ? await loadPrefilled() : await openSavedTender(item.id);
+    onRead(tender);
+    setView("work");
   }
 
   /** The IEX price year when the bid sells at an IEX market (null for a flat price or no sale). */
@@ -217,20 +252,41 @@ export default function BidTab({ user = null }) {
     finance: false,
   };
   const total = plantMw(state, terms);
+  const scope = sizingScope(state.tender?.result);
+  const sizingStep = (id) => ["capacity", "sources", "size", "finance"].includes(id);
   const summary = {
-    tender: state.tender ? (state.tender.result?.values?.["core.identity.tender_number"] || state.tender.name) : preloading ? "Loading" : "No tender",
-    dates: nextDate ? `Next: ${nextDate.label.toLowerCase()} ${nextDate.date.split("-").reverse().join(".")}` : dates.length ? `${dates.length} dates` : "No dates",
+    tender: state.tender ? (state.tender.result?.values?.["core.identity.tender_number"] || state.tender.name) : "No tender",
+    dates: nextDate ? `Next: ${nextDate.label.toLowerCase()} ${nextDate.date.split("-").reverse().join(".")}` : dates.length ? `${dates.length} date${dates.length > 1 ? "s" : ""}` : "No dates",
     capacity: total ? `${nf(total, 0)} MW${state.bid.greenshoe ? " incl. greenshoe" : ""}` : "Not entered",
     sources: missing.length ? `${missing.length} input${missing.length > 1 ? "s" : ""} needed` : `${Object.values(state.sources).filter(Boolean).length} sources ready`,
     size: state.lp ? `₹${nf(state.lp.tariff, 3)}/kWh` : "Not sized",
     finance: state.lp ? "Bid tariff and returns" : "After sizing",
   };
+  if (!scope.applies) for (const id of ["capacity", "sources", "size", "finance"]) { summary[id] = scope.kind === "bess" ? "In the BESS tab" : "Not for this tender"; done[id] = false; }
+  const fileInMemory = Boolean(lastUpload && state.tender && lastUpload.name === state.tender.name);
+  const bessAllowed = !user?.allowedTabs || user.allowedTabs.includes("bessTender");
+  const openBessTab = openTab && bessAllowed ? () => { if (fileInMemory) handOff(lastUpload); openTab("bessTender"); } : null;
 
   const index = STEPS.findIndex((s) => s.id === state.step);
   const step = STEPS[Math.max(0, index)];
   const next = STEPS[index + 1];
   const prev = STEPS[index - 1];
   const props = { state, setState, patch, set, lockProps, isLocked, goto, user, prices, terms, missing };
+
+  if (view === "scan" && scan) {
+    return (
+      <ScanStage key={scan.id} file={scan.file} job={scan.job} outcome={scan.outcome} error={scan.error}
+        onFinish={finishScan} onRetry={() => startUpload(scan.file, scan.opts)} onCancel={cancelScan} />
+    );
+  }
+  if (view !== "work" || !state.tender) {
+    return (
+      <div className="rtc story bid">
+        <StartScreen current={state.tender ? state : null} onUpload={startUpload} onOpenSaved={openFromStart}
+          onContinue={() => setView("work")} error={startError} />
+      </div>
+    );
+  }
 
   return (
     <div className="rtc story bid">
@@ -241,6 +297,7 @@ export default function BidTab({ user = null }) {
           <p>What the tender requires, the capacity you bid, the sources you have with their costs, the least-tariff plant that meets every requirement, and the bid's financial model.</p>
         </div>
         <div className="story-hero-tools">
+          <button type="button" className="rtc-reset" onClick={() => setView("start")} data-testid="bid-new-tender-top"><FilePlus2 size={13} /> New tender</button>
           <button type="button" className="rtc-reset" onClick={resetAll}><RotateCcw size={13} /> Reset inputs</button>
         </div>
       </section>
@@ -270,12 +327,13 @@ export default function BidTab({ user = null }) {
       </nav>
 
       <div className="bid-page" style={{ "--chapter": step.color }} key={step.id}>
-        {step.id === "tender" && <TenderStep {...props} onRead={onRead} onModelRead={onModelRead} preloading={preloading} />}
+        {step.id === "tender" && <TenderStep {...props} onRead={onRead} onModelRead={onModelRead} onNewTender={() => setView("start")} />}
         {step.id === "dates" && <DatesStep {...props} />}
-        {step.id === "capacity" && <CapacityStep {...props} />}
-        {step.id === "sources" && <SourcesStep {...props} startSizing={startSizing} />}
-        {step.id === "size" && <SizeStep {...props} run={run} startSizing={startSizing} stopSizing={stopSizing} hourly={hourly} startDispatch15={startDispatch15} />}
-        {step.id === "finance" && <FinanceStep {...props} />}
+        {!scope.applies && sizingStep(step.id) && <ScopeNotice scope={scope} goto={goto} openBess={openBessTab} fileInMemory={fileInMemory} />}
+        {scope.applies && step.id === "capacity" && <CapacityStep {...props} />}
+        {scope.applies && step.id === "sources" && <SourcesStep {...props} startSizing={startSizing} />}
+        {scope.applies && step.id === "size" && <SizeStep {...props} run={run} startSizing={startSizing} stopSizing={stopSizing} hourly={hourly} startDispatch15={startDispatch15} />}
+        {scope.applies && step.id === "finance" && <FinanceStep {...props} />}
       </div>
 
       <footer className="story-page-foot bid-foot">

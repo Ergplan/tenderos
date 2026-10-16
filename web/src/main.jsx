@@ -98,7 +98,7 @@ export default function App({ user = null, initialScenario = null }) {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} allowed={allowed} />
       <main>
         {!canView && <Restricted label={TABS.find((t) => t[0] === activeTab)?.[2] || "This tab"} contacts={user?.adminContacts} />}
-        {canView && activeTab === "tenderBid" && <BidTab user={user} />}
+        {canView && activeTab === "tenderBid" && <BidTab user={user} openTab={(id) => { if (allowed.has(id)) setActiveTab(id); }} />}
         {canView && activeTab === "rtc" && <RtcTab user={user} initialScenario={opened("rtc")} />}
         {canView && activeTab === "bessTender" && <BessTab initialScenario={opened("bess")} />}
         {canView && activeTab === "cfd" && <CfdTab />}
