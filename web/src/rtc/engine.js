@@ -633,6 +633,20 @@ export function simulate(ctx, sizes, opts = {}) {
   const socMin = E * bess.minSoc;
   const socMax = E * bess.maxSoc;
   let soc = Math.min(socMax, Math.max(socMin, E * bess.initSoc));
+  // Separate sites (ctx.sites.split): solar and wind on different sites, the battery split
+  // between them by sizes.bessWindShare (MW and MWh alike). Each site's surplus charges its own
+  // battery first; what it cannot take is sent to the other site's battery, paying the
+  // transmission charge and arriving less the loss. A deficit draws on both batteries.
+  const split = Boolean(ctx.sites?.split);
+  const share = split ? Math.min(1, Math.max(0, sizes.bessWindShare ?? 0.5)) : 0;
+  const arrive = split ? 1 - Math.min(0.5, Math.max(0, ctx.sites.lossPct || 0)) : 1;
+  const BA = B * (1 - share);
+  const BB = B * share;
+  const EA = E * (1 - share);
+  const EB = E * share;
+  let socA = EA * Math.min(bess.maxSoc, Math.max(bess.minSoc, bess.initSoc));
+  let socB = EB * Math.min(bess.maxSoc, Math.max(bess.minSoc, bess.initSoc));
+  let tWheeled = 0;
   const hourly = opts.hourly;
   const H = hourly
     ? {
@@ -682,17 +696,51 @@ export function simulate(ctx, sizes, opts = {}) {
     const direct = g < target ? g : target;
     const surplus = g - direct;
     let ch = 0;
-    if (surplus > 0 && E > 0) {
-      ch = Math.min(surplus, B, (socMax - soc) / eta);
-      if (ch < 0) ch = 0;
-      soc += ch * eta;
-    }
     let dis = 0;
     const deficit = target - direct;
-    if (deficit > 0 && E > 0) {
-      dis = Math.min(deficit, B, (soc - socMin) * eta);
-      if (dis < 0) dis = 0;
-      soc -= dis / eta;
+    if (split) {
+      // what each battery can still take (as energy arriving at it)
+      const roomA = EA > 0 ? Math.max(0, Math.min(BA, (EA * bess.maxSoc - socA) / eta)) : 0;
+      const roomB = EB > 0 ? Math.max(0, Math.min(BB, (EB * bess.maxSoc - socB) / eta)) : 0;
+      let chA = 0;
+      let chB = 0;
+      let sentA = 0; // wind sent to the solar-site battery
+      let sentB = 0; // solar sent to the wind-site battery
+      if (surplus > 0) {
+        // the surplus is split between the sites so that each battery charges locally first
+        const ssLo = Math.max(0, surplus - w);
+        const ssHi = Math.min(s, surplus);
+        const ss = Math.min(ssHi, Math.max(ssLo, roomA));
+        const ws = surplus - ss;
+        chA = Math.min(ss, roomA);
+        chB = Math.min(ws, roomB);
+        if (ss - chA > 0 && roomB - chB > 1e-12 && arrive > 0) sentB = Math.min(ss - chA, (roomB - chB) / arrive);
+        if (ws - chB > 0 && roomA - chA > 1e-12 && arrive > 0) sentA = Math.min(ws - chB, (roomA - chA) / arrive);
+        socA += (chA + sentA * arrive) * eta;
+        socB += (chB + sentB * arrive) * eta;
+        ch = chA + chB + sentA + sentB; // taken from generation, before the transmission loss
+        tWheeled += sentA + sentB;
+      }
+      if (deficit > 0) {
+        const avA = EA > 0 ? Math.max(0, Math.min(BA, (socA - EA * bess.minSoc) * eta)) : 0;
+        const avB = EB > 0 ? Math.max(0, Math.min(BB, (socB - EB * bess.minSoc) * eta)) : 0;
+        dis = Math.min(deficit, avA + avB);
+        const disA = avA + avB > 0 ? (dis * avA) / (avA + avB) : 0;
+        socA -= disA / eta;
+        socB -= (dis - disA) / eta;
+      }
+      soc = socA + socB;
+    } else {
+      if (surplus > 0 && E > 0) {
+        ch = Math.min(surplus, B, (socMax - soc) / eta);
+        if (ch < 0) ch = 0;
+        soc += ch * eta;
+      }
+      if (deficit > 0 && E > 0) {
+        dis = Math.min(deficit, B, (soc - socMin) * eta);
+        if (dis < 0) dis = 0;
+        soc -= dis / eta;
+      }
     }
     const deliveredBus = direct + dis;
     const delivered = deliveredBus * poi; // at the meter
@@ -782,6 +830,9 @@ export function simulate(ctx, sizes, opts = {}) {
     unmetMWh: tUnmet,
     demandAboveCapMWh: aboveCap,
     cycles: usable > 0 ? tDischarge / usable : 0,
+    // separate sites: energy sent from one site to charge the other site's battery (at the bus)
+    wheeledMWh: tWheeled,
+    wheelLossMWh: tWheeled * (1 - arrive),
     hourly: H,
   };
 }
@@ -884,7 +935,9 @@ export function evaluateDesign(ctx, sizes, model) {
   let omPv = 0;
   const om = omCr(sizes, fin) + capex.hard * (fin.insurancePct || 0) + (fin.otherFixedCr || 0);
   const aug = augmentationScheduleCr(sizes, costs, bess, years);
-  for (let y = 1; y <= years; y += 1) omPv += (om * (1 + fin.omEscalation) ** (y - 1) + aug[y]) / (1 + r) ** y;
+  // separate sites: the transmission charge on the energy sent between them, at year 1's volume
+  const wheel = (y1.wheeledMWh || 0) * (fin.wheelingRsPerKwh || 0) * RS_CR_PER_MWH_AT_1RS;
+  for (let y = 1; y <= years; y += 1) omPv += (om * (1 + fin.omEscalation) ** (y - 1) + aug[y] + wheel) / (1 + r) ** y;
   const energy = worst ? (y1.deliveredMWh + worst.deliveredMWh) / 2 : y1.deliveredMWh;
   const excess = worst ? (y1.excessMWh + worst.excessMWh) / 2 : y1.excessMWh;
   const surplusRevenue = fin.sellSurplus ? excess * fin.surplusPrice * RS_CR_PER_MWH_AT_1RS : 0;
@@ -942,7 +995,8 @@ function linspace(spec, n) {
  * for the smallest feasible MWh. Stage 2: compass (pattern) search from the best candidates
  * on the snapped lattice. Locked variables are held at their value.
  */
-const fmtSizes = (z) => `solar ${Math.round(z.solarMw)} MW, wind ${Math.round(z.windMw)} MW, BESS ${Math.round(z.bessMw)} MW / ${Math.round(z.bessMwh)} MWh`;
+const fmtSizes = (z) => `solar ${Math.round(z.solarMw)} MW, wind ${Math.round(z.windMw)} MW, BESS ${Math.round(z.bessMw)} MW / ${Math.round(z.bessMwh)} MWh${z.bessWindShare !== undefined ? ` (${Math.round(z.bessWindShare * 100)}% at the wind site)` : ""}`;
+const SHARE_SPEC = { value: 0.5, min: 0, max: 1, step: 0.05, locked: false };
 
 export function* optimizeSteps(ctx, model, onProgress) {
   const started = Date.now();
@@ -953,11 +1007,16 @@ export function* optimizeSteps(ctx, model, onProgress) {
   const L = (stage, msg, extra = {}) => { if (log.length < 4000) log.push({ t: Math.round(clock() - t0), stage, msg, ...extra }); };
   let cacheHits = 0;
   let simMs = 0;
+  // separate sites: the share of the battery at the wind site is searched too
+  const split = Boolean(ctx.sites?.split);
+  const KEYS = split ? [...VAR_KEYS, "bessWindShare"] : VAR_KEYS;
+  const WALK_KEYS = VAR_KEYS; // exhaustive neighbourhood walks: sizes only; the share gets its own sweep
   const vars = {};
-  for (const k of VAR_KEYS) {
-    const v = model.vars[k];
+  for (const k of KEYS) {
+    const v = model.vars[k] || SHARE_SPEC;
     vars[k] = { ...v, value: v.locked ? v.value : snap(v.value, v), min: Math.min(v.min, v.max), max: Math.max(v.min, v.max) };
   }
+  const withShare = (input) => (split && input.bessWindShare === undefined ? { ...input, bessWindShare: vars.bessWindShare.value } : input);
   const cache = new Map();
   const cloud = [];
   let evals = 0;
@@ -966,9 +1025,10 @@ export function* optimizeSteps(ctx, model, onProgress) {
   // fixed discharge duration: battery energy follows battery power, only MW is searched
   const fixedDur = Number(model.bess.durationH) > 0 ? Number(model.bess.durationH) : null;
   if (fixedDur) vars.bessMwh = { ...vars.bessMwh, locked: true, value: 0 };
-  const evalAt = (input) => {
+  const evalAt = (raw) => {
+    const input = withShare(raw);
     const sizes = fixedDur ? { ...input, bessMwh: input.bessMw * fixedDur } : input;
-    const key = VAR_KEYS.map((k) => sizes[k]).join("|");
+    const key = KEYS.map((k) => sizes[k]).join("|");
     if (cache.has(key)) { cacheHits += 1; return cache.get(key); }
     const ts = clock();
     const ev = evaluateDesign(ctx, sizes, model);
@@ -995,9 +1055,10 @@ export function* optimizeSteps(ctx, model, onProgress) {
   const tcache = new Map();
   let tariffEvals = 0;
   let tariffMs = 0;
-  const tariffAt = (input) => {
+  const tariffAt = (raw) => {
+    const input = withShare(raw);
     const sizes = fixedDur ? { ...input, bessMwh: input.bessMw * fixedDur } : input;
-    const key = VAR_KEYS.map((k) => sizes[k]).join("|");
+    const key = KEYS.map((k) => sizes[k]).join("|");
     if (tcache.has(key)) return tcache.get(key);
     const ts = clock();
     const fm = runFinancialModel(ctx, sizes, { costs: model.costs, fin: model.fin, bess: model.bess, dfrTarget: model.dfrTarget, tariffLocked: false });
@@ -1032,7 +1093,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
   let done = 0;
   const simsPerEval = model.designCheck === "lifetime" ? 2 : 1;
   L("setup", `Objective: ${model.objective === "capex" ? "least capital cost" : model.objective === "tariff" ? "least 25-year tariff (screened by levelised cost, then full 25-year financial model on a shortlist)" : "least levelised cost of delivered energy"}; DFR ≥ ${(model.dfrTarget * 100).toFixed(1)}% (${model.dfrBasis === "monthly" ? "every month" : "annual"}); check: ${model.designCheck === "lifetime" ? "year 1 and the most degraded year" : "year 1 only"}`);
-  for (const k of VAR_KEYS) {
+  for (const k of KEYS) {
     const v = vars[k];
     if (k === "bessMwh" && fixedDur) L("setup", `bessMwh: follows battery power × ${fixedDur} h (fixed discharge duration)`);
     else L("setup", `${k}: ${v.locked ? `locked at ${v.value}` : `searched ${v.min}–${v.max} step ${v.step}`}`);
@@ -1103,7 +1164,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
   const starts = [];
   for (const s of seeds) {
     if (starts.length >= (model.starts || 6)) break;
-    if (!starts.some((x) => VAR_KEYS.every((k) => Math.abs(x.sizes[k] - s.sizes[k]) < 1e-9))) starts.push(s);
+    if (!starts.some((x) => KEYS.every((k) => Math.abs(x.sizes[k] - s.sizes[k]) < 1e-9))) starts.push(s);
   }
   L("grid", `Grid done: ${evals} designs evaluated, ${seeds.filter((x) => x.feasible && !x.durationViolation).length} of ${seeds.length} grid designs meet the DFR`, { evals });
   // hand the screening optimum to the caller: it starts the HiGHS LP now, in parallel
@@ -1134,7 +1195,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
   starts.forEach((start, si) => {
     let cur = start;
     const steps = {};
-    for (const k of VAR_KEYS) {
+    for (const k of KEYS) {
       const spec = vars[k];
       steps[k] = spec.locked ? 0 : Math.max(spec.step, snap((spec.max - spec.min) / (gridN - 1) / 2, { ...spec, min: 0 }));
     }
@@ -1142,7 +1203,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
     while (guard < 400) {
       guard += 1;
       let improved = false;
-      for (const k of VAR_KEYS) {
+      for (const k of KEYS) {
         if (!steps[k]) continue;
         for (const dir of [1, -1]) {
           const next = { ...cur.sizes, [k]: snap(cur.sizes[k] + dir * steps[k], vars[k]) };
@@ -1169,14 +1230,14 @@ export function* optimizeSteps(ctx, model, onProgress) {
       }
       if (!improved) {
         let any = false;
-        for (const k of VAR_KEYS) {
+        for (const k of KEYS) {
           if (steps[k] > vars[k].step) {
             steps[k] = Math.max(vars[k].step, snap(steps[k] / 2, { ...vars[k], min: 0 }));
             any = true;
           }
         }
         if (!any) break;
-        L("refine", `Start ${si + 1}: no improving move; halving steps → ${VAR_KEYS.filter((k) => steps[k]).map((k) => `${k} ${steps[k]}`).join(", ")}`);
+        L("refine", `Start ${si + 1}: no improving move; halving steps → ${KEYS.filter((k) => steps[k]).map((k) => `${k} ${steps[k]}`).join(", ")}`);
       }
     }
     L("refine", `Start ${si + 1} converged: ${fmtSizes(cur.sizes)} · LCOE ₹${cur.lcoe.toFixed(4)} · DFR ${(cur.dfrCheck * 100).toFixed(2)}%`, { evals });
@@ -1197,7 +1258,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
   // answer (7 × 7 × 7 around solar, wind and battery power), adopt anything cheaper and repeat
   // around the new answer until a round finds nothing better (max 4 rounds)
   for (let round = 1; round <= 4; round += 1) {
-    const axes = VAR_KEYS.filter((k) => !vars[k].locked).map((k) => ({ k, stride: vars[k].step * 2 }));
+    const axes = WALK_KEYS.filter((k) => !vars[k].locked).map((k) => ({ k, stride: vars[k].step * 2 }));
     const combos = [];
     const walk = (i, cur) => {
       if (i === axes.length) { combos.push(cur); return; }
@@ -1216,11 +1277,24 @@ export function* optimizeSteps(ctx, model, onProgress) {
       : `Neighbourhood check ${round} (${combos.length} designs, ${span}; ${evals - before} new): no cheaper feasible design; the answer is a local optimum ✓`, { evals });
     if (!improvedBy) break;
   }
+  if (split && !vars.bessWindShare.locked) {
+    // the battery's split between the sites, swept from all at the solar site to all at the wind site
+    let sweptBy = null;
+    for (let v = vars.bessWindShare.min; v <= vars.bessWindShare.max + 1e-9; v += vars.bessWindShare.step) {
+      const ev = evalAt({ ...best.sizes, bessWindShare: snap(v, vars.bessWindShare) });
+      if (ev.feasible && !ev.durationViolation && ev.score < best.score - 1e-9) { sweptBy = ev; best = ev; }
+    }
+    L("verify", sweptBy ? `Battery split between the sites: ${Math.round(best.sizes.bessWindShare * 100)}% at the wind site is cheaper; adopted` : `Battery split between the sites: ${Math.round(best.sizes.bessWindShare * 100)}% at the wind site is the cheapest ✓`, { evals });
+  }
   // ---- HiGHS: wait for the LP optimum (the caller resumes with it, or with nothing) ------
   const ext = yield { stage: "await-seeds" };
   let highs = null;
   if (ext?.log?.length) for (const line of ext.log) if (log.length < 4000) log.push(line);
   if (ext?.highs) highs = ext.highs;
+  if (split && highs?.ok && highs.sizes) {
+    const share = highs.sizes.bessMw > 1e-6 ? (highs.sizes.bessWindSiteMw || 0) / highs.sizes.bessMw : vars.bessWindShare.value;
+    highs = { ...highs, sizes: { ...highs.sizes, bessWindShare: share } };
+  }
   if (ext?.error) {
     highs = { ok: false, error: ext.error };
     L("highs", `HiGHS unavailable (${ext.error}); continuing with the search results only`);
@@ -1232,10 +1306,10 @@ export function* optimizeSteps(ctx, model, onProgress) {
     const tlog = (tag, r) => L("tariff", `${tag}${fmtSizes(r.sizes)} → 25-yr tariff ₹${r.tariff.toFixed(4)}/kWh · lowest yearly DFR ${(r.minDfr * 100).toFixed(2)}% (year ${r.worstYear})${r.feasible ? "" : " ✗ misses DFR"} · aug capex ₹${Math.round(r.augCapexCr)} cr`, { sizes: r.sizes, tariff: r.tariff, dfr: r.minDfr, feasible: r.feasible });
     // shortlist: refine results + best screening designs, including ones just below the target
     // (the screening envelope is conservative, the yearly check may accept them)
-    const mixKey = (z) => VAR_KEYS.map((k) => z[k]).join("|");
+    const mixKey = (z) => KEYS.map((k) => z[k]).join("|");
     const highsDesigns = [];
     if (highs?.ok && highs.sizes) {
-      const free = VAR_KEYS.filter((k) => !vars[k].locked);
+      const free = KEYS.filter((k) => !vars[k].locked);
       const combos = [{}];
       for (const k of free) {
         const st = vars[k].step || 1;
@@ -1246,7 +1320,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
         combos.splice(0, combos.length, ...next);
       }
       for (const c of combos) {
-        const sizes = { ...Object.fromEntries(VAR_KEYS.map((k) => [k, vars[k].locked ? vars[k].value : highs.sizes[k]])), ...c };
+        const sizes = { ...Object.fromEntries(KEYS.map((k) => [k, vars[k].locked ? vars[k].value : highs.sizes[k]])), ...c };
         highsDesigns.push({ sizes });
       }
       const rs = (v) => (Number.isFinite(v) ? `₹${v.toFixed(4)}` : "n/a");
@@ -1268,7 +1342,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
     });
     L("tariff", `Best of the shortlist: ${fmtSizes(tbest.sizes)} at ₹${tbest.tariff.toFixed(4)}/kWh`);
     // pattern search on the tariff itself
-    const free = VAR_KEYS.filter((k) => !vars[k].locked);
+    const free = KEYS.filter((k) => !vars[k].locked);
     const steps = Object.fromEntries(free.map((k) => [k, vars[k].step * 4]));
     for (let guard = 0; guard < 200; guard += 1) {
       let moved = false;
@@ -1292,13 +1366,17 @@ export function* optimizeSteps(ctx, model, onProgress) {
       }
     }
     // neighbourhood check on the tariff
+    const walkFree = free.filter((k) => k !== "bessWindShare");
     for (let round = 1; round <= 3; round += 1) {
       const combos = [];
       const walk = (i, cur) => {
-        if (i === free.length) { combos.push(cur); return; }
-        for (let d = -2; d <= 2; d += 1) walk(i + 1, { ...cur, [free[i]]: snap(tbest.sizes[free[i]] + d * vars[free[i]].step * 2, vars[free[i]]) });
+        if (i === walkFree.length) { combos.push(cur); return; }
+        for (let d = -2; d <= 2; d += 1) walk(i + 1, { ...cur, [walkFree[i]]: snap(tbest.sizes[walkFree[i]] + d * vars[walkFree[i]].step * 2, vars[walkFree[i]]) });
       };
       walk(0, { ...tbest.sizes });
+      if (split && !vars.bessWindShare.locked) {
+        for (let v = vars.bessWindShare.min; v <= vars.bessWindShare.max + 1e-9; v += vars.bessWindShare.step) combos.push({ ...tbest.sizes, bessWindShare: snap(v, vars.bessWindShare) });
+      }
       const before = tariffEvals;
       let better = null;
       for (const c of combos) {
@@ -1381,6 +1459,7 @@ export function highsPayload(ctx, model, seed) {
     vars,
     seed: seed || null,
     tariffGuess: seed?.tariff || null,
+    ...(ctx.sites?.split ? { sites: { split: true, wheelingRsPerKwh: ctx.sites.chargeRsPerKwh || 0, wheelingLossPct: ctx.sites.lossPct || 0 } } : {}),
   };
 }
 
@@ -1666,8 +1745,14 @@ export function tariffAgeingBreakdown(ctx, sizes, { costs, fin, bess, dfrTarget 
   };
 }
 
-export function buildContext({ demand, solarCf, windCf, plantMw, bess, lossPct = 0, trafoLossPct = 0, lineLossPct = 0, sellSurplus = false, extraExportMw = 0 }) {
-  return { demand, solarCf, windCf, plantMw, bess, lossPct, trafoLossPct, lineLossPct, sellSurplus, extraExportMw };
+/** Separate sites are switched on and both transmission figures are entered. */
+export function splitSitesReady(sites) {
+  return Boolean(sites?.split && Number.isFinite(sites.chargeRsPerKwh) && Number.isFinite(sites.lossPct));
+}
+
+export function buildContext({ demand, solarCf, windCf, plantMw, bess, lossPct = 0, trafoLossPct = 0, lineLossPct = 0, sellSurplus = false, extraExportMw = 0, sites = null }) {
+  // sites: { split, chargeRsPerKwh, lossPct } for solar and wind on separate sites; null for one site
+  return { demand, solarCf, windCf, plantMw, bess, lossPct, trafoLossPct, lineLossPct, sellSurplus, extraExportMw, sites };
 }
 
 export function buildModel({ inputs, costs, fin, bess, vars, objective = "tariff", gridPoints = 11 }) {

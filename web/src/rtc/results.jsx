@@ -27,14 +27,17 @@ function CountUp({ value, format, duration = 1400, play }) {
 
 // ---------------------------------------------------------------- the answer
 
-export function Answer({ sizes, sim, finance, capex, inputs, revealKey, optimized, targetIrr, highs }) {
+export function Answer({ sizes, sim, finance, capex, inputs, revealKey, optimized, targetIrr, highs, split = false }) {
   const play = revealKey > 0;
   const ok = sim.dfr >= inputs.dfrTarget - 1e-6;
   const dur = sizes.bessMw > 0 ? sizes.bessMwh / sizes.bessMw : 0;
   const mix = [
     { key: "solar", label: "Solar", icon: Sun, color: DATA_COLORS.solar, value: sizes.solarMw, unit: "MWac" },
     { key: "wind", label: "Wind", icon: Wind, color: DATA_COLORS.wind, value: sizes.windMw, unit: "MW" },
-    { key: "bess", label: "Battery", icon: BatteryCharging, color: DATA_COLORS.bess, value: sizes.bessMw, unit: "MW", extra: `${nf(sizes.bessMwh)} MWh · ${nf(dur, 1)} h` },
+    { key: "bess", label: "Battery", icon: BatteryCharging, color: DATA_COLORS.bess, value: sizes.bessMw, unit: "MW",
+      extra: split
+        ? `${nf(sizes.bessMwh)} MWh · ${nf(sizes.bessMw * (1 - (sizes.bessWindShare ?? 0.5)))} MW at the solar site, ${nf(sizes.bessMw * (sizes.bessWindShare ?? 0.5))} MW at the wind site · ${nf((sim.wheeledMWh || 0) / 1000, 1)} MU sent between the sites`
+        : `${nf(sizes.bessMwh)} MWh · ${nf(dur, 1)} h` },
   ];
   return (
     <section className={`answer ${play ? "is-revealed" : ""}`} key={revealKey} id="rtc-answer">

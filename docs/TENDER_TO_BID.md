@@ -301,6 +301,32 @@ benchmarks:
 
 The 15-minute dispatch models one battery site and is not offered for separate sites yet.
 
+**Round the clock tab.** The Battery chapter has the same switch and the same two fields. The tab's
+answer comes from its own search, which is seeded by HiGHS, and from the browser's hour-by-hour
+dispatch (`simulate` in `web/src/rtc/engine.js`). With separate sites:
+
+* **The battery split.** The battery is divided between the sites by a wind-site share, and the
+  share is one more variable of the search. HiGHS's two-battery optimum seeds it, and the search
+  then sweeps it from 0 to 100%.
+* **Dispatch rule.** Each hour, a site's surplus charges its own battery first. Surplus that
+  battery cannot take is sent to the other site's battery, paying the charge and losing the loss.
+  A deficit is served by both batteries.
+* **Costs.** The screening cost and the 25-year model include the transmission charge.
+
+**Example: the default Beed case** at ₹0.50/kWh and 3% loss:
+* **The plant:** solar 700 MW, wind 460 MW, battery 410 MW / 1,640 MWh, all of it at the solar
+  site, charging 9.8 MU of wind a year over the link.
+* **The tariff:** ₹5.708/kWh, against ₹5.705 for the same plant on one site.
+* **Run time:** about 4.5 minutes with HiGHS, against about 50 s on one site.
+
+`tools/check_rtc_engine.mjs` checks the following:
+* all the battery at the solar site with a lossless link dispatches exactly as one site;
+* a loss never adds energy;
+* generation still balances;
+* the charge is in the 25-year model;
+* the optimizer searches the split;
+* the LP request carries the sites.
+
 ## Surplus sold on IEX
 
 Where the tender allows a sale, the bidder chooses on the Supply sources step whether to sell; for

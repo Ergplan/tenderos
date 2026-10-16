@@ -38,7 +38,11 @@ function defaultState() {
     bess: { ...E.DEFAULT_BESS },
     costs: { ...E.DEFAULT_COSTS },
     fin: { ...E.DEFAULT_FINANCE },
-    vars: structuredClone(E.DEFAULT_VARS),
+    // the share of the battery at the wind site, searched when solar and wind are on separate sites
+    vars: { ...structuredClone(E.DEFAULT_VARS), bessWindShare: { value: 0.5, min: 0, max: 1, step: 0.05, locked: false } },
+    // solar and wind on separate sites, each with a battery; energy sent between them pays the
+    // transmission charge and loses a share on the way (asked for when switched on)
+    sites: { split: false, chargeRsPerKwh: null, lossPct: null },
     objective: "tariff",
     solver: "highs", // 'highs' = HiGHS LP on the engine + exact 25-year search; 'search' = search only
     gridPoints: 11,
@@ -51,7 +55,7 @@ function defaultState() {
 function mergeState(saved) {
   const base = defaultState();
   const merged = { ...base, ...saved };
-  for (const k of ["inputs", "bess", "costs", "fin", "locks"]) merged[k] = { ...base[k], ...(saved[k] || {}) };
+  for (const k of ["inputs", "bess", "costs", "fin", "sites", "locks"]) merged[k] = { ...base[k], ...(saved[k] || {}) };
   merged.vars = Object.fromEntries(Object.keys(base.vars).map((k) => [k, { ...base.vars[k], ...(saved.vars?.[k] || {}) }]));
   if (!CHAPTERS.some((c) => c.id === merged.chapter)) merged.chapter = "energy";
   // v2: the 25-year tariff became the default objective (it was levelised cost)
@@ -142,14 +146,17 @@ export default function RtcTab({ initialScenario = null, user = null }) {
     () => E.buildDemand({ annualEnergyMu: inputs.annualEnergyMu, hourShape: d.hourShape, monthShape: d.monthShape, custom: d.demandUpload?.values }),
     [inputs.annualEnergyMu, d.hourShape, d.monthShape, d.demandUpload],
   );
+  // separate sites apply once the transmission charge and loss are entered
+  const sitesOn = E.splitSitesReady(d.sites);
+  const sites = useMemo(() => (sitesOn ? { split: true, chargeRsPerKwh: d.sites.chargeRsPerKwh, lossPct: d.sites.lossPct } : null), [sitesOn, d.sites]);
   const ctx = useMemo(
-    () => E.buildContext({ demand, solarCf: solarBusCf, windCf: windBusCf, plantMw: inputs.plantCapacityMw, bess: bessBus, lossPct: inputs.lossPct, trafoLossPct: inputs.trafoLossPct, lineLossPct: inputs.lineLossPct, sellSurplus: d.fin.sellSurplus, extraExportMw: d.fin.extraExportMw }),
-    [demand, solarBusCf, windBusCf, inputs.plantCapacityMw, bessBus, inputs.lossPct, inputs.trafoLossPct, inputs.lineLossPct, d.fin.sellSurplus, d.fin.extraExportMw],
+    () => E.buildContext({ demand, solarCf: solarBusCf, windCf: windBusCf, plantMw: inputs.plantCapacityMw, bess: bessBus, lossPct: inputs.lossPct, trafoLossPct: inputs.trafoLossPct, lineLossPct: inputs.lineLossPct, sellSurplus: d.fin.sellSurplus, extraExportMw: d.fin.extraExportMw, sites }),
+    [demand, solarBusCf, windBusCf, inputs.plantCapacityMw, bessBus, inputs.lossPct, inputs.trafoLossPct, inputs.lineLossPct, d.fin.sellSurplus, d.fin.extraExportMw, sites],
   );
   // battery energy follows the chosen discharge duration (2 h or 4 h)
   const sizes = useMemo(() => E.withDuration(Object.fromEntries(Object.entries(d.vars).map(([k, v]) => [k, v.value])), d.bess), [d.vars, d.bess]);
   const sim = useMemo(() => E.simulate(ctx, sizes, { hourly: true }), [ctx, sizes]);
-  const finInput = useMemo(() => ({ ...d.fin, demandGrowth: inputs.demandGrowth }), [d.fin, inputs.demandGrowth]);
+  const finInput = useMemo(() => ({ ...d.fin, demandGrowth: inputs.demandGrowth, wheelingRsPerKwh: sites ? sites.chargeRsPerKwh : 0 }), [d.fin, inputs.demandGrowth, sites]);
   const finance = useMemo(
     () => E.runFinancialModel(ctx, sizes, { costs: d.costs, fin: finInput, bess: bessBus, dfrTarget: inputs.dfrTarget, tariffLocked: d.tariffLocked }),
     [ctx, sizes, d.costs, finInput, bessBus, inputs.dfrTarget, d.tariffLocked],
@@ -209,6 +216,10 @@ export default function RtcTab({ initialScenario = null, user = null }) {
 
   // ---- optimizer with the surface theatre
   function runOptimizer() {
+    if (state.sites?.split && !E.splitSitesReady(state.sites)) {
+      setMessage("Separate sites: enter the transmission charge and the transmission loss between the sites (Battery chapter) before optimizing.");
+      return;
+    }
     workerRef.current?.terminate();
     const worker = new Worker(new URL("./optimizer.worker.js", import.meta.url), { type: "module" });
     workerRef.current = worker;
@@ -245,8 +256,8 @@ export default function RtcTab({ initialScenario = null, user = null }) {
     };
     worker.postMessage({
       id,
-      ctx: { demand: ctx.demand, solarCf: ctx.solarCf, windCf: ctx.windCf, plantMw: ctx.plantMw, bess: ctx.bess, lossPct: ctx.lossPct, trafoLossPct: ctx.trafoLossPct, lineLossPct: ctx.lineLossPct, sellSurplus: ctx.sellSurplus, extraExportMw: ctx.extraExportMw },
-      modelInput: { inputs: state.inputs, costs: state.costs, fin: state.fin, bess: { ...state.bess, rte: E.rteAtBus(state.bess.rte, state.inputs.bessLoss, state.inputs.bessRteAt ?? E.LOSS_STAGES.bess.length) }, vars: state.vars, objective: state.objective, gridPoints: state.gridPoints },
+      ctx: { demand: ctx.demand, solarCf: ctx.solarCf, windCf: ctx.windCf, plantMw: ctx.plantMw, bess: ctx.bess, lossPct: ctx.lossPct, trafoLossPct: ctx.trafoLossPct, lineLossPct: ctx.lineLossPct, sellSurplus: ctx.sellSurplus, extraExportMw: ctx.extraExportMw, sites: ctx.sites },
+      modelInput: { inputs: state.inputs, costs: state.costs, fin: { ...state.fin, wheelingRsPerKwh: ctx.sites ? ctx.sites.chargeRsPerKwh : 0 }, bess: { ...state.bess, rte: E.rteAtBus(state.bess.rte, state.inputs.bessLoss, state.inputs.bessRteAt ?? E.LOSS_STAGES.bess.length) }, vars: state.vars, objective: state.objective, gridPoints: state.gridPoints },
       useHighs: tariffMode && state.solver !== "search",
     });
   }
@@ -447,7 +458,7 @@ export default function RtcTab({ initialScenario = null, user = null }) {
       </section>
 
       <div ref={answerRef} className="answer-anchor" />
-      <Answer sizes={sizes} sim={sim} finance={finance} capex={capex} inputs={inputs} revealKey={revealKey} optimized={Boolean(opt)} targetIrr={state.fin.targetEquityIrr} highs={opt?.highs} />
+      <Answer sizes={sizes} sim={sim} finance={finance} capex={capex} inputs={inputs} revealKey={revealKey} optimized={Boolean(opt)} targetIrr={state.fin.targetEquityIrr} highs={opt?.highs} split={Boolean(ctx.sites)} />
       {maxDfr < inputs.dfrTarget && (
         <div className="alert">
           Demand above the {nf(inputs.plantCapacityMw, 0)} MW plant capacity ({nf(sim.demandAboveCapMWh / 1000, 1)} MU) cannot be served, so the highest achievable DFR is {pf(maxDfr, 1)}. Raise the plant capacity or flatten the consumption profile.

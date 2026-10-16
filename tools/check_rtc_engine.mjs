@@ -186,4 +186,38 @@ assert.throws(() => parseProfileCsv("1\n2\n3"));
   const failed = optimize(ctx, mTar, null, { error: "engine down" });
   assert.ok(failed.feasible && failed.highs.ok === false, "an unavailable engine falls back to the search");
 }
+// ---- solar and wind on separate sites, a battery at each
+{
+  const z = { solarMw: 500, windMw: 350, bessMw: 150, bessMwh: 600 };
+  const one = simulate(ctx, z);
+  const sitesCtx = (charge, loss) => buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: DEFAULT_BESS, sites: { split: true, chargeRsPerKwh: charge, lossPct: loss } });
+  // all the battery at the solar site and a lossless link: the same dispatch as one site
+  const allSolar = simulate(sitesCtx(0, 0), { ...z, bessWindShare: 0 });
+  assert.ok(Math.abs(allSolar.deliveredMWh - one.deliveredMWh) < 1e-6, "one battery reachable from both sites = one site");
+  assert.ok(allSolar.wheeledMWh > 0, "wind surplus is sent to the solar-site battery");
+  // a loss on the link can only lose energy
+  const half = (loss) => simulate(sitesCtx(0.3, loss), { ...z, bessWindShare: 0.5 });
+  const h0 = half(0);
+  const h10 = half(0.1);
+  assert.ok(h10.deliveredMWh <= h0.deliveredMWh + 1e-6, "transmission loss does not add energy");
+  assert.ok(Math.abs(h10.wheelLossMWh - 0.1 * h10.wheeledMWh) < 1e-6);
+  // generation still balances: what charging took includes the energy sent (and lost on the way)
+  const genS = h10.solarGenMWh + h10.windGenMWh;
+  const balS = h10.solarDirectMWh + h10.windDirectMWh + h10.chargeMWh + h10.excessMWh + h10.curtailMWh;
+  assert.ok(Math.abs(genS - balS) < 1e-3 * genS, "generation balance with separate sites");
+  // the transmission charge is an operating cost of the 25-year model
+  const fm = runFinancialModel(sitesCtx(0.5, 0.03), { ...z, bessWindShare: 0.5 }, { costs: DEFAULT_COSTS, fin: { ...DEFAULT_FINANCE, wheelingRsPerKwh: 0.5 }, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget });
+  assert.ok(Math.abs(fm.rows[0].wheeling - (fm.rows[0].wheeledMu * 1000 * 0.5) / 1e4) < 1e-9, "charge on the energy sent");
+  assert.ok(fm.rows[0].wheeling > 0);
+  // the optimizer searches the battery's split between the sites
+  const mSplit = buildModel({ inputs, costs: DEFAULT_COSTS, fin: { ...DEFAULT_FINANCE, wheelingRsPerKwh: 0.5 }, bess: DEFAULT_BESS, vars: { ...DEFAULT_VARS, bessWindShare: { value: 0.5, min: 0, max: 1, step: 0.05, locked: false } }, objective: "tariff", gridPoints: 7 });
+  const t1 = performance.now();
+  const os = optimize(sitesCtx(0.5, 0.03), mSplit);
+  assert.ok(os.feasible && os.best.sizes.bessWindShare >= 0 && os.best.sizes.bessWindShare <= 1, "a feasible split design");
+  assert.ok(os.log.some((l) => l.msg.startsWith("Battery split between the sites")), "the split is swept");
+  const body = highsPayload(sitesCtx(0.5, 0.03), mSplit, null);
+  assert.deepEqual(body.sites, { split: true, wheelingRsPerKwh: 0.5, wheelingLossPct: 0.03 });
+  assert.equal(highsPayload(ctx, mSplit, null).sites, undefined, "one site: no sites in the LP request");
+  console.log(`separate sites: ${JSON.stringify(os.best.sizes)} ₹${os.best.tariff.toFixed(4)} · ${((performance.now() - t1) / 1000).toFixed(1)} s`);
+}
 console.log("RTC engine checks passed");
