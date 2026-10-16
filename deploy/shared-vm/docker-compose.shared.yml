@@ -1,0 +1,30 @@
+# Shared VM overlay (tariff-order VM): TenderOS runs beside the old app with no published port
+# of its own; the router owns port 8081 and serves the app chooser (deploy/shared-vm/Caddyfile).
+# The old app's web container (fdre-dashboard-web-1) is reached over its compose network.
+services:
+  web:
+    ports: !reset []
+    environment:
+      COOKIE_SECURE: "false"
+      DEMO_MODE: "1"
+      APP_SWITCH_URL: /__switch
+
+  router:
+    image: caddy:2.8-alpine
+    depends_on:
+      - web
+    ports:
+      - "${ROUTER_PORT:-8081}:8081"
+    volumes:
+      - ./deploy/shared-vm/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/shared-vm/chooser:/srv/chooser:ro
+      - ./web/public/brand:/srv/chooser-assets:ro
+    networks:
+      - default
+      - old_app
+    restart: unless-stopped
+
+networks:
+  old_app:
+    name: ${OLD_APP_NETWORK:-fdre-dashboard_default}
+    external: true

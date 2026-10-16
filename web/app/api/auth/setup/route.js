@@ -2,9 +2,11 @@ import { cookies } from "next/headers";
 import { query, tx } from "@/lib/db";
 import { handler, hashPassword, HttpError, validatePassword } from "@/lib/auth";
 import { SESSION_COOKIE, sessionCookieOptions, signSession } from "@/lib/session";
+import { DEMO_MODE } from "@/lib/demo";
 
 // First run only: create the administrator when the users table is empty.
 export const POST = handler(async (req) => {
+  if (DEMO_MODE) throw new HttpError(403, "Setup is switched off in demo mode.");
   const { email, name, password } = await req.json().catch(() => ({}));
   if (!email || !String(email).includes("@")) throw new HttpError(400, "Enter a valid email.");
   const bad = validatePassword(password);

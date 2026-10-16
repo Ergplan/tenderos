@@ -2,6 +2,7 @@
 // themselves (they are excluded here so large engine uploads are not buffered).
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE, verifySession } from "./lib/session";
+import { DEMO_MODE } from "./lib/demo";
 
 const PUBLIC = ["/login", "/setup"];
 
@@ -10,7 +11,7 @@ export async function proxy(request) {
   if (PUBLIC.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return NextResponse.next();
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
   if (session) return NextResponse.next();
-  const url = new URL("/login", request.url);
+  const url = new URL(DEMO_MODE ? "/api/auth/demo" : "/login", request.url);
   if (pathname !== "/") url.searchParams.set("next", pathname + search);
   return NextResponse.redirect(url);
 }

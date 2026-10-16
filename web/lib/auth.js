@@ -6,6 +6,7 @@ import { query } from "./db";
 import { SESSION_COOKIE, verifySession } from "./session";
 import { getSetting } from "./settings";
 import { resolveTabs } from "./tabs";
+import { APP_SWITCH_URL, DEMO_MODE } from "./demo";
 
 const scrypt = promisify(crypto.scrypt);
 
@@ -50,6 +51,8 @@ export async function currentUserWithAccess() {
     ...rest,
     allowedTabs: resolveTabs(user, defaults),
     adminContacts: admins.rows.map((a) => ({ name: a.name, email: a.email })),
+    demo: DEMO_MODE,
+    switchUrl: APP_SWITCH_URL,
   };
 }
 

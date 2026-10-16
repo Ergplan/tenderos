@@ -25,10 +25,12 @@ RFS = ROOT / "samples" / "tenders" / "nhpc-fdre-ii" / "RfS.pdf"
 URL = os.environ.get("TENDEROS_URL", "").rstrip("/")
 EMAIL = os.environ.get("TENDEROS_EMAIL", "")
 PASSWORD = os.environ.get("TENDEROS_PASSWORD", "")
+# A demo deployment (DEMO_MODE=1, no sign-in), possibly behind the app chooser of deploy/shared-vm
+DEMO = os.environ.get("TENDEROS_DEMO") == "1"
 
 pytestmark = [
     pytest.mark.slow,
-    pytest.mark.skipif(not (URL and EMAIL and PASSWORD), reason="set TENDEROS_URL, TENDEROS_EMAIL, TENDEROS_PASSWORD"),
+    pytest.mark.skipif(not (URL and (DEMO or (EMAIL and PASSWORD))), reason="set TENDEROS_URL and TENDEROS_EMAIL, TENDEROS_PASSWORD (or TENDEROS_DEMO=1)"),
     pytest.mark.skipif(not RFS.exists(), reason="NHPC FDRE-II RfS not in samples/"),
 ]
 
@@ -49,11 +51,18 @@ def test_nhpc_tender_to_bid(tmp_path):
         page = ctx.new_page()
         page.on("pageerror", lambda e: errors.append(str(e)))
 
-        page.goto(URL + "/login")
-        page.fill("input[type=email]", EMAIL)
-        page.fill("input[type=password]", PASSWORD)
-        page.click("button[type=submit]")
-        page.wait_for_url(URL + "/", timeout=30_000)
+        if DEMO:
+            page.goto(URL + "/")
+            if page.locator("text=Choose an app").count():
+                page.click("a[href='/__switch/new']")
+            page.wait_for_selector("summary:has-text('Read a new tender')", timeout=60_000)
+            assert page.locator("input[type=password]").count() == 0, "demo mode needs no sign-in"
+        else:
+            page.goto(URL + "/login")
+            page.fill("input[type=email]", EMAIL)
+            page.fill("input[type=password]", PASSWORD)
+            page.click("button[type=submit]")
+            page.wait_for_url(URL + "/", timeout=30_000)
 
         # 1. Tender: upload and read
         page.click("summary:has-text('Read a new tender')")

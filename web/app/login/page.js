@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import { currentUser, userCount } from "@/lib/auth";
 import AuthForm from "@/components/AuthForm";
+import { DEMO_MODE } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Sign in" };
 
 export default async function Login({ searchParams }) {
+  if (DEMO_MODE) redirect("/api/auth/demo");
   if ((await userCount()) === 0) redirect("/setup");
   if (await currentUser()) redirect("/");
   const sp = await searchParams;

@@ -2,11 +2,13 @@ import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import PageShell from "@/components/PageShell";
 import AccountForm from "@/components/AccountForm";
+import { DEMO_MODE } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Account" };
 
 export default async function Account() {
+  if (DEMO_MODE) redirect("/");
   const user = await currentUser();
   if (!user) redirect("/login?next=/account");
   return (

@@ -105,7 +105,45 @@ To check a deployed site from any machine with the repository:
 TENDEROS_URL=https://<site> TENDEROS_EMAIL=… TENDEROS_PASSWORD=… make e2e
 ```
 
-## 6. Removing it
+## 6. Beside the old app on the shared VM (port 8081)
+
+On the tariff-order VM (34.131.67.235), the old jouleWise app (compose project `fdre-dashboard`)
+was published on port 8081. Ports 80 and 443 belong to the tariff-order app's Caddy and are
+not touched. `deploy/shared-vm/install.sh` puts TenderOS beside the old app:
+
+* `http://34.131.67.235:8081/` shows a chooser: **TenderOS** (new design and workflow, no
+  sign-in) or the **old app** (unchanged, existing accounts).
+  * The choice is a cookie, so the address stays the same and both apps keep their root paths.
+  * "Switch app" in the TenderOS sidebar, or `/__switch`, shows the chooser again.
+* TenderOS runs in demo mode (`DEMO_MODE=1`). Every visitor is signed in as one shared demo user
+  who can open every tab.
+  * Sign-in, first-run setup, account changes and administration are switched off.
+  * Saved scenarios are shared by everyone who opens the demo.
+* The old app's web container moves from `0.0.0.0:8081` to `127.0.0.1:8082`, and the router
+  reaches it over its compose network. Its database, engine and data are not touched. The
+  move costs about 10 seconds of downtime.
+  * If the old app's own `deploy/update.sh` runs later, it re-publishes on port 8082. The
+    router still finds it by container name.
+* Measured memory use is about 0.5 GB for TenderOS while sizing NHPC; the build needs about 2 GB.
+
+```
+curl -fsSL https://raw.githubusercontent.com/Ergplan/tenderos/main/deploy/shared-vm/install.sh -o install.sh
+sudo bash install.sh                                 # BRANCH=... for another branch
+sudo bash /opt/tenderos/deploy/shared-vm/rollback.sh  # undo: old app back on 8081
+```
+
+Tested here against a stand-in for the old app: a compose project `fdre-dashboard` with a
+`${WEB_PORT}:3000` web service and a Postgres db. The tests covered:
+
+* the install and the move of the old app to `127.0.0.1:8082`;
+* the chooser, both switches and `/__switch`;
+* the NHPC browser run through the chooser with no sign-in;
+* setup, account and admin closed;
+* the rollback to 8081 and a re-install.
+
+The real old app has not been run behind the router here.
+
+## 7. Removing it
 
 Delete the VM, the static IP and the firewall rules:
 

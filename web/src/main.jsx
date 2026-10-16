@@ -4,7 +4,7 @@
 // signs out. The legacy FDRE tabs (yield assessment, EYA report, custom dispatch and the
 // rest) are not part of this application.
 import React, { useEffect, useMemo, useState } from "react";
-import { Activity, BatteryCharging, Clock3, FolderOpen, Gavel, Lock, LogOut, Scale, UserRound, Users } from "lucide-react";
+import { Activity, ArrowLeftRight, BatteryCharging, Clock3, FolderOpen, Gavel, Lock, LogOut, Scale, UserRound, Users } from "lucide-react";
 import { flushActivity, startActivityTracker, trackEvent } from "./activity";
 import "./styles.css";
 import "./chartTheme";
@@ -50,7 +50,12 @@ function Sidebar({ activeTab, setActiveTab, user, allowed }) {
           {user?.role === "admin" && <a href="/admin/activity"><Activity size={15} /> Activity</a>}
         </nav>
       </div>
-      {user && (
+      {user?.switchUrl && (
+        <div className="side-section">
+          <nav className="side-nav"><a href={user.switchUrl}><ArrowLeftRight size={15} /> Switch app</a></nav>
+        </div>
+      )}
+      {user && !user.demo && (
         <div className="side-section side-user">
           <a href="/account" className="side-user-link"><UserRound size={15} /><span><strong>{user.name || user.email}</strong><small>{user.role}</small></span></a>
           <button type="button" className="rtc-icon-btn" title="Sign out" onClick={async () => { await flushActivity(); await authApi.logout().catch(() => {}); window.location.href = "/login"; }}><LogOut size={15} /></button>

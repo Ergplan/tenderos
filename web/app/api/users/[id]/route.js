@@ -1,9 +1,11 @@
 import { query } from "@/lib/db";
 import { handler, hashPassword, HttpError, requireUser, validatePassword } from "@/lib/auth";
+import { DEMO_MODE } from "@/lib/demo";
 import { cleanTabList } from "@/lib/tabs";
 
 // Admins can change anyone's name, role or password; users can change their own name and password.
 export const PATCH = handler(async (req, { params }) => {
+  if (DEMO_MODE) throw new HttpError(403, "Accounts cannot be changed in demo mode.");
   const me = await requireUser();
   const { id } = await params;
   const isSelf = me.id === id;
