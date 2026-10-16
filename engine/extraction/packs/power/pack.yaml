@@ -1,0 +1,312 @@
+# Power pack: fields whose meaning depends on the power sector.
+# Field paths are sector.power.<subdomain>.<field>; this file holds subdomain `common`,
+# the power fields every tender type shares. Each tender type has its own YAML.
+pack: power
+version: v4
+reads_versions: [v1, v2, v3]
+# Fields that v2 defines differently than v1. Their sections were read again under v2, and
+# their candidates from v1 runs are not read. The loader checks this list against
+# released/v1.yaml: a changed field that is not listed here, or a removed one, fails the load.
+read_again:
+  v1: [sector.power.transmission.elements]
+sector: power
+subdomains: [common, solar, wind, hybrid, fdre, bess, transmission, generation, epc, ipp, re_rtc]
+
+# Section groups this pack adds to the core ones.
+sections:
+  connectivity_and_compliance:
+    label: Connectivity and compliance
+    prompt: extract/connectivity_and_compliance
+    prompt_version: v2
+    roles: [rfs, contractual, nit]
+    section_kinds: [connectivity_and_compliance, technical_requirements]
+    keywords: [connectivity, general network access, gna, ists charges, waiver, pooling substation, transmission line, almm, domestic content, land, clearances, interconnection point]
+  supply_sources:
+    label: Supply sources
+    prompt: extract/supply_sources
+    prompt_version: v2
+    roles: [rfs, contractual, nit, ppa]
+    section_kinds: [introduction_and_scope, technical_requirements, connectivity_and_compliance]
+    keywords: [source of supply, any source, renewable energy certificate, rec, non-re, thermal, conventional, storage, battery, pumped storage, hydro, biomass, co-located, charged, exchange, market, traceable]
+  # Written by the pack's derivation rules from the decided fields, never read from pages.
+  derived:
+    label: Derived
+    prompt: derivations
+    roles: [rfs, contractual, nit, ppa, amendment, clarification]
+    derived: true
+
+fields:
+  sector.power.common.total_capacity_mw:
+    section: identity_and_scope
+    label: Total capacity
+    type: mw
+    unit: MW
+    min: 0.1
+    max: 100000
+    help: Total capacity tendered, in MW.
+  sector.power.common.total_capacity_mwh:
+    section: identity_and_scope
+    label: Total energy capacity
+    type: mwh
+    unit: MWh
+    min: 0.1
+    max: 1000000
+    help: Total energy or storage capacity tendered, in MWh, when the tender states one.
+  sector.power.common.min_bid_mw:
+    section: identity_and_scope
+    label: Minimum bid capacity
+    type: mw
+    unit: MW
+    min: 0.1
+    max: 100000
+    help: Smallest capacity one bidder may quote.
+  sector.power.common.max_bid_mw:
+    section: identity_and_scope
+    label: Maximum bid capacity
+    type: mw
+    unit: MW
+    min: 0.1
+    max: 100000
+    help: Largest capacity one bidder (with its affiliates) may quote or be awarded.
+  sector.power.common.max_projects_per_bidder:
+    section: identity_and_scope
+    label: Maximum projects per bidder
+    type: int
+    min: 1
+    max: 1000
+    help: Largest number of projects one bidder may offer, if limited.
+  sector.power.common.location_constraint:
+    section: identity_and_scope
+    label: Location constraint
+    type: enum
+    enum: [ists_anywhere, state_specific, named_substation, named_site]
+    help: Where the project may be located.
+  sector.power.common.named_states_or_sites:
+    section: identity_and_scope
+    label: Named states or sites
+    type: list_text
+    help: States, substations or sites the tender names for the project.
+  sector.power.common.delivery_point:
+    section: identity_and_scope
+    label: Delivery point
+    type: text
+    help: Where the power is delivered, as defined in the tender.
+  sector.power.common.metering_point:
+    section: identity_and_scope
+    label: Metering point
+    type: text
+    help: Where energy is metered, as defined in the tender.
+
+  sector.power.common.ppa_signing_window_days:
+    section: key_dates
+    label: PPA signing window
+    type: int
+    unit: days
+    min: 1
+    max: 730
+    help: Days from the Letter of Award within which the PPA is to be signed.
+  sector.power.common.financial_closure_months:
+    section: key_dates
+    label: Financial closure
+    type: duration_months
+    unit: months
+    min: 1
+    max: 120
+    help: Months the tender gives for financial closure, counted as financial_closure_reference says.
+  sector.power.common.financial_closure_reference:
+    section: key_dates
+    label: Financial closure counted
+    type: enum
+    enum: [effective_date, ppa_signing, loa, before_scod]
+    help: Whether the months run forward from the effective date, the PPA signing or the LoA, or back from the scheduled commissioning date.
+  sector.power.common.scod_months:
+    section: key_dates
+    label: Scheduled commissioning
+    type: duration_months
+    unit: months
+    min: 1
+    max: 120
+    help: Months to scheduled commissioning or commencement of supply, counted from the scod_reference.
+  sector.power.common.scod_reference:
+    section: key_dates
+    label: Commissioning counted from
+    type: enum
+    enum: [effective_date, ppa_signing, loa]
+    help: The date the commissioning period is counted from.
+  sector.power.common.ppa_tenure_years:
+    section: key_dates
+    label: PPA tenure
+    type: int
+    unit: years
+    min: 10
+    max: 35
+    help: Term of the power purchase or service agreement in years.
+
+  sector.power.common.min_commissioned_mw:
+    section: eligibility
+    label: Minimum commissioned capacity
+    type: mw
+    unit: MW
+    min: 0
+    max: 100000
+    help: Capacity a bidder must have commissioned to qualify, if required.
+  sector.power.common.under_construction_counts:
+    section: eligibility
+    label: Under-construction projects count
+    type: bool
+    help: Whether projects under construction count towards technical experience.
+  sector.power.common.net_worth_per_mw_inr:
+    section: eligibility
+    label: Net worth per MW
+    type: money_inr
+    unit: INR per MW
+    min: 1000
+    max: 1000000000
+    help: Minimum net worth per MW of quoted capacity.
+
+  sector.power.common.tariff_ceiling_inr_per_kwh:
+    section: commercial
+    label: Ceiling tariff
+    type: decimal
+    unit: INR per kWh
+    min: 1
+    max: 15
+    help: Ceiling tariff, if the tender sets one.
+  sector.power.common.tariff_structure:
+    section: commercial
+    label: Tariff structure
+    type: enum
+    enum: [fixed, escalating, two_part, capacity_charge]
+    help: Shape of the quoted tariff.
+  sector.power.common.deemed_generation_clause:
+    section: commercial
+    label: Deemed generation
+    type: long_text
+    help: Compensation for grid unavailability or backdown.
+  sector.power.common.deemed_generation_structured:
+    section: commercial
+    label: Deemed generation, structured
+    type: record
+    help: "Compensation for grid unavailability and backdown, as numbers. How it is computed is a fixed choice; a percentage is given only where the document prints one."
+    keys:
+      grid_threshold_hours_per_year: {label: Grid unavailability beyond, type: decimal, unit: hours per year, min: 0, max: 8760}
+      backdown_threshold_hours_per_year: {label: Backdown beyond, type: decimal, unit: hours per year, min: 0, max: 8760}
+      compensation_basis: {label: Compensation computed at, type: enum, enum: [full_tariff, percent_of_tariff, fixed_rate, other]}
+      compensation_pct_of_tariff: {label: Compensation percentage, type: percent, unit: percent of tariff}
+      exchange_sale_share_adjusted_pct: {label: Share of exchange sale adjusted, type: percent, unit: percent}
+      payer: {label: Paid by, type: text}
+
+  sector.power.common.connectivity_responsibility:
+    section: connectivity_and_compliance
+    label: Connectivity responsibility
+    type: enum
+    enum: [developer, procurer, shared]
+    help: Who obtains grid connectivity.
+  sector.power.common.gna_requirement:
+    section: connectivity_and_compliance
+    label: GNA requirement
+    type: long_text
+    help: What the tender requires on General Network Access and who bears it.
+  sector.power.common.ists_waiver_cutoff_date:
+    section: connectivity_and_compliance
+    label: ISTS waiver cut-off date
+    type: date
+    help: Commissioning date up to which the ISTS charges waiver applies, if printed.
+  sector.power.common.line_to_pooling_station_responsibility:
+    section: connectivity_and_compliance
+    label: Line to pooling station
+    type: text
+    help: Who builds and pays for the line up to the interconnection or pooling point.
+  sector.power.common.almm_required:
+    section: connectivity_and_compliance
+    label: ALMM required
+    type: bool
+    help: Whether modules (or cells) must come from the Approved List of Models and Manufacturers.
+  sector.power.common.dcr_required:
+    section: connectivity_and_compliance
+    label: Domestic content required
+    type: bool
+    help: Whether a domestic content requirement applies.
+  sector.power.common.local_content_rule:
+    section: connectivity_and_compliance
+    label: Local content rule
+    type: long_text
+    help: The local content or Make in India rule, as stated.
+  sector.power.common.land_responsibility:
+    section: connectivity_and_compliance
+    label: Land responsibility
+    type: text
+    help: Who arranges the land.
+  sector.power.common.clearances_responsibility:
+    section: connectivity_and_compliance
+    label: Clearances responsibility
+    type: text
+    help: Who obtains statutory clearances and approvals.
+
+  # Supply sources, as the document states them: the basis the derived source table is
+  # computed from. One item per source the tender names a rule for; a tender that says
+  # nothing about sources has an empty list, not a guess.
+  sector.power.common.source_mix_rules:
+    section: supply_sources
+    label: Supply source rules
+    type: record_list
+    help: "One item per source the tender addresses: whether it may, must or must not supply the contracted power, and any limit. `any_non_re` is for a clause on non-RE supply in general that names no source. Each item needs its own quote."
+    keys:
+      source: {label: Source, type: enum, enum: [solar, wind, hydro, biomass, bess, pumped_storage, thermal, market_purchase, any_non_re, other]}
+      treatment: {label: Treatment, type: enum, enum: [allowed, allowed_with_limit, required, prohibited]}
+      limit_value: {label: Limit, type: decimal, min: 0, max: 100000}
+      limit_unit: {label: Limit unit, type: enum, enum: [percent_of_annual_energy, percent_of_contracted_capacity, mw, mwh]}
+      condition: {label: Condition, type: text}
+  sector.power.common.bess_charging_rule:
+    section: supply_sources
+    label: Storage charging rule
+    type: record
+    help: Conditions on a battery or storage system that supplies under the contract.
+    keys:
+      re_only: {label: Charged from RE only, type: bool}
+      co_located_required: {label: Must be co-located, type: bool}
+      regulation_reference: {label: Regulation cited, type: text}
+
+  # Derived tables: written by tender/domain_packs/power/derivations/ from the decided
+  # fields above, each row carrying the clause it rests on. Never read from pages.
+  sector.power.common.source_eligibility:
+    section: derived
+    label: Source eligibility
+    type: record_list
+    help: "For each possible source of supply, whether the tender allows, limits, requires or prohibits it, or does not address it. `basis` says whether the row rests on a clause naming the source (stated) or on a general clause (inherited); a row with no clause behind it is not_addressed."
+    keys:
+      source: {label: Source, type: enum, enum: [solar, wind, hydro, biomass, bess, pumped_storage, thermal, market_purchase, other]}
+      status: {label: Status, type: enum, enum: [allowed, allowed_with_limit, required, prohibited, not_addressed, withdrawn]}
+      basis: {label: Basis, type: enum, enum: [stated, inherited, none]}
+      limit_value: {label: Limit, type: decimal, min: 0, max: 100000}
+      limit_unit: {label: Limit unit, type: enum, enum: [percent_of_annual_energy, percent_of_contracted_capacity, mw, mwh]}
+      condition: {label: Condition, type: text}
+      clause: {label: Clause, type: text}
+      derived_from: {label: Derived from, type: text}
+  sector.power.common.optimizer_constraints:
+    section: derived
+    label: Optimiser constraints
+    type: record_list
+    help: "The constraints an optimisation engine must satisfy, typed: a quantity with a comparator and unit, a date or a period from an event (temporal), or an obligation that holds or not. Each names the field it comes from and carries its evidence."
+    keys:
+      id: {label: Id, type: text}
+      kind: {label: Kind, type: enum, enum: [quantity, temporal, obligation, withdrawn]}
+      subject: {label: Subject, type: enum, enum: [traceable_green_share, non_re_share, cuf_annual, cuf_monthly, cuf_peak, peak_window_hours, contracted_capacity, greenshoe_capacity, linked_capacity_multiple, linked_capacity, linked_land_per_mw, non_re_tariff_fixed_share, non_re_tariff_variable_share, contract_term, storage_capacity, supply_start, supply_start_greenshoe, greenshoe_offer_deadline, greenshoe_ppa_signing, linked_capacity_documents, financial_closure, scod, rec_for_non_re_supply, bess_re_charged_only, bess_co_located, linked_capacity_installation, peak_window_set_by_procurer, non_re_merit_order_despatch, storage_mandatory, source_prohibited, contracted_energy_capacity, project_capacity_min, project_capacity_max, min_commissioned_capacity, storage_power_capacity, storage_energy_capacity, storage_cycles_per_day, round_trip_efficiency, availability, assured_availability, location_constraint, ppa_signing]}
+      comparator: {label: Comparator, type: enum, enum: [">=", "<=", "==", between]}
+      value: {label: Value, type: decimal, min: -1000000000, max: 1000000000}
+      value_max: {label: Upper value, type: decimal, min: -1000000000, max: 1000000000}
+      unit: {label: Unit, type: enum, enum: [percent_of_annual_energy, percent_of_monthly_energy, percent_of_peak_energy, percent_of_tariff, mw, mwh, multiple_of_contracted_mw, acres_per_mw, hours_per_day, years, months, days, percent, cycles_per_day]}
+      period: {label: Period, type: enum, enum: [annual, monthly, daily, peak_hours, contract_term]}
+      on_date: {label: Date (ISO), type: text}
+      relative_to: {label: Relative to, type: enum, enum: [loa, ppa_signing, scod, supply_start, effective_date, greenshoe_offer, before_scod, unspecified]}
+      offset_months: {label: Offset, type: decimal, unit: months, min: 0, max: 600}
+      offset_days: {label: Offset, type: decimal, unit: days, min: 0, max: 3660}
+      share_pct: {label: Share, type: percent, unit: percent, min: 0, max: 100}
+      holds: {label: Holds, type: bool}
+      condition: {label: Condition, type: text}
+      source: {label: Source, type: text}
+      basis: {label: Basis, type: enum, enum: [stated, inherited]}
+      clause: {label: Clause, type: text}
+      derived_from: {label: Derived from, type: text}
+
+cross_field_rules: [bid_capacity_order, power_structured_agrees_with_scalar]

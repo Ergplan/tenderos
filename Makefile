@@ -1,0 +1,36 @@
+# TenderOS. Local runs need Postgres, Python 3.12 and Node 22; see README.
+PY ?= .venv/bin/python
+
+.PHONY: install build test check-web e2e lint dev stop up down
+
+install:
+	python3.12 -m venv .venv && $(PY) -m pip install -r engine/requirements-dev.txt
+	cd web && npm ci
+
+build:
+	cd web && npx next build
+
+test:
+	$(PY) -m pytest -q tests/engine tests/e2e/test_nhpc_tender.py
+
+check-web:
+	for f in tools/check_*.mjs; do case $$f in *nhpc*) continue;; esac; node $$f || exit 1; done
+
+# Needs a running stack and a user: TENDEROS_URL, TENDEROS_EMAIL, TENDEROS_PASSWORD
+e2e:
+	$(PY) -m pytest -q -m slow tests/e2e/test_tender_to_bid.py
+
+lint:
+	$(PY) -m ruff check engine tests
+
+dev:
+	bash tools/dev.sh
+
+stop:
+	bash tools/dev.sh stop
+
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down

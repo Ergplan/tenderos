@@ -1,0 +1,8 @@
+.venv*
+web
+samples
+tests
+docs
+tools
+**/__pycache__
+.env*

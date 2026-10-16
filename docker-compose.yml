@@ -1,0 +1,48 @@
+# TenderOS: Postgres, the Python engine and the Next.js web app. Only the web app is published;
+# it signs users in and forwards /api/* to the engine. Fill .env from .env.example first.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: tenderos
+      POSTGRES_USER: tenderos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenderos -d tenderos"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+  engine:
+    build:
+      context: .
+      dockerfile: deploy/engine.Dockerfile
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      EXTRACTION_MODEL: ${EXTRACTION_MODEL:-}
+      EXTRACTION_REQUIRE_LLM: ${EXTRACTION_REQUIRE_LLM:-}
+    volumes:
+      - extraction_jobs:/data/extraction_jobs
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    depends_on:
+      db:
+        condition: service_healthy
+      engine:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://tenderos:${POSTGRES_PASSWORD}@db:5432/tenderos
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+      ENGINE_URL: http://engine:8000
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    restart: unless-stopped
+
+volumes:
+  db:
+  extraction_jobs:

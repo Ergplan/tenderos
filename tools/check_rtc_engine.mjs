@@ -1,0 +1,189 @@
+// Smoke/consistency checks for the RTC engine (web/src/rtc/engine.js).
+// Run from the repository root: node tools/check_rtc_engine.mjs
+import assert from "node:assert/strict";
+import {
+  HOURS, DEFAULT_RTC_INPUTS, DEFAULT_BESS, DEFAULT_COSTS, DEFAULT_FINANCE, DEFAULT_VARS,
+  synthSolarCf, synthWindCf, buildDemand, buildContext, buildModel, simulate, optimize,
+  runFinancialModel, parseProfileCsv, parseDatedProfile, mean, irr, withDuration, tariffAgeingBreakdown,
+  optimizeSteps, highsPayload, LOSS_STAGES, toBusFactor, rteAtBus, lossFactors,
+} from "../web/src/rtc/engine.js";
+
+const inputs = DEFAULT_RTC_INPUTS;
+const solarCf = synthSolarCf({ targetCuf: inputs.solarCuf, dcAc: inputs.solarDcAc });
+const windCf = synthWindCf({ targetCuf: inputs.windCuf });
+assert.equal(solarCf.length, HOURS);
+assert.ok(Math.abs(mean(solarCf) - inputs.solarCuf) < 1e-4, "solar CUF calibrated");
+assert.ok(Math.abs(mean(windCf) - inputs.windCuf) < 1e-4, "wind CUF calibrated");
+
+const demand = buildDemand({ annualEnergyMu: inputs.annualEnergyMu });
+const total = demand.reduce((a, b) => a + b, 0);
+assert.ok(Math.abs(total - 2455e3) < 1e-3, "demand sums to annual energy");
+
+const ctx = buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: DEFAULT_BESS });
+const t0 = performance.now();
+const r = simulate(ctx, { solarMw: 500, windMw: 350, bessMw: 150, bessMwh: 600 });
+const simMs = performance.now() - t0;
+// energy balance: generation = direct + charge + excess + curtail; delivered = direct + discharge
+const gen = r.solarGenMWh + r.windGenMWh;
+const balance = r.solarDirectMWh + r.windDirectMWh + r.chargeMWh + r.excessMWh + r.curtailMWh;
+assert.ok(Math.abs(gen - balance) < 1e-3 * gen, "generation balance");
+assert.ok(Math.abs(r.deliveredMWh - (r.solarDirectMWh + r.windDirectMWh + r.dischargeMWh)) < 1e-3, "delivery balance");
+assert.ok(r.dischargeMWh <= r.chargeMWh * DEFAULT_BESS.rte + 600, "BESS discharge bounded by RTE");
+console.log(`simulate: ${simMs.toFixed(2)} ms, DFR ${(r.dfr * 100).toFixed(2)}%, cycles ${r.cycles.toFixed(0)}`);
+
+// surplus: curtailed unless sold; selling exports through spare plant capacity + extra export MW
+const reasons = r.curtailReasons;
+assert.ok(Math.abs(reasons.batteryFull + reasons.batteryPower + reasons.noStorage - r.curtailMWh) < 1e-3, "curtailment reasons add up");
+assert.equal(r.excessMWh, 0, "no export when surplus sales are off");
+const ctxSell = buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: DEFAULT_BESS, sellSurplus: true, extraExportMw: 100 });
+const rs = simulate(ctxSell, { solarMw: 500, windMw: 350, bessMw: 150, bessMwh: 600 });
+assert.ok(rs.excessMWh > 0 && rs.curtailMWh < r.curtailMWh, "selling with export capacity converts curtailment into exports");
+assert.ok(Math.abs(rs.excessMWh + rs.curtailMWh - r.curtailMWh) < 1e-3, "sold + curtailed = surplus");
+assert.ok(Math.abs(rs.deliveredMWh - r.deliveredMWh) < 1e-6, "selling surplus never changes supply to the customer");
+const bt = r.byTech;
+assert.ok(Math.abs(bt.solar.direct + bt.solar.charge + bt.solar.export + bt.solar.curtail - r.solarGenMWh) < 1e-2, "solar flows add up");
+assert.ok(Math.abs(bt.wind.direct + bt.wind.charge + bt.wind.export + bt.wind.curtail - r.windGenMWh) < 1e-2, "wind flows add up");
+console.log(`surplus: ${(r.curtailMWh / 1000).toFixed(1)} MU curtailed when not sold; with sales + 100 MW extra export ${(rs.excessMWh / 1000).toFixed(1)} MU sold, ${(rs.curtailMWh / 1000).toFixed(1)} MU curtailed`);
+
+// the 33 kV main bus bar → 220 kV GSS billing meter: power transformer 0.4%, line 0.5%
+const eta = (1 - 0.004) * (1 - 0.005);
+const plant = { solarMw: 500, windMw: 350, bessMw: 150, bessMwh: 600 };
+const ctxL = buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: DEFAULT_BESS, trafoLossPct: 0.004, lineLossPct: 0.005, sellSurplus: true, extraExportMw: 100 });
+const rl = simulate(ctxL, plant);
+assert.ok(Math.abs(rl.evac.efficiency - eta) < 1e-12);
+assert.ok(Math.abs(rl.solarGenMWh - rs.solarGenMWh) < 1e-6, "generation at the bus is the profile's");
+const genL = rl.solarGenMWh + rl.windGenMWh;
+assert.ok(Math.abs(genL - (rl.solarDirectMWh + rl.windDirectMWh + rl.chargeMWh + rl.excessMWh / eta + rl.curtailMWh)) < 1e-3 * genL, "bus balance: direct + charge + sold + curtailed");
+assert.ok(Math.abs(rl.deliveredMWh - (rl.solarDirectMWh + rl.windDirectMWh + rl.dischargeMWh) * eta) < 1e-3, "delivered at the meter = bus injection × η");
+const ev = rl.evac;
+assert.ok(Math.abs(ev.injectedMWh - (rl.deliveredMWh + rl.excessMWh) / eta) < 1e-3, "injected at the bus");
+assert.ok(Math.abs(ev.trafoLossMWh - 0.004 * ev.injectedMWh) < 1e-6 && Math.abs(ev.lineLossMWh - 0.005 * 0.996 * ev.injectedMWh) < 1e-6, "transformer then line");
+assert.ok(Math.abs(ev.injectedMWh - ev.trafoLossMWh - ev.lineLossMWh - ev.meterMWh) < 1e-6 && Math.abs(ev.meterMWh - rl.deliveredMWh - rl.excessMWh) < 1e-3, "meter = injected − losses = delivered + sold");
+assert.ok(rl.dfr < rs.dfr, "the losses cost DFR on the same plant");
+assert.ok(Math.abs(rl.dischargePoiMWh - rl.dischargeMWh * eta) < 1e-6);
+// a plant 1/η bigger (every size) meets the meter exactly as the lossless plant meets the bus
+const bigger = Object.fromEntries(Object.entries(plant).map(([k, v]) => [k, v / eta]));
+const rb = simulate(buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: DEFAULT_BESS, trafoLossPct: 0.004, lineLossPct: 0.005 }), bigger);
+assert.ok(Math.abs(rb.dfr - r.dfr) < 1e-9, `scale invariance: ${rb.dfr} vs ${r.dfr}`);
+const finL = runFinancialModel(ctxL, plant, { costs: DEFAULT_COSTS, fin: { ...DEFAULT_FINANCE, sellSurplus: true }, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget, tariffLocked: true });
+const y1 = finL.rows[0];
+assert.ok(Math.abs(y1.meterMu - y1.deliveredMu - y1.excessMu) < 1e-9 && Math.abs(y1.injectedMu - y1.trafoLossMu - y1.lineLossMu - y1.meterMu) < 1e-9, "finance rows: bus → losses → meter");
+assert.ok(Math.abs(y1.energyRevenue - y1.deliveredMu * 1000 * DEFAULT_FINANCE.tariff * 1e-4) < 1e-9, "revenue on the units at the meter");
+console.log(`33 kV → 220 kV: η ${(eta * 100).toFixed(3)}%, ${(ev.trafoLossMWh / 1000).toFixed(2)} MU transformer + ${(ev.lineLossMWh / 1000).toFixed(2)} MU line loss; DFR ${(rs.dfr * 100).toFixed(2)}% → ${(rl.dfr * 100).toFixed(2)}% on the same plant`);
+
+// losses before the bus: only the stages after the point a profile is measured apply
+const sl = { dc: 0.02, inverter: 0.015, idt: 0.01, cable: 0.005 };
+assert.equal(toBusFactor("solar", sl, 4), 1, "a profile at the 33 kV bus already has every stage");
+assert.ok(Math.abs(toBusFactor("solar", sl, 2) - 0.99 * 0.995) < 1e-12, "measured at the inverter output: IDT and cables apply");
+assert.ok(Math.abs(toBusFactor("solar", sl, 0) - 0.98 * 0.985 * 0.99 * 0.995) < 1e-12, "measured at the modules: every stage applies");
+assert.ok(Math.abs(rteAtBus(0.9, { pcs: 0.015, mvTrafo: 0.008, cable: 0.003 }, 0) - 0.9 * (0.985 * 0.992 * 0.997) ** 2) < 1e-12, "a DC round trip loses the PCS, transformer and cables both ways");
+assert.equal(rteAtBus(0.87, { pcs: 0.015 }, LOSS_STAGES.bess.length), 0.87, "an RTE quoted at the bus is used as is");
+const lf = lossFactors(inputs, 0.87);
+assert.deepEqual([lf.solar, lf.wind, lf.rteBus], [1, 1, 0.87], "the defaults: every profile and the RTE at the 33 kV bus");
+assert.ok(Math.abs(lf.meter - (1 - 0.004) * (1 - 0.005)) < 1e-12);
+
+// monotonicity: more storage never reduces DFR
+const r2 = simulate(ctx, { solarMw: 500, windMw: 350, bessMw: 150, bessMwh: 900 });
+assert.ok(r2.dfr >= r.dfr - 1e-9, "DFR monotone in MWh");
+
+const model = buildModel({ inputs, costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, vars: DEFAULT_VARS });
+const t1 = performance.now();
+const opt = optimize(ctx, model);
+console.log(`optimize: ${opt.evals} evaluations in ${(performance.now() - t1).toFixed(0)} ms`);
+console.log("best", opt.best.sizes, `DFR ${(opt.best.dfr * 100).toFixed(2)}% (check ${(opt.best.dfrCheck * 100).toFixed(2)}%)`, `LCOE ${opt.best.lcoe.toFixed(3)} Rs/kWh`, `capex ${opt.best.capexCr.toFixed(0)} cr`);
+assert.ok(opt.feasible, "optimizer finds a feasible design");
+assert.equal(opt.best.sizes.bessMwh, opt.best.sizes.bessMw * DEFAULT_BESS.durationH, "battery energy follows the chosen duration");
+const opt2h = optimize(ctx, buildModel({ inputs, costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: { ...DEFAULT_BESS, durationH: 2 }, vars: DEFAULT_VARS, gridPoints: 7 }));
+assert.equal(opt2h.best.sizes.bessMwh, opt2h.best.sizes.bessMw * 2, "2-hour battery");
+console.log("2-hour best", opt2h.best.sizes, `LCOE ${opt2h.best.lcoe.toFixed(3)} feasible ${opt2h.feasible}`);
+assert.ok(opt.best.dfrCheck >= inputs.dfrTarget - 1e-6);
+
+// locks are honoured
+const locked = { ...DEFAULT_VARS, windMw: { ...DEFAULT_VARS.windMw, value: 250, locked: true } };
+const optL = optimize(ctx, buildModel({ inputs, costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, vars: locked }));
+assert.equal(optL.best.sizes.windMw, 250, "locked wind held");
+
+const fm = runFinancialModel(ctx, opt.best.sizes, { costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget, tariffLocked: false });
+assert.equal(fm.rows.length, 25);
+assert.ok(Math.abs(fm.equityIrr - DEFAULT_FINANCE.targetEquityIrr) < 1e-4, "tariff solve hits target IRR");
+assert.ok(fm.rows.at(-1).closingDebt < 1e-6, "debt fully repaid");
+console.log(`finance: tariff ${fm.tariff.toFixed(3)} Rs/kWh, LCOE ${fm.lcoe.toFixed(3)}, project IRR ${(fm.projectIrr * 100).toFixed(2)}%, min DSCR ${fm.minDscr.toFixed(2)}, min lifetime DFR ${(fm.minLifetimeDfr * 100).toFixed(2)}%`);
+const fmLocked = runFinancialModel(ctx, opt.best.sizes, { costs: DEFAULT_COSTS, fin: { ...DEFAULT_FINANCE, tariff: fm.tariff + 0.5 }, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget, tariffLocked: true });
+assert.ok(fmLocked.equityIrr > fm.equityIrr, "higher locked tariff raises IRR");
+
+assert.ok(Math.abs(irr([-100, 110]) - 0.1) < 1e-6);
+
+// uploads
+const csv = ["hour,cf", ...Array.from({ length: HOURS }, (_, i) => `${i + 1},${(i % 24) / 48}`)].join("\n");
+const parsed = parseProfileCsv(csv);
+assert.equal(parsed.values.length, HOURS);
+const mw = Array.from({ length: 35040 }, () => "50").join("\n");
+const parsedMw = parseProfileCsv(mw, { referenceMw: 100 });
+assert.ok(Math.abs(mean(parsedMw.values) - 0.5) < 1e-9, "15-min MW upload normalised");
+assert.throws(() => parseProfileCsv("1\n2\n3"));
+// dated SCADA export: must read "Actual Generation (MW)", not "Schedule (MW)"; negatives → 0; gaps filled
+{
+  const rows = ["Block No,Clock Time (HH:MM),Date / Range,Entity Name,Schedule (MW),Actual Generation (MW),CUF (%)"];
+  for (let day = 1; day <= 28; day += 1) {
+    for (let b = 0; b < 96; b += 1) {
+      const hh = String(Math.floor(b / 4)).padStart(2, "0"); const mm = String((b % 4) * 15).padStart(2, "0");
+      const actual = b < 8 ? -0.5 : 30; // small negative aux at night
+      rows.push(`${b + 1},"${hh}:${mm}","2026-02-${String(day).padStart(2, "0")}","Test_W",0.00,${actual},${(Math.max(0, actual) / 100 * 100).toFixed(2)}`);
+    }
+  }
+  const p = parseDatedProfile(rows.join("\n"));
+  assert.ok(Math.abs(p.capacityMw - 100) < 1e-6, "capacity implied by the CUF column");
+  assert.ok(p.monthlyCuf[1] > 0.25 && p.monthlyCuf[1] < 0.3, "uses actual generation, not schedule");
+  assert.ok(p.negativeShare > 0 && p.values.every((v) => v >= 0), "negatives clipped");
+  assert.ok(p.coverage < 0.1 && p.values[0] >= 0 && p.quality === "suspect", "partial year flagged and filled");
+}
+// PVsyst-style yield file: metadata lines, stated AC capacity, output above nameplate kept,
+// night-time negative auxiliary load does not fail the file
+{
+  const rows = ["Beed, Maharashtra", "Fixed Tilt", "AC,300,MW", "DC,450,MWp", "Date,Time,E_Grid (MW)"];
+  for (let d = 0; d < 365; d += 1) {
+    const date = new Date(Date.UTC(1990, 0, 1 + d)).toISOString().slice(0, 10);
+    for (let h = 0; h < 24; h += 1) rows.push(`${date},${String(h).padStart(2, "0")}:00,${h >= 7 && h <= 17 ? (h === 12 ? 340 : 200) : -0.33}`);
+  }
+  const p = parseDatedProfile(rows.join("\n"));
+  assert.equal(p.capacityMw, 300, "AC capacity read from the header lines");
+  assert.equal(p.quality, "validated", "night negatives and above-nameplate output are acceptable for modelled files");
+  assert.ok(Math.max(...p.values) > 1.1, "output above nameplate is kept");
+  assert.ok(p.name.startsWith("Beed"), "title from metadata");
+}
+// the 25-year tariff objective never does worse than the LCOE-screened answer on the tariff
+{
+  const mTar = buildModel({ inputs, costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, vars: DEFAULT_VARS, objective: "tariff" });
+  const t0 = performance.now();
+  const ot = optimize(ctx, mTar);
+  const tarOf = (z) => runFinancialModel(ctx, z, { costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget }).tariff;
+  const lcoeBest = optimize(ctx, buildModel({ inputs, costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, vars: DEFAULT_VARS, objective: "lcoe" })).best;
+  assert.ok(ot.feasible && ot.best.minLifetimeDfr >= inputs.dfrTarget - 1e-6, "tariff optimum meets the DFR in every year");
+  assert.ok(ot.best.tariff <= tarOf(lcoeBest.sizes) + 1e-9, "tariff objective is at least as good as the LCOE answer");
+  console.log(`tariff objective: ${JSON.stringify(ot.best.sizes)} ₹${ot.best.tariff.toFixed(4)} vs LCOE-optimal design ₹${tarOf(lcoeBest.sizes).toFixed(4)} · ${ot.stats.tariffEvals} 25-yr models · ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+  const ab = tariffAgeingBreakdown(ctx, ot.best.sizes, { costs: DEFAULT_COSTS, fin: DEFAULT_FINANCE, bess: DEFAULT_BESS, dfrTarget: inputs.dfrTarget });
+  assert.ok(Math.abs(ab.ideal.tariff + ab.genImpact + ab.bessImpact - ab.all.tariff) < 1e-9);
+  console.log(`ageing: no-ageing ₹${ab.ideal.tariff.toFixed(3)} + generation ₹${ab.genImpact.toFixed(3)} + battery ₹${ab.bessImpact.toFixed(3)} = ₹${ab.all.tariff.toFixed(3)}`);
+  assert.equal(ot.tariffMap.cells.length, ot.tariffMap.solarGrid.length * ot.tariffMap.windGrid.length, "tariff map covers the grid");
+
+  // HiGHS hand-off: the generator pauses after screening (seed for the LP) and before the
+  // tariff search (LP result); the exact search then starts from the rounded LP optimum.
+  const it = optimizeSteps(ctx, mTar);
+  const screened = it.next().value;
+  assert.equal(screened.stage, "screened");
+  assert.ok(screened.seed.tariff > 0 && screened.seed.deliveredMwh.length === DEFAULT_FINANCE.years, "seed carries the tariff and yearly energy for the LP");
+  const body = highsPayload(ctx, mTar, screened.seed);
+  assert.equal(body.ctx.demand.length, HOURS);
+  assert.ok(Array.isArray(body.ctx.solarCf) && body.vars.bessMw.max > 0, "payload is plain JSON");
+  assert.equal(it.next().value.stage, "await-seeds");
+  // LP optimum from engine/sizing/rtc_lp.py for this case (default Beed inputs)
+  const lp = { ok: true, sizes: { solarMw: 672.7, windMw: 475.1, bessMw: 395.5, bessMwh: 1582.2 }, tariff: 5.6533, lowerBound: 5.6532, seconds: 42 };
+  const done = it.next({ highs: lp, log: [{ t: 5, stage: "highs", msg: "injected" }] });
+  assert.ok(done.done && done.value.highs === lp && done.value.log.some((l) => l.msg === "injected"));
+  const oh = done.value;
+  assert.ok(oh.feasible && oh.best.tariff <= ot.best.tariff + 1e-9, "seeding with the LP optimum never makes the answer worse");
+  console.log(`with HiGHS seed: ${JSON.stringify(oh.best.sizes)} ₹${oh.best.tariff.toFixed(4)} (search alone ₹${ot.best.tariff.toFixed(4)})`);
+  const failed = optimize(ctx, mTar, null, { error: "engine down" });
+  assert.ok(failed.feasible && failed.highs.ok === false, "an unavailable engine falls back to the search");
+}
+console.log("RTC engine checks passed");

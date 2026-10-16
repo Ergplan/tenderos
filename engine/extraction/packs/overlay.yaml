@@ -1,0 +1,132 @@
+# FDRE-side additions to the packs copied from Ergplan/tender_engine. NOT from tender_engine:
+# these fields were added in the FDRE repo for the bid tools (which renewable sources a
+# tender allows). An overlay field joins its section in every tender type that includes the
+# section; tender types without the section do not get the field.
+pack: overlay
+
+fields:
+  sector.power.fdre.permitted_re_sources:
+    section: fdre_profile
+    label: Permitted renewable sources
+    type: list_text
+    help: Renewable sources the tender allows for the supply, as listed (for example solar, wind, hydro, biomass, storage).
+  sector.power.fdre.biomass_permitted:
+    section: fdre_profile
+    label: Biomass permitted
+    type: bool
+    help: Whether biomass (or bio-energy) generation may be part of the supply.
+  sector.power.fdre.annual_supply_min_pct:
+    section: fdre_profile
+    label: Minimum annual supply
+    type: percent
+    unit: percent
+    help: Minimum supply over each year, as a percentage of contracted capacity (annual CUF or availability).
+  sector.power.fdre.monthly_supply_min_pct:
+    section: fdre_profile
+    label: Minimum monthly supply
+    type: percent
+    unit: percent
+    help: Minimum supply in each month, as a percentage of contracted capacity.
+  sector.power.fdre.peak_supply_min_pct:
+    section: fdre_profile
+    label: Minimum peak-hour supply
+    type: percent
+    unit: percent
+    help: Minimum supply during peak hours, as a percentage of contracted capacity.
+  sector.power.fdre.peak_hours_per_day:
+    section: fdre_profile
+    label: Peak hours per day
+    type: decimal
+    unit: hours
+    min: 0
+    max: 24
+    help: Number of peak hours in a day during which the peak supply obligation applies.
+  sector.power.fdre.green_share_min_pct:
+    section: fdre_profile
+    label: Minimum green share
+    type: percent
+    unit: percent
+    help: Least share of supply that must come from renewable (traceable green) sources.
+  sector.power.fdre.non_re_allowed:
+    section: fdre_profile
+    label: Non-RE supply allowed
+    type: bool
+    help: Whether part of the supply may come from non-renewable sources.
+  sector.power.fdre.min_solar_capacity_multiple:
+    section: fdre_profile
+    label: Minimum solar capacity
+    type: decimal
+    unit: times the contracted capacity
+    min: 0
+    max: 10
+    help: Solar capacity the supplier must install, as a multiple of the contracted capacity.
+  sector.power.fdre.market_sale_scope:
+    section: fdre_profile
+    label: Market sale allowed
+    type: enum
+    enum: [mandated_solar, any_capacity, not_allowed]
+    help: "What the supplier may schedule or sell in the market (a power exchange or a third party) during the contract, as the tender states it: only the solar capacity the tender makes it install (mandated_solar), any of its capacity (any_capacity), or nothing (not_allowed). Leave empty when the tender does not say. Sales before the supply start date are not this field."
+  sector.power.fdre.ppa_priority_before_sale:
+    section: fdre_profile
+    label: PPA supplied before any sale
+    type: bool
+    help: "Whether the tender makes the supplier meet its supply to the procurer before selling any energy elsewhere (for example 'priority shall be accorded to meet the energy requirements as per PPA, before selling any quantum of energy in the open market', or a penalty for selling while the PPA demand is unmet). Leave empty when the tender does not say."
+  sector.power.fdre.peak_hours_set_by:
+    section: fdre_profile
+    label: Peak hours set by
+    type: enum
+    enum: [tender, procurer, supplier]
+    help: "Who fixes the peak hours: the tender prints them (tender), the procurer decides or declares them (procurer, for example 'as decided by WBSEDCL'), or the supplier chooses them (supplier). Leave empty when the tender does not say."
+  sector.power.fdre.supply_start_date:
+    section: fdre_profile
+    label: Supply start date
+    type: date
+    help: Scheduled commencement of supply (supply start date) for the base contracted capacity, when the tender prints a date.
+  sector.power.common.greenshoe_capacity_mw:
+    section: identity_and_scope
+    label: Greenshoe capacity
+    type: mw
+    unit: MW
+    min: 0.1
+    max: 100000
+    help: Additional capacity the procurer may take up under a greenshoe option, in MW.
+  sector.power.common.part_capacity_allowed:
+    section: identity_and_scope
+    label: Part capacity allowed
+    type: bool
+    help: "Whether a bidder may bid for part of the capacity. False when the tender says a single bidder must bid for the whole capacity and no part capacity is allowed. Leave empty when the tender does not say."
+  sector.power.common.greenshoe_supply_start_date:
+    section: identity_and_scope
+    label: Greenshoe supply start date
+    type: date
+    help: Supply start date for the greenshoe capacity, when the tender prints one.
+  core.key_dates.query_response_date:
+    section: key_dates
+    label: Response to queries
+    type: date
+    help: Date by which the procurer answers the bidders' queries, when the schedule prints one.
+  core.key_dates.document_sale_end_date:
+    section: key_dates
+    label: Last date to obtain the tender document
+    type: date
+    help: Last date for procuring (buying or downloading) the tender document, when printed.
+  core.key_dates.loa_date:
+    section: key_dates
+    label: Letter of Award
+    type: date
+    help: Date of placement or issue of the Letter of Award, when the schedule prints one.
+  core.key_dates.ppa_execution_date:
+    section: key_dates
+    label: PPA execution
+    type: date
+    help: Date by which the PPA is executed, when the schedule prints one.
+  sector.power.common.greenshoe_offer_date:
+    section: identity_and_scope
+    label: Greenshoe offered at least 30 days before
+    type: date
+    help: The date before which the procurer offers the greenshoe capacity to the selected bidder, as printed (for example "at least 30 days prior to 30.09.2027").
+  sector.power.common.greenshoe_same_tariff:
+    section: identity_and_scope
+    label: Greenshoe at the same tariff
+    type: bool
+    help: "True when the tender says the greenshoe capacity is supplied at the same terms and tariff as the base capacity. Leave empty when the tender does not say."

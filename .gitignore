@@ -1,0 +1,18 @@
+# Installed dependencies and build output
+.venv*/
+node_modules/
+.next/
+dist/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local credentials and machine files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+*.log

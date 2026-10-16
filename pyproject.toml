@@ -1,0 +1,19 @@
+[project]
+name = "tenderos"
+version = "1.0.0"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: needs the running stack (browser end to end) or takes minutes",
+]
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+# The sizing modules come from FDRE with compact one-line statements; kept as they are.
+ignore = ["E702", "E731"]
