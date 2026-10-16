@@ -16,3 +16,6 @@ __pycache__/
 *.key
 .DS_Store
 *.log
+
+# Database backups on a VM
+backups/

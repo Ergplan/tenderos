@@ -32,6 +32,11 @@ administrator. Without `ANTHROPIC_API_KEY`, tenders are read by the rule-based r
 the headline fields only; the Tender step says which reader was used. Behind HTTPS, set
 `COOKIE_SECURE=true`.
 
+## Deploy a demo VM
+
+`docs/DEPLOY.md`: one script creates a Google Cloud VM with HTTPS (Caddy and Let's Encrypt), a
+generated administrator password, firewall rules, backups and updates.
+
 ## Run locally
 
 You need Python 3.12, Node 22 and a Postgres database.

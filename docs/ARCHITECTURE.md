@@ -14,6 +14,9 @@ flowchart LR
 | Engine | `engine/` | A stateless FastAPI service. It reads tenders (`extraction/`), runs the BESS tender adapter (`bess/`), sizes plants with the HiGHS LP (`sizing/rtc_lp.py`) and runs the 15-minute dispatch (`sizing/dispatch15.py`). |
 | Database | Postgres | Holds users, sessions, tab access, scenarios, activity, resource profiles and tender readings (`web/db/migrations`, applied by the web app on start). |
 
+On a VM, Caddy (`deploy/docker-compose.vm.yml`, `deploy/Caddyfile`) terminates HTTPS in front of
+the web app and is the only published service (`docs/DEPLOY.md`).
+
 ## Tabs
 
 | Tab | Engine route families | Purpose |

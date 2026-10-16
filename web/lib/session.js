@@ -1,7 +1,7 @@
 // Signed session cookie (HS256 JWT). Safe to import from proxy.js: no database access.
 import { SignJWT, jwtVerify } from "jose";
 
-export const SESSION_COOKIE = "fdre_session";
+export const SESSION_COOKIE = "tenderos_session";
 export const SESSION_DAYS = 14;
 
 function key() {

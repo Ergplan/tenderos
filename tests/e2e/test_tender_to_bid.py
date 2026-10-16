@@ -8,7 +8,8 @@ Needs the whole stack running (database, engine, web; see README) and a user who
 the Tender to Bid tab:
     TENDEROS_URL=http://127.0.0.1:3000 TENDEROS_EMAIL=... TENDEROS_PASSWORD=... \
         .venv/bin/python -m pytest tests/e2e/test_tender_to_bid.py -m slow
-Optional: PLAYWRIGHT_CHROMIUM (a Chromium binary), E2E_SHOTS (a folder for screenshots).
+Optional: PLAYWRIGHT_CHROMIUM (a Chromium binary), E2E_SHOTS (a folder for screenshots),
+E2E_IGNORE_HTTPS_ERRORS=1 (a site with a self-signed certificate, such as Caddy on localhost).
 Sizing takes about a minute; the test allows 30.
 """
 from __future__ import annotations
@@ -43,7 +44,8 @@ def test_nhpc_tender_to_bid(tmp_path):
     errors: list[str] = []
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM") or None)
-        ctx = browser.new_context(viewport={"width": 1500, "height": 1000}, accept_downloads=True)
+        ctx = browser.new_context(viewport={"width": 1500, "height": 1000}, accept_downloads=True,
+                                  ignore_https_errors=os.environ.get("E2E_IGNORE_HTTPS_ERRORS") == "1")
         page = ctx.new_page()
         page.on("pageerror", lambda e: errors.append(str(e)))
 

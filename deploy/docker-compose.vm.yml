@@ -1,0 +1,28 @@
+# VM overlay: Caddy terminates HTTPS on 80/443 and is the only published service.
+# Used through COMPOSE_FILE in .env (deploy/bootstrap.sh writes it), so plain `docker compose`
+# commands on the VM include it.
+services:
+  web:
+    ports: !reset []
+    environment:
+      COOKIE_SECURE: "true"
+
+  caddy:
+    image: caddy:2.8-alpine
+    depends_on:
+      - web
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
