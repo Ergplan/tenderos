@@ -47,9 +47,10 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
    NDJSON stream with progress lines, and the browser builds the tender conditions table from it.
 5. `POST /api/bid/dispatch15` runs the 15-minute dispatch for every PPA year and offers a ZIP.
 6. The financial model runs in the browser. `POST /api/bid/model` (a Next route) writes the Excel
-   workbook, with the Live model tab rebuilding that model as Excel formulas
-   (`web/lib/liveModel.js`, checked against the app by `tools/check_live_model.mjs` with
-   LibreOffice).
+   workbook (`web/lib/modelWorkbook.js`), with the Live model tab rebuilding that model as Excel
+   formulas (`web/lib/liveModel.js`, checked against the app by `tools/check_live_model.mjs` with
+   LibreOffice). The Round the clock tab downloads the same workbook for its plant through
+   `POST /api/rtc/model` (`web/src/rtc/exportModel.js` builds the request).
 
 ## Tests
 
@@ -57,7 +58,7 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off; and the Round the clock workbook (`tests/e2e/test_round_the_clock.py`) |
 
 ## What is not here
 

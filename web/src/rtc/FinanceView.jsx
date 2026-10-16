@@ -50,10 +50,11 @@ const FIN_LINES = [
   ["DSCR", "dscr", 2],
 ];
 
-export default function FinanceView({ state, patch, set, lockProps, finance, sizes, extraLines = null, energyLines = null }) {
+export default function FinanceView({ state, patch, set, lockProps, finance, sizes, extraLines = null, energyLines = null, actions = null }) {
   const { fin } = state;
   // extraLines: [label, key, fmt, sign] rows a caller adds after "Other fixed" (Tender to Bid: biomass fuel);
-  // energyLines: rows added before "Delivered" (Round the clock: the 33 kV bus to the 220 kV meter)
+  // energyLines: rows added before "Delivered" (Round the clock: the 33 kV bus to the 220 kV meter);
+  // actions: buttons beside Export CSV (Round the clock: the Excel workbook)
   const lines = useMemo(() => {
     let out = FIN_LINES;
     if (energyLines?.length) {
@@ -121,7 +122,7 @@ export default function FinanceView({ state, patch, set, lockProps, finance, siz
 
   return (
     <>
-      <section className="rtc-stats">
+      <section className="rtc-stats" data-testid="rtc-finance-stats">
         <Stat label={finance.tariffLocked ? "Tariff (fixed)" : "Tariff for target IRR"} value={`₹${nf(finance.tariff, 3)}`} detail={fin.tariffEscalation ? `levelised ₹${nf(finance.levelisedTariff, 3)}` : "flat, ₹/kWh"} />
         <Stat label="LCOE" value={`₹${nf(finance.lcoe, 3)}`} detail={`@ ${pf(fin.discountRate, 1)} discount`} />
         <Stat label="Equity IRR" value={pf(finance.equityIrr, 2)} detail={`NPV @ target ₹${nf(finance.equityNpv, 0)} cr`} tone={finance.equityIrr >= fin.targetEquityIrr - 1e-4 ? "good" : "bad"} />
@@ -177,7 +178,7 @@ export default function FinanceView({ state, patch, set, lockProps, finance, siz
         </Section>
       </div>
 
-      <Section index="F.4" title={`${fin.years}-year financial model`} note={`Project cost ₹${nf(finance.capex.total, 1)} cr (hard ₹${nf(finance.capex.hard, 1)} + pre-op ₹${nf(finance.capex.preop, 1)})`} actions={<button type="button" className="secondary" onClick={exportCsv}><Download size={14} /> Export CSV</button>}>
+      <Section index="F.4" title={`${fin.years}-year financial model`} note={`Project cost ₹${nf(finance.capex.total, 1)} cr (hard ₹${nf(finance.capex.hard, 1)} + pre-op ₹${nf(finance.capex.preop, 1)})`} actions={<>{actions}<button type="button" className="secondary" onClick={exportCsv}><Download size={14} /> Export CSV</button></>}>
         <div className="table-wrap rtc-model">
           <table>
             <thead>

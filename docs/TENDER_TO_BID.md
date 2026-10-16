@@ -251,6 +251,10 @@ the tab computed:
   and bid deliver, and met / not met.
 * **Inputs**: every input with its unit and source (your input, industry benchmark, model default).
 * **Plant and capex**: sizes, capex by source, transmission, pre-operative costs, debt and equity.
+* **Round the clock** downloads the same workbook from its financial model (F.4, **Download
+  financial model (Excel)**, `POST /api/rtc/model`): no tender conditions sheet, the energy from
+  the tab's hourly simulation of every year (green), with the 33 kV bus to 220 kV meter lines, and
+  the transmission charge when solar and wind are on separate sites.
 * **Revenue and costs (values)**: the app's numbers when the workbook was made; year by year, PPA supply revenue, market sale revenue, penalties, O&M,
   insurance, other fixed cost, biomass fuel, hydro and thermal costs (with RECs), augmentation.
 * **Financial model (values)**: the app's numbers; energy and tariff, revenue, operating costs, profit and loss, cash flow

@@ -2,6 +2,7 @@
 // rebuilds the financial model as Excel formulas. Kept apart from exportModel.js so the check
 // (tools/check_live_model.mjs) can build it in Node.
 import { FINANCE_FIELDS, SOURCES, SOURCE_FIELDS } from "./model.js";
+import { LIVE_FIN_KEYS, liveResults } from "../rtc/exportModel.js";
 
 /**
  * What the Live model sheet (web/lib/liveModel.js) needs to rebuild the financial model as Excel
@@ -26,30 +27,10 @@ export function liveModelRequest({ state, lp, finance, costs, fin, bess, ops, df
       ...pick(costs, ["solarCrPerMw", "windCrPerMw", "bessCrPerMwh", "bessPcsCrPerMw", "biomassCrPerMw", "evacuationCr", "preopPct"]),
       plants: (costs.plants || []).map((p) => pick(p, ["id", "capexCrPerMw", "fixedLakhPerMw", "energyRsPerKwh", "recRsPerKwh", "escalation"])),
     },
-    fin: pick(fin, [
-      "tariffEscalation", "solarOmLakhPerMw", "windOmLakhPerMw", "bessOmLakhPerMwh", "biomassOmLakhPerMw", "omEscalation", "insurancePct", "otherFixedCr",
-      "biomassFuelRsPerKwh", "biomassFuelEscalation", "wheelingRsPerKwh", "sellSurplus", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
-      "tenorYears", "repayment", "targetEquityIrr", "discountRate", "taxRate", "taxDepreciation", "wdvRate", "bookLifeYears", "salvagePct", "receivableDays",
-    ]),
+    fin: pick(fin, LIVE_FIN_KEYS),
     bess: pick(bess, ["annualDegradation", "augmentation", "augmentationYear", "costDeclinePct"]),
     ops: ops.slice(0, n).map((o) => pick(o, ["demandMWh", "deliveredMWh", "excessMWh", "surplusRevenueCr", "biomassMWh", "hydroMWh", "thermalMWh", "wheeledMWh"])),
     sources,
-    app: {
-      tariff: finance.tariff,
-      equityIrr: finance.equityIrr,
-      irrGap: finance.equityIrr - fin.targetEquityIrr,
-      projectIrr: finance.projectIrr,
-      equityNpv: finance.equityNpv,
-      projectNpv: finance.projectNpv,
-      minDscr: finance.minDscr,
-      avgDscr: finance.avgDscr,
-      lcoe: finance.lcoe,
-      levelisedTariff: finance.levelisedTariff,
-      payback: finance.payback ?? "beyond the term",
-      capexTotal: finance.capex.total,
-      debt: finance.debt,
-      equity: finance.equity,
-      revenueTotal: finance.totals.revenue,
-    },
+    app: liveResults(finance, fin),
   };
 }

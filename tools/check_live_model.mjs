@@ -20,6 +20,8 @@ import * as E from "../web/src/rtc/engine.js";
 import { defaultBidState, modelInputs, opsFromLp } from "../web/src/bid/model.js";
 import { liveModelRequest } from "../web/src/bid/liveModelRequest.js";
 import { LIVE_SHEET, addLiveModel, liveModelInput } from "../web/lib/liveModel.js";
+import { buildModelWorkbook } from "../web/lib/modelWorkbook.js";
+import { rtcModelExport } from "../web/src/rtc/exportModel.js";
 
 const require = createRequire(new URL("../web/package.json", import.meta.url));
 const ExcelJS = require("exceljs");
@@ -174,6 +176,23 @@ async function recalc(buffer) {
 }
 
 // cell.result, not cell.value.result: exceljs's value drops a result of 0 or ""
+async function recalcBook(buffer, dir) {
+  const src = path.join(dir, "book.xlsx");
+  writeFileSync(src, buffer);
+  mkdirSync(path.join(dir, "profile", "user"), { recursive: true });
+  writeFileSync(path.join(dir, "profile", "user", "registrymodifications.xcu"), `<?xml version="1.0" encoding="UTF-8"?>
+<oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<item oor:path="/org.openoffice.Office.Calc/Formula/Load"><prop oor:name="OOXMLRecalcMode" oor:op="fuse"><value>0</value></prop></item>
+</oor:items>
+`);
+  execFileSync(soffice, [`-env:UserInstallation=file://${path.join(dir, "profile")}`, "--headless", "--calc", "--convert-to", "xlsx", "--outdir", path.join(dir, "out"), src], {
+    stdio: "pipe", timeout: 180_000, env: { ...process.env, HOME: dir },
+  });
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(readFileSync(path.join(dir, "out", "book.xlsx")));
+  return wb;
+}
+
 const resultOf = (cell) => (cell.formula ? cell.result : cell.value);
 const numberAt = (ws, addr) => {
   const v = resultOf(ws.getCell(addr.replace(/^'[^']+'!/, "").replace(/\$/g, "")));
@@ -244,5 +263,94 @@ for (const [name, c] of CASES) {
     assert.ok(close(numberAt(ws, live.cells[key]), want, 1e-6), `${name}, battery capex −20%: ${key} ${numberAt(ws, live.cells[key])} vs app ${want}`);
   }
   console.log(`ok   live    battery ₹${newCapex.toFixed(2)} cr/MWh: project cost ₹${app.capex.total.toFixed(1)} cr, equity IRR ${(app.equityIrr * 100).toFixed(3)}% in LibreOffice and in the app`);
+}
+// ---- 4. the whole workbook (web/lib/modelWorkbook.js, as the routes build it): Round the clock on
+// one site and on separate sites, and the first Tender to Bid bid; the Cover's key results are
+// formulas on the Live model and recalculate to the app's numbers
+function rtcCase(sites) {
+  const { site, ...inputs } = E.DEFAULT_RTC_INPUTS;
+  const bess = { ...E.DEFAULT_BESS };
+  const costs = { ...E.DEFAULT_COSTS };
+  const fin0 = { ...E.DEFAULT_FINANCE, sellSurplus: true, surplusPrice: 2.5 };
+  const lf = E.lossFactors(inputs, bess.rte);
+  const solarCf = Float64Array.from(E.synthSolarCf({ targetCuf: inputs.solarCuf, dcAc: inputs.solarDcAc }), (v) => v * lf.solar);
+  const windCf = Float64Array.from(E.synthWindCf({ targetCuf: inputs.windCuf }), (v) => v * lf.wind);
+  const bessBus = { ...bess, rte: lf.rteBus };
+  const demand = E.buildDemand({ annualEnergyMu: inputs.annualEnergyMu });
+  const ctx = E.buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: bessBus, lossPct: inputs.lossPct, trafoLossPct: inputs.trafoLossPct, lineLossPct: inputs.lineLossPct, sellSurplus: true, extraExportMw: 0, sites });
+  const sizes = E.withDuration({ ...Object.fromEntries(Object.entries(E.DEFAULT_VARS).map(([k, v]) => [k, v.value])), bessWindShare: 0.4 }, bess);
+  const fin = { ...fin0, demandGrowth: 0, wheelingRsPerKwh: sites ? sites.chargeRsPerKwh : 0 };
+  const finance = E.runFinancialModel(ctx, sizes, { costs, fin, bess: bessBus, dfrTarget: inputs.dfrTarget, tariffLocked: false });
+  return { finance, body: rtcModelExport({ inputs, sizes, costs, fin, bess: bessBus, sites, finance }) };
+}
+const WORKBOOKS = [
+  ["Round the clock, one site", rtcCase(null), "Round the clock"],
+  ["Round the clock, separate sites", rtcCase({ split: true, chargeRsPerKwh: 0.3, lossPct: 0.03 }), "Round the clock"],
+];
+assert.ok(WORKBOOKS[1][1].finance.rows[0].wheeling > 0 && WORKBOOKS[0][1].finance.rows[0].wheeling === 0, "separate sites pay the transmission charge");
+assert.ok(WORKBOOKS[0][1].finance.rows[0].trafoLossMu > 0, "losses to the 220 kV meter");
+{
+  // the first Tender to Bid bid, as its route sends it (the Live model part is what this check built)
+  const c = CASES[0][1];
+  WORKBOOKS.push(["Tender to Bid, six sources", { finance: c.finance, body: { title: "Check", rows: c.finance.rows, cover: { outputs: [
+    ["Bid tariff (₹/kWh)", c.finance.tariff, "tariff", "", "tariff"], ["Equity IRR", c.finance.equityIrr, "pct", "", "equityIrr"], ["Minimum DSCR", c.finance.minDscr, "x", "", "minDscr"],
+  ] }, live: c.req } }, "Tender to Bid"]);
+}
+for (const [name, { finance, body }, product] of WORKBOOKS) {
+  const req = JSON.parse(JSON.stringify(body));
+  const { buffer } = await buildModelWorkbook(req, { preparedBy: "check", product });
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(buffer);
+  assert.deepEqual(wb.worksheets.slice(0, 2).map((w) => w.name), ["Cover", LIVE_SHEET], name);
+  if (product === "Round the clock") {
+    assert.ok(!wb.getWorksheet("Tender conditions"), "no tender, no conditions sheet");
+    const text = [];
+    wb.getWorksheet(LIVE_SHEET).eachRow((row) => text.push(String(row.getCell(1).value ?? "")));
+    assert.ok(text.includes("At the 220 kV billing meter") && text.some((t) => t.startsWith("Energy (the hourly simulation")), name);
+    assert.equal(text.includes("Sent between the sites to charge a battery"), Boolean(req.live.split), name);
+  }
+  // the app's values in the sheet, then LibreOffice from no stored value
+  const live = addLiveModel(new ExcelJS.Workbook(), liveModelInput(req.live));
+  for (const [key, appKey] of Object.entries(SAME)) {
+    for (const row of finance.rows) {
+      const b = row[appKey];
+      if (b === null || b === undefined || Number.isNaN(b)) continue;
+      assert.ok(close(live.rows[key][row.year], b, 1e-9), `${name}: ${key} year ${row.year}: sheet ${live.rows[key][row.year]}, app ${b}`);
+    }
+  }
+  const bare = new ExcelJS.Workbook();
+  await bare.xlsx.load(buffer);
+  for (const ws of bare.worksheets) ws.eachRow((row) => row.eachCell((cell) => { if (cell.formula) cell._value.model.result = undefined; }));
+  const dir = mkdtempSync(path.join(tmpdir(), "live-wb-"));
+  try {
+    const out = await recalcBook(Buffer.from(await bare.xlsx.writeBuffer()), dir);
+    const ws = out.getWorksheet(LIVE_SHEET);
+    let formulas = 0;
+    wb.getWorksheet(LIVE_SHEET).eachRow((row) => row.eachCell((cell) => {
+      if (!cell.formula) return;
+      formulas += 1;
+      const got = resultOf(ws.getCell(cell.address));
+      const want = cell.result;
+      assert.ok(!(got && typeof got === "object" && "error" in got), `${name}: ${cell.address} ${cell.formula} → ${JSON.stringify(got)}`);
+      if (typeof want === "number") assert.ok(typeof got === "number" && close(got, want, 1e-6), `${name}: ${cell.address} ${cell.formula}: ${got} vs ${want}`);
+      else if (want !== undefined) assert.equal(got ?? "", want, `${name}: ${cell.address}`);
+    }));
+    const cover = out.getWorksheet("Cover");
+    let links = 0;
+    wb.getWorksheet("Cover").eachRow((row) => row.eachCell((cell) => {
+      if (!cell.formula) return;
+      links += 1;
+      const got = resultOf(cover.getCell(cell.address));
+      if (typeof cell.result === "number") assert.ok(close(got, cell.result, 1e-6), `${name}: Cover ${cell.address} ${cell.formula}: ${got} vs ${cell.result}`);
+    }));
+    assert.ok(links >= 3, `${name}: Cover links`);
+    for (const key of RESULTS) {
+      const app = req.live.app[key];
+      if (typeof app === "number") assert.ok(close(resultOf(ws.getCell(live.cells[key].split("!")[1].replace(/\$/g, ""))), app, key.endsWith("Irr") ? 1e-6 : 1e-6), `${name}: ${key}`);
+    }
+    console.log(`ok   book    ${name}: tariff ₹${finance.tariff.toFixed(4)}/kWh; ${formulas} Live model formulas and ${links} Cover links recalculated by LibreOffice to the app's numbers`);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 console.log("live model checks passed");

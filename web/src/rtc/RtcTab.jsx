@@ -1,5 +1,5 @@
 import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Activity, ArrowRight, ChevronLeft, FolderOpen, Loader2, RotateCcw, Save, SlidersHorizontal, X, Zap } from "lucide-react";
+import { Activity, ArrowRight, ChevronLeft, Download, FolderOpen, Loader2, RotateCcw, Save, SlidersHorizontal, TriangleAlert, X, Zap } from "lucide-react";
 import * as E from "./engine";
 import SaveDialog from "../scenarios/SaveDialog";
 import OptimizerTheatre from "./Theatre";
@@ -9,6 +9,7 @@ import { trackEvent } from "../activity";
 import { Answer, Alternatives, AgeingImpact, DispatchStory, EnergyFlow, SolverLog, TariffMap } from "./results";
 import { BessChapter, CHAPTERS, DfrChapter, EnergyChapter, ResourceChapter, TypeChapter, chapterSummary } from "./chapters";
 import { Section, SelectBox, nf, pf } from "./ui";
+import { downloadRtcModel, rtcModelExport } from "./exportModel";
 
 // the units billed, year by year: generation at the 33 kV bus, the losses to the 220 kV meter
 const METER_LINES = [
@@ -470,7 +471,8 @@ export default function RtcTab({ initialScenario = null, user = null }) {
         <EnergyFlow sim={sim} inputs={inputs} fin={d.fin} />
       </Section>
       <div className="story-divider"><span>Financial model · {state.fin.years} years</span></div>
-      <FinanceView state={state} patch={patch} set={set} lockProps={lockProps} finance={finance} sizes={sizes} energyLines={METER_LINES} />
+      <FinanceView state={state} patch={patch} set={set} lockProps={lockProps} finance={finance} sizes={sizes} energyLines={METER_LINES}
+        actions={<ModelDownload request={() => rtcModelExport({ inputs, sizes, costs: d.costs, fin: finInput, bess: bessBus, sites, finance })} />} />
       <AgeingImpact ctx={ctx} sizes={sizes} costs={d.costs} fin={finInput} bess={bessBus} dfrTarget={inputs.dfrTarget} finance={finance} />
       <TariffMap opt={opt} sizes={sizes} applySizes={applySizes} />
       <Alternatives opt={opt} sizes={sizes} target={inputs.dfrTarget} applySizes={applySizes} />
@@ -488,5 +490,23 @@ export default function RtcTab({ initialScenario = null, user = null }) {
         />
       )}
     </div>
+  );
+}
+
+/** Download the financial model as an Excel workbook, with the Live model tab of formulas. */
+function ModelDownload({ request }) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  return (
+    <>
+      {error && <span className="alert" title={error}><TriangleAlert size={14} /> {error}</span>}
+      <button type="button" className="primary" disabled={saving} data-testid="rtc-download"
+        onClick={async () => {
+          setSaving(true); setError("");
+          try { await downloadRtcModel(request()); } catch (err) { setError(err.message); } finally { setSaving(false); }
+        }}>
+        {saving ? <Loader2 className="spin" size={14} /> : <Download size={14} />} Download financial model (Excel)
+      </button>
+    </>
   );
 }

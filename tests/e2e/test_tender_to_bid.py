@@ -209,29 +209,11 @@ def _xlsx_sheets(path: Path) -> dict[str, dict[str, tuple[str | None, str | None
     return out
 
 
-def _check_live_model(path: Path, *, tariff: float, irr: float, tmp: Path) -> None:
-    """The Live model tab: second, built of formulas, linked from the Cover, and recalculated by
-    LibreOffice (when installed) to the tariff and equity IRR the app shows."""
-    sheets = _xlsx_sheets(path)
-    names = list(sheets)
-    assert names[:2] == ["Cover", "Live model"], names
-    live = sheets["Live model"]
-    formulas = sum(1 for f, _ in live.values() if f)
-    assert formulas > 1000, formulas
-    label: dict[str, str] = {}  # the first row with each label: the Key results block
-    for addr, (_, v) in sorted(live.items(), key=lambda kv: int(re.sub(r"\D", "", kv[0]))):
-        if re.fullmatch(r"A\d+", addr) and v:
-            label.setdefault(v, addr)
-    row = lambda text: label[text][1:]  # noqa: E731
-    assert abs(float(live[f"C{row('Bid tariff')}"][1]) - tariff) < 0.0006, live[f"C{row('Bid tariff')}"]
-    assert abs(float(live[f"C{row('Equity IRR')}"][1]) - irr) < 0.0006
-    assert live[f"F{row('Equity IRR')}"][1] == "Yes", "the workbook's equity IRR is the app's"
-    assert live[f"C{row('Model checks')}"][1] == "OK"
-    cover_links = [f for f, _ in sheets["Cover"].values() if f and "Live model" in f]
-    assert len(cover_links) >= 10, cover_links
+def _recalculated(path: Path, tmp: Path):
+    """The workbook's sheets after LibreOffice recalculates every formula; None without LibreOffice."""
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if not soffice:
-        return
+        return None
     profile = tmp / "lo-profile"
     (profile / "user").mkdir(parents=True, exist_ok=True)
     (profile / "user" / "registrymodifications.xcu").write_text(
@@ -242,12 +224,53 @@ def _check_live_model(path: Path, *, tariff: float, irr: float, tmp: Path) -> No
     out_dir = tmp / "recalc"
     subprocess.run([soffice, f"-env:UserInstallation=file://{profile}", "--headless", "--calc", "--convert-to", "xlsx",
                     "--outdir", str(out_dir), str(path)], check=True, capture_output=True, timeout=300, env={**os.environ, "HOME": str(tmp)})
-    again = _xlsx_sheets(out_dir / path.name)["Live model"]
-    assert abs(float(again[f"C{row('Bid tariff')}"][1]) - tariff) < 0.0006
-    assert abs(float(again[f"C{row('Equity IRR')}"][1]) - irr) < 0.0006, again[f"C{row('Equity IRR')}"]
-    assert again[f"C{row('Model checks')}"][1] == "OK"
-    errors = [addr for addr, (_, v) in again.items() if isinstance(v, str) and v.startswith("#")]
-    assert not errors, errors[:10]
+    return _xlsx_sheets(out_dir / path.name)
+
+
+def _key_results(live: dict) -> dict[str, tuple[str | None, str | None]]:
+    """The Live model's Key results block: {label: (this workbook, same as app?)}."""
+    rows: dict[int, dict[str, str | None]] = {}
+    for addr, (_, v) in live.items():
+        m = re.fullmatch(r"([A-Z]+)(\d+)", addr)
+        rows.setdefault(int(m.group(2)), {})[m.group(1)] = v
+    out: dict[str, tuple[str | None, str | None]] = {}
+    inside = False
+    for n in sorted(rows):
+        r = rows[n]
+        if r.get("C") == "This workbook":
+            inside = True
+            continue
+        if inside and r.get("A"):
+            out[r["A"]] = (r.get("C"), r.get("F"))
+            if r["A"] == "Model checks":
+                break
+    return out
+
+
+def _check_live_model(path: Path, *, tariff: float, irr: float, tmp: Path, tariff_label: str = "Bid tariff", cover_links: int = 10) -> None:
+    """The Live model tab: second, built of formulas, linked from the Cover; every key result the
+    same as the app's, before and after LibreOffice (when installed) recalculates every formula."""
+    sheets = _xlsx_sheets(path)
+    names = list(sheets)
+    assert names[:2] == ["Cover", "Live model"], names
+    live = sheets["Live model"]
+    formulas = sum(1 for f, _ in live.values() if f)
+    assert formulas > 1000, formulas
+    links = [f for f, _ in sheets["Cover"].values() if f and "Live model" in f]
+    assert len(links) >= cover_links, links
+    books = [("as downloaded", sheets)]
+    again = _recalculated(path, tmp)
+    if again is not None:
+        books.append(("recalculated by LibreOffice", again))
+    for when, book in books:
+        keys = _key_results(book["Live model"])
+        assert abs(float(keys[tariff_label][0]) - tariff) < 0.0006, (when, keys[tariff_label])
+        assert abs(float(keys["Equity IRR"][0]) - irr) < 0.0006, (when, keys["Equity IRR"])
+        assert keys["Model checks"][0] == "OK", when
+        changed = {k: v for k, v in keys.items() if v[1] not in ("Yes", "OK", None)}
+        assert not changed, (when, changed)
+        errors = [addr for addr, (_, v) in book["Live model"].items() if isinstance(v, str) and v.startswith("#")]
+        assert not errors, (when, errors[:10])
 
 
 def test_prefilled_simulation():

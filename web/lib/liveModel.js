@@ -188,7 +188,13 @@ export function addLiveModel(wb, m) {
   const hydro = on.hydro ? plant("hydro") : null;
   const thermal = on.thermal ? plant("thermal") : null;
   const hourly = m.ops.some((o) => finite(o.surplusRevenueCr));
-  const src = (key, fallback = "Your input") => m.sources?.[key] || fallback;
+  // where each input came from: the request names some; sourceAll (Round the clock: the tab) names the rest
+  const src = (key, fallback = "Your input") => m.sources?.[key] || m.sourceAll || fallback;
+  // where the plant and the yearly energy come from: the HiGHS sizing (Tender to Bid) or the
+  // tab's hourly simulation of every year (Round the clock)
+  const sim = m.engine === "simulation";
+  const sized = sim ? "Round the clock plant" : "HiGHS sizing";
+  const meter = m.ops.some((o) => finite(o.meterMWh) && o.meterMWh > 0);
   const ys = Array.from({ length: N }, (_, i) => i + 1);
 
   // ---- title, legend and the year header (frozen)
@@ -196,18 +202,20 @@ export function addLiveModel(wb, m) {
   r.getCell(1).value = m.title || "Bid financial model";
   r.getCell(1).font = { bold: true, size: 16 };
   r = S.next();
-  r.getCell(1).value = "Every number below is a formula on the blue inputs and the optimiser's energy (green). Change a blue cell: the whole model, the returns and the Cover move with it.";
+  r.getCell(1).value = `Every number below is a formula on the blue inputs and the ${sim ? "simulated" : "optimiser's"} energy (green). Change a blue cell: the whole model, the returns and the Cover move with it.`;
   r.getCell(1).font = { color: { argb: "FF555555" } };
   r = S.next();
   r.getCell(1).value = "Colour key";
   r.getCell(1).font = { bold: true };
   S.put(r.getCell(2), { v: "Input", kind: "input" });
-  S.put(r.getCell(3), { v: "Optimiser", kind: "opt" });
+  S.put(r.getCell(3), { v: sim ? "Simulation" : "Optimiser", kind: "opt" });
   S.put(r.getCell(4), { v: "Formula" });
   r.getCell(4).border = { top: THIN, bottom: THIN, left: THIN, right: THIN };
   for (const c of [2, 3, 4]) r.getCell(c).alignment = { horizontal: "center" };
   r = S.next();
-  r.getCell(1).value = "The optimiser's energy comes from the hourly HiGHS dispatch of every year; changing a plant size here moves its cost, not its energy (size the plant again in TenderOS for that).";
+  r.getCell(1).value = sim
+    ? "The energy comes from the Round the clock tab's hourly simulation of every year; changing a plant size here moves its cost, not its energy (change it in the tab for that)."
+    : "The optimiser's energy comes from the hourly HiGHS dispatch of every year; changing a plant size here moves its cost, not its energy (size the plant again in TenderOS for that).";
   r.getCell(1).font = { italic: true, color: { argb: "FF777777" } };
   r = S.next();
   S.yearRow = S.row;
@@ -228,7 +236,7 @@ export function addLiveModel(wb, m) {
   // ---- key results: filled at the end, once every row they read exists
   S.section("Key results");
   const KEYS = [
-    ["tariff", "Bid tariff", "₹/kWh", "tariff"],
+    ["tariff", sim ? "Tariff" : "Bid tariff", "₹/kWh", "tariff"],
     ["equityIrr", "Equity IRR", "%", "pct"],
     ["irrGap", "Equity IRR less the target", "%", "pct"],
     ["projectIrr", "Project IRR", "%", "pct"],
@@ -255,24 +263,24 @@ export function addLiveModel(wb, m) {
   const keyRow0 = S.row + 1;
   S.row += KEYS.length;
   r = S.next();
-  r.getCell(1).value = "To price the bid again after changing an input: Data › What-If Analysis › Goal Seek, set the cell \"Equity IRR less the target\" to 0 by changing the bid tariff.";
+  r.getCell(1).value = `To price ${sim ? "the supply" : "the bid"} again after changing an input: Data › What-If Analysis › Goal Seek, set the cell "Equity IRR less the target" to 0 by changing the ${sim ? "" : "bid "}tariff.`;
   r.getCell(1).font = { italic: true, color: { argb: "FF555555" } };
 
   // ---- inputs
   S.section("Inputs");
   S.group("Tariff");
-  S.one("tariff", "Bid tariff", "₹/kWh", { v: m.tariff, kind: "input", fmt: "tariff", source: m.tariffLocked ? "Fixed by you" : "Solved in TenderOS for the target equity IRR" });
+  S.one("tariff", sim ? "Tariff" : "Bid tariff", "₹/kWh", { v: m.tariff, kind: "input", fmt: "tariff", source: m.tariffLocked ? "Fixed by you" : "Solved in TenderOS for the target equity IRR" });
   S.one("tariffEsc", "Tariff escalation", "%/yr", { v: fi.tariffEscalation || 0, kind: "input", fmt: "pct", source: src("fin.tariffEscalation") });
 
-  S.group("Plant (sized by the optimiser)");
-  if (on.solar) S.one("solarMw", "Solar", "MW", { v: sz.solarMw || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
-  if (on.wind) S.one("windMw", "Wind", "MW", { v: sz.windMw || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
+  S.group(sim ? "Plant (from the Round the clock tab)" : "Plant (sized by the optimiser)");
+  if (on.solar) S.one("solarMw", "Solar", "MW", { v: sz.solarMw || 0, kind: "opt", fmt: "mw", source: sized });
+  if (on.wind) S.one("windMw", "Wind", "MW", { v: sz.windMw || 0, kind: "opt", fmt: "mw", source: sized });
   if (on.biomass) S.one("biomassMw", "Biomass", "MW", { v: sz.biomassMw || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
   if (hydro) S.one("hydroMw", "Hydro", "MW", { v: sz.hydroMw || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
   if (thermal) S.one("thermalMw", "Thermal (non-RE)", "MW", { v: sz.thermalMw || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
   if (on.bess) {
-    S.one("bessMw", "Battery power", "MW", { v: sz.bessMw || 0, kind: "opt", fmt: "mw", source: m.split ? "HiGHS sizing, both sites together" : "HiGHS sizing" });
-    S.one("bessMwh", "Battery energy", "MWh", { v: sz.bessMwh || 0, kind: "opt", fmt: "mw", source: "HiGHS sizing" });
+    S.one("bessMw", "Battery power", "MW", { v: sz.bessMw || 0, kind: "opt", fmt: "mw", source: m.bessNote || (m.split ? `${sized}, both sites together` : sized) });
+    S.one("bessMwh", "Battery energy", "MWh", { v: sz.bessMwh || 0, kind: "opt", fmt: "mw", source: sized });
   }
 
   S.group("Capital cost");
@@ -283,7 +291,7 @@ export function addLiveModel(wb, m) {
   if (thermal) S.one("thermalCapex", "Thermal (non-RE)", "₹ cr/MW", { v: thermal.capexCrPerMw || 0, kind: "input", fmt: "num", source: src("thermal.capex") });
   if (on.bess) {
     S.one("bessCapex", "Battery energy", "₹ cr/MWh", { v: co.bessCrPerMwh || 0, kind: "input", fmt: "num", source: src("bess.capex") });
-    S.one("bessPcs", "Battery power conversion", "₹ cr/MW", { v: co.bessPcsCrPerMw || 0, kind: "input", fmt: "num", source: "Included in the energy price" });
+    S.one("bessPcs", "Battery power conversion", "₹ cr/MW", { v: co.bessPcsCrPerMw || 0, kind: "input", fmt: "num", source: src("costs.bessPcsCrPerMw", "Included in the energy price") });
   }
   S.one("evac", "Transmission / evacuation", "₹ cr", { v: co.evacuationCr || 0, kind: "input", fmt: "cr", source: src("costs.evacuationCr") });
   S.one("preop", "Pre-operative and IDC", "% of hard cost", { v: co.preopPct || 0, kind: "input", fmt: "pct", source: src("costs.preopPct") });
@@ -295,7 +303,7 @@ export function addLiveModel(wb, m) {
   if (on.biomass) S.one("biomassOm", "Biomass O&M", "₹ lakh/MW/yr", { v: fi.biomassOmLakhPerMw || 0, kind: "input", fmt: "num", source: src("biomass.om") });
   S.one("omEsc", "O&M escalation", "%/yr", { v: fi.omEscalation || 0, kind: "input", fmt: "pct", source: src("fin.omEscalation") });
   S.one("insurance", "Insurance", "% of hard cost/yr", { v: fi.insurancePct || 0, kind: "input", fmt: "pct", source: src("fin.insurancePct") });
-  S.one("otherFixed", "Other fixed cost", "₹ cr/yr", { v: fi.otherFixedCr || 0, kind: "input", fmt: "cr", source: "Model default", note: "Escalates with O&M" });
+  S.one("otherFixed", "Other fixed cost", "₹ cr/yr", { v: fi.otherFixedCr || 0, kind: "input", fmt: "cr", source: src("fin.otherFixedCr", "Model default"), note: "Escalates with O&M" });
   if (on.biomass) {
     S.one("fuel", "Biomass fuel", "₹/kWh", { v: fi.biomassFuelRsPerKwh || 0, kind: "input", fmt: "tariff", source: src("biomass.fuel") });
     S.one("fuelEsc", "Biomass fuel escalation", "%/yr", { v: fi.biomassFuelEscalation || 0, kind: "input", fmt: "pct", source: src("biomass.fuelEscalation") });
@@ -316,32 +324,32 @@ export function addLiveModel(wb, m) {
   S.group("Revenue and supply");
   S.one("sell", "Sell surplus in the market", "Yes / No", { v: fi.sellSurplus ? "Yes" : "No", kind: "input", list: ["Yes", "No"], source: src("market.sell") });
   if (!hourly) S.one("flatPrice", "Market sale price", "₹/kWh", { v: fi.surplusPrice || 0, kind: "input", fmt: "tariff", source: fi.sellSurplus ? "Your input (flat price)" : "Not used: no market sale" });
-  S.one("target", "Annual supply floor", "% of contracted", { v: m.dfrTarget || 0, kind: "input", fmt: "pct", source: "Tender" });
-  S.one("penalty", "Shortfall penalty", "₹/kWh short", { v: fi.shortfallPenalty || 0, kind: "input", fmt: "tariff", source: "Model default" });
+  S.one("target", "Annual supply floor", "% of contracted", { v: m.dfrTarget || 0, kind: "input", fmt: "pct", source: src("target", "Tender") });
+  S.one("penalty", "Shortfall penalty", "₹/kWh short", { v: fi.shortfallPenalty || 0, kind: "input", fmt: "tariff", source: src("fin.shortfallPenalty", "Model default") });
 
   if (on.bess) {
     S.group("Battery augmentation");
     S.one("augMethod", "Augmentation", "annual / oneTime / none", { v: bs.augmentation || "none", kind: "input", list: ["annual", "oneTime", "none"], source: src("bess.augmentation") });
     S.one("deg", "Battery capacity fade", "%/yr", { v: bs.annualDegradation || 0, kind: "input", fmt: "pct", source: src("bess.degradation") });
-    S.one("augYear", "One-time augmentation year", "year", { v: bs.augmentationYear || 0, kind: "input", fmt: "int", source: "Model default (used with oneTime)" });
-    S.one("decline", "Battery price decline", "%/yr", { v: bs.costDeclinePct || 0, kind: "input", fmt: "pct", source: "Model default" });
+    S.one("augYear", "One-time augmentation year", "year", { v: bs.augmentationYear || 0, kind: "input", fmt: "int", source: src("bess.augmentationYear", "Model default (used with oneTime)") });
+    S.one("decline", "Battery price decline", "%/yr", { v: bs.costDeclinePct || 0, kind: "input", fmt: "pct", source: src("bess.costDeclinePct", "Model default") });
   }
 
   S.group("Financing");
   S.one("debtPct", "Debt share", "% of project cost", { v: fi.debtFraction, kind: "input", fmt: "pct", source: src("fin.debtFraction") });
   S.one("rate", "Interest rate", "%/yr", { v: fi.interestRate, kind: "input", fmt: "pct", source: src("fin.interestRate") });
   S.one("tenor", "Loan tenor", "years", { v: fi.tenorYears, kind: "input", fmt: "int", source: src("fin.tenorYears") });
-  S.one("repay", "Repayment", "annuity / equal", { v: fi.repayment === "annuity" ? "annuity" : "equal", kind: "input", list: ["annuity", "equal"], source: "Model default" });
+  S.one("repay", "Repayment", "annuity / equal", { v: fi.repayment === "annuity" ? "annuity" : "equal", kind: "input", list: ["annuity", "equal"], source: src("fin.repayment", "Model default") });
   S.one("targetIrr", "Target equity IRR", "%", { v: fi.targetEquityIrr, kind: "input", fmt: "pct", source: src("fin.targetEquityIrr") });
-  S.one("disc", "Discount rate (LCOE, project NPV)", "%", { v: fi.discountRate, kind: "input", fmt: "pct", source: "Model default" });
+  S.one("disc", "Discount rate (LCOE, project NPV)", "%", { v: fi.discountRate, kind: "input", fmt: "pct", source: src("fin.discountRate", "Model default") });
 
   S.group("Tax and depreciation");
   S.one("taxRate", "Corporate tax", "%", { v: fi.taxRate, kind: "input", fmt: "pct", source: src("fin.taxRate") });
-  S.one("taxMethod", "Tax depreciation", "wdv / slm", { v: fi.taxDepreciation === "wdv" ? "wdv" : "slm", kind: "input", list: ["wdv", "slm"], source: "Model default", note: "wdv: written-down value at the WDV rate; slm: the book depreciation" });
-  S.one("wdvRate", "WDV rate", "%/yr", { v: fi.wdvRate, kind: "input", fmt: "pct", source: "Model default" });
-  S.one("bookLife", "Book life", "years", { v: fi.bookLifeYears, kind: "input", fmt: "int", source: "Model default" });
-  S.one("salvage", "Salvage value", "% of project cost", { v: fi.salvagePct, kind: "input", fmt: "pct", source: "Model default" });
-  S.one("recvDays", "Receivable days", "days", { v: fi.receivableDays, kind: "input", fmt: "int", source: "Model default" });
+  S.one("taxMethod", "Tax depreciation", "wdv / slm", { v: fi.taxDepreciation === "wdv" ? "wdv" : "slm", kind: "input", list: ["wdv", "slm"], source: src("fin.taxDepreciation", "Model default"), note: "wdv: written-down value at the WDV rate; slm: the book depreciation" });
+  S.one("wdvRate", "WDV rate", "%/yr", { v: fi.wdvRate, kind: "input", fmt: "pct", source: src("fin.wdvRate", "Model default") });
+  S.one("bookLife", "Book life", "years", { v: fi.bookLifeYears, kind: "input", fmt: "int", source: src("fin.bookLifeYears", "Model default") });
+  S.one("salvage", "Salvage value", "% of project cost", { v: fi.salvagePct, kind: "input", fmt: "pct", source: src("fin.salvagePct", "Model default") });
+  S.one("recvDays", "Receivable days", "days", { v: fi.receivableDays, kind: "input", fmt: "int", source: src("fin.receivableDays", "Model default") });
 
   // ---- project cost and funding
   S.section("Project cost and funding");
@@ -385,7 +393,7 @@ export function addLiveModel(wb, m) {
   S.one("bookDepYr", "Book depreciation a year", "₹ cr/yr", { f: `${S.s("bookBase")}/${S.s("bookLife")}`, v: bookBase / S.v("bookLife"), fmt: "cr" });
 
   // ---- energy from the optimiser
-  S.section("Energy (the optimiser's hourly dispatch, summed by year)");
+  S.section(sim ? "Energy (the hourly simulation of each year, summed)" : "Energy (the optimiser's hourly dispatch, summed by year)");
   const op = (y) => m.ops[y - 1];
   const mu = (x) => (x || 0) / 1000;
   S.series("demand", "Contracted energy", "MU", { v: (y) => mu(op(y).demandMWh), kind: "opt", fmt: "mu", total: true });
@@ -411,6 +419,17 @@ export function addLiveModel(wb, m) {
   if (hydro) S.series("hydroMu", "Hydro energy", "MU", { v: (y) => mu(op(y).hydroMWh), kind: "opt", fmt: "mu", total: true });
   if (thermal) S.series("thermalMu", "Thermal (non-RE) energy", "MU", { v: (y) => mu(op(y).thermalMWh), kind: "opt", fmt: "mu", total: true });
   if (m.split) S.series("wheeledMu", "Sent between the sites to charge a battery", "MU", { v: (y) => mu(op(y).wheeledMWh), kind: "opt", fmt: "mu", total: true });
+  if (meter) {
+    S.series("genBusMu", "Generated at the 33 kV bus", "MU", { v: (y) => mu(op(y).genBusMWh), kind: "opt", fmt: "mu", total: true });
+    S.series("injectedMu", "Injected at the 33 kV bus", "MU", { v: (y) => mu(op(y).injectedMWh), kind: "opt", fmt: "mu", total: true });
+    S.series("trafoLossMu", "Power transformer loss", "MU", { v: (y) => mu(op(y).trafoLossMWh), kind: "opt", fmt: "mu", total: true });
+    S.series("lineLossMu", "Transmission line loss", "MU", { v: (y) => mu(op(y).lineLossMWh), kind: "opt", fmt: "mu", total: true });
+    S.series("meterMu", "At the 220 kV billing meter", "MU", { v: (y) => mu(op(y).meterMWh), kind: "opt", fmt: "mu", total: true });
+    S.series("evacLoss", "Loss from the 33 kV bus to the meter", "% of injected", {
+      f: (y) => `IF(${S.at("injectedMu", y)}>0,(${S.at("trafoLossMu", y)}+${S.at("lineLossMu", y)})/${S.at("injectedMu", y)},0)`,
+      v: (y) => (S.v("injectedMu", y) > 0 ? (S.v("trafoLossMu", y) + S.v("lineLossMu", y)) / S.v("injectedMu", y) : 0), fmt: "pct",
+    });
+  }
 
   // ---- escalation and discount factors
   S.section("Escalation and discount factors");
@@ -817,6 +836,9 @@ export function liveModelInput(raw) {
   const plantIds = ["hydro", "thermal"];
   return {
     title: String(raw.title || "").slice(0, 200),
+    engine: raw.engine === "simulation" ? "simulation" : "highs",
+    bessNote: typeof raw.bessNote === "string" ? raw.bessNote.slice(0, 120) : null,
+    sourceAll: typeof raw.sourceAll === "string" ? raw.sourceAll.slice(0, 80) : null,
     tariff: n(raw.tariff),
     tariffLocked: Boolean(raw.tariffLocked),
     dfrTarget: n(raw.dfrTarget),
@@ -846,7 +868,7 @@ export function liveModelInput(raw) {
       augmentation: ["annual", "oneTime"].includes(raw.bess?.augmentation) ? raw.bess.augmentation : "none",
     },
     ops: raw.ops.slice(0, 60).map((o) => ({
-      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "wheeledMWh"]),
+      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "wheeledMWh", "genBusMWh", "injectedMWh", "trafoLossMWh", "lineLossMWh", "meterMWh"]),
       ...(finite(o?.surplusRevenueCr) ? { surplusRevenueCr: o.surplusRevenueCr } : {}),
     })),
     sources: Object.fromEntries(Object.entries(raw.sources || {}).slice(0, 200)
