@@ -128,18 +128,16 @@ function rampStats(series, mw) {
 }
 
 /** Step 4: the least-tariff plant from the bidder's sources that meets every tender requirement. */
-/** Separate sites: each site's battery and the energy sent between the sites in year 1. */
+/** Separate sites: each site's battery, as HiGHS split it. */
 function SplitSites({ lp }) {
   const z = lp.sizes;
-  const y1 = lp.perYear?.[0] || {};
-  const rs = lp.sites.wheelingRsPerKwh || 0;
+  const share = z.bessMw > 1e-6 ? z.bessWindSiteMw / z.bessMw : 0;
   const hours = (mwh, mw) => (mw > 0.5 ? ` · ${nf(mwh / mw, 1)} h` : "");
   return (
     <div className="rtc-grid rtc-grid-3 bid-split" data-testid="bid-split-sites">
-      <Stat label="Battery at the solar site" value={`${nf(z.bessSolarSiteMw, 0)} MW / ${nf(z.bessSolarSiteMwh, 0)} MWh`} detail={`charges from solar, or from wind sent over${hours(z.bessSolarSiteMwh, z.bessSolarSiteMw)}`} />
-      <Stat label="Battery at the wind site" value={`${nf(z.bessWindSiteMw, 0)} MW / ${nf(z.bessWindSiteMwh, 0)} MWh`} detail={`charges from wind, or from solar sent over${hours(z.bessWindSiteMwh, z.bessWindSiteMw)}`} />
-      <Stat label="Sent between the sites (year 1)" value={`${nf(y1.wheeledMu || 0, 1)} MU`}
-        detail={`${nf(y1.wheelLossMu || 0, 1)} MU lost (${pf(lp.sites.wheelingLossPct, 1)}) · ₹${nf(((y1.wheeledMu || 0) * 1e3 * rs) / 1e4, 1)} cr at ₹${nf(rs, 2)}/kWh`} />
+      <Stat label="Battery at the solar site" value={`${nf(z.bessSolarSiteMw, 0)} MW / ${nf(z.bessSolarSiteMwh, 0)} MWh`} detail={`charges from solar only${hours(z.bessSolarSiteMwh, z.bessSolarSiteMw)}`} />
+      <Stat label="Battery at the wind site" value={`${nf(z.bessWindSiteMw, 0)} MW / ${nf(z.bessWindSiteMwh, 0)} MWh`} detail={`charges from wind only${hours(z.bessWindSiteMwh, z.bessWindSiteMw)}`} />
+      <Stat label="Split between the sites" value={`${nf(share * 100, 0)}% at the wind site`} detail="of the battery MW, decided by HiGHS" />
     </div>
   );
 }

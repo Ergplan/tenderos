@@ -144,9 +144,9 @@ export function defaultBidState() {
     costs: { preopPct: null, evacuationCr: null },
     // sale of what the tender lets the supplier sell (asked only when it allows a sale)
     market: { sell: null, source: "GDAM", escalation: 0, flatPrice: null },
-    // solar and wind on separate sites, each with its own battery; a battery charging from the
-    // other site's output pays the transmission charge and loses a share on the way
-    sites: { split: false, chargeRsPerKwh: null, lossPct: null },
+    // solar and wind on separate sites, each with its own battery that charges from its own site
+    // only; HiGHS decides how much battery goes on each site
+    sites: { split: false },
     tariffLocked: false,
     locks: {},
     lp: null, // last sizing (without the hourly dispatch)
@@ -268,10 +268,6 @@ export function missingInputs(state, terms) {
   for (const f of FINANCE_FIELDS) if (!isNum(state[f.section][f.key])) out.push(`Financing: ${f.label.toLowerCase()}`);
   if (terms?.sale && terms.sale !== "not_allowed" && state.market.sell === null) out.push("Say whether to sell in the market what the tender allows");
   if (state.market.sell && state.market.source === "flat" && !isNum(state.market.flatPrice)) out.push("Market: enter the flat sale price");
-  if (splitSitesOn(state)) {
-    if (!isNum(state.sites.chargeRsPerKwh)) out.push("Separate sites: the transmission charge between the sites");
-    if (!isNum(state.sites.lossPct)) out.push("Separate sites: the transmission loss between the sites");
-  }
   if (!terms?.rules?.length) out.push("The tender sets no supply floor to size for");
   return out;
 }
@@ -417,8 +413,6 @@ export function modelInputs(state, terms) {
     biomassFuelEscalation: on("biomass") ? s.biomass.fuelEscalation : 0,
     solarDegradation: on("solar") ? s.solar.degradation : 0,
     windDegradation: 0,
-    // separate sites: the charge on energy sent between them (the financial model's opex)
-    wheelingRsPerKwh: splitSitesOn(state) ? state.sites.chargeRsPerKwh || 0 : 0,
   };
   const duration = s.bess.duration === "free" ? null : Number(s.bess.duration) || null;
   const bess = {
@@ -520,7 +514,7 @@ export function lpPayload(state, terms, { solarCf, windCf }, prices = null) {
       payload.ctx.extraExportMw = m.vars.solarMw.locked ? m.vars.solarMw.value : m.vars.solarMw.max;
     }
   }
-  if (splitSitesOn(state)) payload.sites = { split: true, wheelingRsPerKwh: state.sites.chargeRsPerKwh, wheelingLossPct: state.sites.lossPct };
+  if (splitSitesOn(state)) payload.sites = { split: true };
   if (rules.some((r) => r.hours === "peak")) payload.peakMask = Array.from(peakMask(terms.peak));
   else if (rules.some((r) => r.hours === "any") && terms.peak?.windows?.length) payload.peakMask = Array.from(anyMask(terms.peak));
   return payload;
@@ -639,7 +633,6 @@ export function opsFromLp(lp, fin, bess) {
       biomassMWh: row.biomassMwh || 0,
       hydroMWh: row.hydroMwh || 0,
       thermalMWh: row.thermalMwh || 0,
-      wheeledMWh: row.wheeledMwh || 0, // sent between separate sites to charge a battery
       // surplus sale revenue at the hourly market price, when the sizing used one
       ...(lp.market && row.exportRevenueCr !== undefined ? { surplusRevenueCr: row.exportRevenueCr } : {}),
     };

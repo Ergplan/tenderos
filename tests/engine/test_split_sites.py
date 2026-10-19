@@ -1,6 +1,6 @@
-"""Split sites in the sizing LP (Tender to Bid): solar and wind on separate sites, each with its
-own battery; a battery charging from the other site's output pays a transmission charge and
-loses a share of the energy sent."""
+"""Split sites in the sizing LP: solar and wind on separate sites, each with its own battery, which
+charges only from its own site (solar never charges the wind-site battery, nor wind the solar-site
+battery). HiGHS decides how much battery goes on each site."""
 from __future__ import annotations
 
 import numpy as np
@@ -39,13 +39,8 @@ def colocated():
 
 
 @pytest.fixture(scope="module")
-def free_wheeling():
-    return M.solve(_payload({"split": True, "wheelingRsPerKwh": 0.0, "wheelingLossPct": 0.0}))
-
-
-@pytest.fixture(scope="module")
-def cheap():
-    return M.solve(_payload({"split": True, "wheelingRsPerKwh": 0.2, "wheelingLossPct": 0.05}))
+def split():
+    return M.solve(_payload({"split": True}))
 
 
 def test_split_off_is_the_colocated_model(colocated):
@@ -55,58 +50,37 @@ def test_split_off_is_the_colocated_model(colocated):
     assert off["model"] == colocated["model"]
 
 
-def test_free_lossless_transmission_matches_one_colocated_battery(colocated, free_wheeling):
-    # two batteries that charge from either site at no cost and no loss are as good as one
-    assert free_wheeling["tariff"] == pytest.approx(colocated["tariff"], abs=0.003)
-    z = free_wheeling["sizes"]
-    assert z["bessMw"] == pytest.approx(z["bessSolarSiteMw"] + z["bessWindSiteMw"])
-    assert z["bessMwh"] == pytest.approx(z["bessSolarSiteMwh"] + z["bessWindSiteMwh"])
-    assert z["bessSolarSiteMwh"] == pytest.approx(4 * z["bessSolarSiteMw"], rel=1e-6), "each battery keeps the duration"
-    assert free_wheeling["sites"]["split"] is True
-
-
-def test_charges_and_losses_only_raise_the_tariff_and_cut_what_is_sent(free_wheeling, cheap):
-    dear = M.solve(_payload({"split": True, "wheelingRsPerKwh": 3.0, "wheelingLossPct": 0.05}))
-    tol = 0.003  # HiGHS gap tolerance and tie-breaking
-    assert cheap["tariff"] >= free_wheeling["tariff"] - tol
-    assert dear["tariff"] >= cheap["tariff"] - tol
-    sent = lambda r: sum(row["wheeledMu"] for row in r["perYear"])  # noqa: E731
-    assert sent(dear) <= sent(cheap) + 1e-6
-    # at ₹3/kWh hardly anything is worth sending: each site charges its own battery
-    assert sent(dear) <= 0.02 * max(1e-9, sum(row["deliveredMu"] for row in dear["perYear"]))
-    for r in (cheap, dear):
-        assert all(rule["met"] for row in r["perYear"] for rule in row["rules"]), "the tender floors still hold"
-
-
-def test_energy_balance_of_each_site(cheap):
-    r = cheap
+def test_each_battery_charges_from_its_own_site_only(split):
+    r = split
     h = {k: np.asarray(v) for k, v in r["hourly"].items() if isinstance(v, list)}
     z = r["sizes"]
     tol = 0.02  # outputs are rounded to 0.01 MW
-    # what reaches a battery is within its MW, and the energy sent arrives less the loss
-    assert (h["chargeSolarSite"] <= z["bessSolarSiteMw"] + tol).all()
-    assert (h["chargeWindSite"] <= z["bessWindSiteMw"] + tol).all()
-    assert (h["dischargeSolarSite"] <= z["bessSolarSiteMw"] + tol).all()
-    assert (h["dischargeWindSite"] <= z["bessWindSiteMw"] + tol).all()
-    # charging uses no more of a site's output than it makes
-    assert (h["sentToWindSite"] <= h["solar"] + tol).all()
-    assert (h["sentToSolarSite"] <= h["wind"] + tol).all()
-    # the generation given up for charging includes the energy lost on the way
-    lost = 0.05 * (h["sentToSolarSite"] + h["sentToWindSite"])
-    assert h["charge"] == pytest.approx(h["chargeSolarSite"] + h["chargeWindSite"] + lost, abs=0.05)
+    # the solar-site battery charges from solar, the wind-site battery from wind, hour by hour
+    assert (h["chargeSolarSite"] <= h["solar"] + tol).all()
+    assert (h["chargeWindSite"] <= h["wind"] + tol).all()
+    night = h["solar"] < 1e-6
+    assert (h["chargeSolarSite"][night] <= tol).all(), "no solar, no charging at the solar site"
+    calm = h["wind"] < 1e-6
+    assert (h["chargeWindSite"][calm] <= tol).all(), "no wind, no charging at the wind site"
+    assert not any(k.startswith("sentTo") for k in h), "nothing is sent between the sites"
+    # each battery within its MW; the two together are the plant's battery
+    for k, mw in (("chargeSolarSite", "bessSolarSiteMw"), ("dischargeSolarSite", "bessSolarSiteMw"), ("chargeWindSite", "bessWindSiteMw"), ("dischargeWindSite", "bessWindSiteMw")):
+        assert (h[k] <= z[mw] + tol).all(), k
+    assert h["charge"] == pytest.approx(h["chargeSolarSite"] + h["chargeWindSite"], abs=0.05)
     assert h["discharge"] == pytest.approx(h["dischargeSolarSite"] + h["dischargeWindSite"], abs=0.02)
-    year1 = r["perYear"][0]
-    assert year1["wheeledMu"] == pytest.approx((h["sentToSolarSite"].sum() + h["sentToWindSite"].sum()) / 1000, rel=1e-3, abs=1e-3)
-    assert year1["wheelLossMu"] == pytest.approx(0.05 * year1["wheeledMu"])
-    assert all("wheeledMwh" in row for row in r["lifetime"])
+    assert z["bessMw"] == pytest.approx(z["bessSolarSiteMw"] + z["bessWindSiteMw"])
+    assert z["bessMwh"] == pytest.approx(z["bessSolarSiteMwh"] + z["bessWindSiteMwh"])
+    assert r["sites"] == {"split": True}
+    assert all("wheeledMu" not in row for row in r["perYear"]) and all("wheeledMwh" not in row for row in r["lifetime"])
+    assert all(rule["met"] for row in r["perYear"] for rule in row["rules"]), "the tender floors still hold"
 
 
-@pytest.mark.parametrize("sites", [
-    {"split": True, "wheelingLossPct": 0.03},
-    {"split": True, "wheelingRsPerKwh": -1, "wheelingLossPct": 0.03},
-    {"split": True, "wheelingRsPerKwh": 0.5},
-    {"split": True, "wheelingRsPerKwh": 0.5, "wheelingLossPct": 0.6},
-])
-def test_split_sites_need_the_charge_and_the_loss(sites):
-    with pytest.raises(M.LpInputError):
-        M.solve(_payload(sites))
+def test_separate_sites_cost_no_less_than_one_site(colocated, split):
+    # one site lets the battery charge from both; separate sites can only cost as much or more
+    assert split["tariff"] >= colocated["tariff"] - 0.003  # HiGHS gap tolerance and tie-breaking
+
+
+def test_a_transmission_charge_from_an_older_request_is_ignored(split):
+    old = M.solve(_payload({"split": True, "wheelingRsPerKwh": 2.0, "wheelingLossPct": 0.2}))
+    assert old["tariff"] == pytest.approx(split["tariff"], abs=1e-9)
+    assert old["sites"] == {"split": True}

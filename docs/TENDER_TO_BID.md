@@ -227,15 +227,14 @@ the tab computed:
     by changing the bid tariff).
   * *Inputs* in blue on yellow: tariff and escalation; capex by source, evacuation and
     pre-operative cost; O&M, insurance, other fixed cost, biomass fuel, hydro and thermal charges
-    and RECs, the transmission charge between separate sites; market sale (Yes / No) and its
+    and RECs; market sale (Yes / No) and its
     price, the supply floor and shortfall penalty; battery augmentation (annual / oneTime /
     none), fade, year and price decline; debt share, interest, tenor, repayment (annuity /
     equal), target IRR, discount rate; tax, tax depreciation (wdv / slm), WDV rate, book life,
     salvage and receivable days. Choices are drop-down lists. Each input says where it came from
     (your input, industry benchmark, model default, tender).
   * *From the optimiser* in green: the sizes, and by year the contracted, delivered and sold
-    energy, the realised hourly market price, biomass, hydro and thermal energy and the energy
-    sent between sites. These come from the HiGHS dispatch; changing a size moves its cost, not
+    energy, the realised hourly market price, and biomass, hydro and thermal energy. These come from the HiGHS dispatch; changing a size moves its cost, not
     its energy (size again in TenderOS for that).
   * *Formulas* in black: project cost and funding, escalation and discount factors, revenue,
     operating costs by line, EBITDA, battery augmentation, book depreciation (with augmentation
@@ -254,7 +253,7 @@ the tab computed:
 * **Round the clock** downloads the same workbook from its financial model (F.4, **Download
   financial model (Excel)**, `POST /api/rtc/model`): no tender conditions sheet, the energy from
   the tab's hourly simulation of every year (green), with the 33 kV bus to 220 kV meter lines, and
-  the transmission charge when solar and wind are on separate sites.
+  each site's battery when solar and wind are on separate sites.
 * **Revenue and costs (values)**: the app's numbers when the workbook was made; year by year, PPA supply revenue, market sale revenue, penalties, O&M,
   insurance, other fixed cost, biomass fuel, hydro and thermal costs (with RECs), augmentation.
 * **Financial model (values)**: the app's numbers; energy and tariff, revenue, operating costs, profit and loss, cash flow
@@ -297,68 +296,44 @@ Biomass may charge the battery; its surplus is curtailed (only what the tender a
 
 On the Supply sources step, **Solar and wind sites → Separate sites** applies when the bid has
 solar, wind and a battery. It sizes a plant whose solar and wind are on different sites, each with
-its own battery. Once you choose it, two fields are asked for:
+its own battery. Nothing more is asked for.
 
-* **Transmission charge between the sites**, in ₹/kWh. It applies to every kWh sent from one site
-  to charge the other site's battery.
-* **Transmission loss between the sites**, in %. It is the share of the energy sent that does not
-  arrive.
+**The rule:** each battery charges only from its own site. Solar cannot charge the wind-site
+battery, and wind cannot charge the solar-site battery. No energy is sent between the sites to
+charge a battery, so there is no transmission charge or loss between them.
 
-There is no benchmark for either value, because both depend on the route between your sites.
+In the sizing LP (`engine/sizing/rtc_lp.py`, `payload.sites = { split: true }`), each modelled
+hour works like this:
 
-In the sizing LP (`engine/sizing/rtc_lp.py`, `payload.sites`), each modelled hour works like this:
-
-* **Charging.** The solar-site battery charges from solar (free), or from wind sent over the grid.
-  The wind-site battery charges from wind, or from solar sent over.
-* **Charge and loss.** Energy sent between the sites pays the charge on every MWh sent, and only
-  (1 − loss) of it reaches the battery.
-* **Site output.** Each site's charging stays within its own output.
-* **Delivery.** It counts both batteries' discharge.
+* **Charging.** The solar-site battery charges from solar only (charge ≤ solar output), and the
+  wind-site battery from wind only (charge ≤ wind output).
+* **Delivery.** Both sites serve the customer, and both batteries discharge into the delivery.
 * **Other plants.** Biomass, hydro and thermal feed the delivery point and do not charge the
   batteries in this mode.
 
-HiGHS sizes both batteries. That decides how much storage goes to each site, and when charging from
-the other site is worth its charge and loss.
-
-The battery range and duration you enter apply to the two batteries together; each battery keeps
-the duration. The transmission charge enters the financial model as an operating cost of
-energy sent × charge (`wheeling` in `runFinancialModel`, and a line in the Excel model). The Size
-step shows each site's battery and the energy sent between the sites.
-
-**Example.** On the NHPC FDRE-II RfS at ₹0.50/kWh and 3% loss, with solar, wind and battery at the
-benchmarks:
-* **The batteries:** 789 MW / 3,154 MWh at the solar site and 136 MW / 544 MWh at the wind site.
-* **Sent between the sites:** 7.2 MU in year 1.
-* **The tariff:** ₹5.436/kWh, against ₹5.435 on one site. All 7 conditions are met.
-* **Run time:** about 5.5 minutes, against about 50 s on one site.
+HiGHS sizes both batteries, which decides how much storage goes to each site. The battery range
+and duration you enter apply to the two batteries together; each battery keeps the duration. The
+Size step shows each site's battery and the split. On one site the battery can charge from both,
+so separate sites never cost less.
 
 The 15-minute dispatch models one battery site and is not offered for separate sites yet.
 
-**Round the clock tab.** The Battery chapter has the same switch and the same two fields. The tab's
+**Round the clock tab.** The Battery chapter has the same switch and nothing to enter. The tab's
 answer comes from its own search, which is seeded by HiGHS, and from the browser's hour-by-hour
 dispatch (`simulate` in `web/src/rtc/engine.js`). With separate sites:
 
-* **The battery split.** The battery is divided between the sites by a wind-site share, and the
-  share is one more variable of the search. HiGHS's two-battery optimum seeds it, and the search
-  then sweeps it from 0 to 100%.
-* **Dispatch rule.** Each hour, a site's surplus charges its own battery first. Surplus that
-  battery cannot take is sent to the other site's battery, paying the charge and losing the loss.
-  A deficit is served by both batteries.
-* **Costs.** The screening cost and the 25-year model include the transmission charge.
-
-**Example: the default Beed case** at ₹0.50/kWh and 3% loss:
-* **The plant:** solar 700 MW, wind 460 MW, battery 410 MW / 1,640 MWh, all of it at the solar
-  site, charging 9.8 MU of wind a year over the link.
-* **The tariff:** ₹5.708/kWh, against ₹5.705 for the same plant on one site.
-* **Run time:** about 4.5 minutes with HiGHS, against about 50 s on one site.
+* **The battery split.** The battery is divided between the sites by a wind-site share, which the
+  optimizer decides: HiGHS's two-battery optimum seeds it, and the search then sweeps it from 0 to
+  100%. It is not an input; the Battery chapter shows each site's battery and the split.
+* **Dispatch rule.** Each hour, solar's surplus charges the solar-site battery and wind's surplus
+  the wind-site battery, as far as each can take it; the rest is sold or curtailed. A deficit is
+  served by both batteries.
 
 `tools/check_rtc_engine.mjs` checks the following:
-* all the battery at the solar site with a lossless link dispatches exactly as one site;
-* a loss never adds energy;
-* generation still balances;
-* the charge is in the 25-year model;
-* the optimizer searches the split;
-* the LP request carries the sites.
+* with all the battery at one site, it charges hour by hour from that site's output only, and
+  never in an hour only the other site produces;
+* separate sites never deliver more than one site, and generation still balances;
+* the optimizer sweeps the split, and the HiGHS request carries `{ split: true }` only.
 
 ## Surplus sold on IEX
 
@@ -418,13 +393,12 @@ python tools/build_iex_prices.py --gdam GDAM.xlsx --dam DAM.xlsx --rtm RTM.xlsx 
 
 * `tests/engine/test_split_sites.py` (`make test-slow`, several minutes) checks separate sites:
   * switched off, it gives exactly the one-site model;
-  * with no charge and no loss, the tariff equals one co-located battery;
-  * charges and losses only raise the tariff and cut the energy sent;
-  * each site's battery balances hour by hour;
-  * the charge and the loss are required.
+  * each battery charges from its own site only, hour by hour (none at the solar site at night,
+    none at the wind site in calm hours), within its MW;
+  * separate sites cost no less than one site, and the tender floors still hold;
+  * a transmission charge in an older request is ignored.
 
-  `tools/check_bid_model.mjs` checks the two inputs, the request and the charge in the financial
-  model.
+  `tools/check_bid_model.mjs` checks that nothing more is asked for and the request.
 * `tests/engine/test_preview.py`: the scan screen's preview. Every line is on its page, a job
   shows it before the result, and text uploads work.
 * `tools/check_scan_agents.mjs`: which agent reports which field, with its page; the "Not read"

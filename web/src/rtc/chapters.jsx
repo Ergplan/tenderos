@@ -345,9 +345,8 @@ export function ResourceChapter({ kind, state, patch, set, setVar, lockProps, is
 // ---------------------------------------------------------------- 06 battery
 
 /** Solar and wind on one site, or on separate sites with a battery at each (Battery chapter). */
-function SitesBlock({ state, patch, setVar, sizes, sim }) {
+function SitesBlock({ state, patch, sizes }) {
   const sites = state.sites || {};
-  const ready = E.splitSitesReady(sites);
   const share = Math.min(1, Math.max(0, sizes.bessWindShare ?? 0.5));
   const at = (k) => (sizes[k] || 0) * share;
   return (
@@ -355,7 +354,7 @@ function SitesBlock({ state, patch, setVar, sizes, sim }) {
       <div className="duration-pick">
         <div>
           <span className="duration-label">Solar and wind sites</span>
-          <p>On one site the battery charges from both. On separate sites each site has its own battery; a battery charging from the other site's output pays the transmission charge and loses a share on the way. The optimizer decides how much battery goes to each site.</p>
+          <p>On one site the battery charges from both. On separate sites each site has its own battery, and each battery charges only from its own site: solar cannot charge the wind-site battery and wind cannot charge the solar-site battery. The optimizer decides how much battery goes to each site.</p>
         </div>
         <div className="seg seg-strong duration-seg" role="radiogroup" aria-label="Solar and wind sites">
           <button type="button" role="radio" aria-checked={!sites.split} className={!sites.split ? "active" : ""} onClick={() => patch("sites", { split: false })} data-testid="rtc-sites-one">One site</button>
@@ -363,28 +362,10 @@ function SitesBlock({ state, patch, setVar, sizes, sim }) {
         </div>
       </div>
       {sites.split && (
-        <div className="rtc-grid rtc-grid-3">
-          <div data-testid="rtc-wheel-charge">
-            <Field label="Transmission charge between the sites" unit="₹/kWh" value={sites.chargeRsPerKwh} onChange={(v) => patch("sites", { chargeRsPerKwh: v })} step={0.05} min={0}
-              hint="On every kWh sent from one site to charge the other site's battery" />
-          </div>
-          <div data-testid="rtc-wheel-loss">
-            <Field label="Transmission loss between the sites" pct value={sites.lossPct} onChange={(v) => patch("sites", { lossPct: v })} step={0.1} min={0} max={49}
-              hint="Share of the energy sent that does not arrive" />
-          </div>
-          <div data-testid="rtc-wind-share">
-            <Field label="Battery at the wind site" pct value={state.vars.bessWindShare?.value ?? 0.5} onChange={(v) => setVar("bessWindShare", { value: Math.min(1, Math.max(0, v)) })} step={5} min={0} max={100}
-              hint="Share of the battery MW and MWh; the optimizer searches it" />
-          </div>
-        </div>
-      )}
-      {sites.split && !ready && <p className="rtc-note warn" data-testid="rtc-sites-missing">Enter the transmission charge and loss between the sites: until then the plant is modelled on one site.</p>}
-      {ready && (
         <div className="rtc-grid rtc-grid-3" data-testid="rtc-sites-result">
-          <Stat label="Battery at the solar site" value={`${nf(sizes.bessMw - at("bessMw"))} MW / ${nf(sizes.bessMwh - at("bessMwh"))} MWh`} detail="charges from solar, or from wind sent over" />
-          <Stat label="Battery at the wind site" value={`${nf(at("bessMw"))} MW / ${nf(at("bessMwh"))} MWh`} detail="charges from wind, or from solar sent over" />
-          <Stat label="Sent between the sites · year 1" value={`${nf((sim.wheeledMWh || 0) / 1000, 1)} MU`}
-            detail={`${nf((sim.wheelLossMWh || 0) / 1000, 1)} MU lost · ₹${nf(((sim.wheeledMWh || 0) * (sites.chargeRsPerKwh || 0)) / 1e4, 1)} cr`} />
+          <Stat label="Battery at the solar site" value={`${nf(sizes.bessMw - at("bessMw"))} MW / ${nf(sizes.bessMwh - at("bessMwh"))} MWh`} detail="charges from solar only" />
+          <Stat label="Battery at the wind site" value={`${nf(at("bessMw"))} MW / ${nf(at("bessMwh"))} MWh`} detail="charges from wind only" />
+          <Stat label="Split between the sites" value={`${nf(share * 100)}% at the wind site`} detail="decided by the optimizer: run it after changing the plant" />
         </div>
       )}
     </div>
@@ -420,7 +401,7 @@ export function BessChapter({ state, patch, setVar, lockProps, sizes, sim }) {
         </div>
         <LockButton {...{ locked: lockProps("bess.durationH").locked, onToggle: lockProps("bess.durationH").onLock }} title="Lock the discharge duration" />
       </div>
-      <SitesBlock state={state} patch={patch} setVar={setVar} sizes={sizes} sim={sim} />
+      <SitesBlock state={state} patch={patch} sizes={sizes} />
       <div className="rtc-grid rtc-grid-3">
         <SizeCard label="Power" unit="MW" spec={state.vars.bessMw} onChange={(v) => setVar("bessMw", v)} color={color} />
         <div className="size-card derived" style={{ "--chapter": color }}>

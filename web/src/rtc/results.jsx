@@ -36,7 +36,7 @@ export function Answer({ sizes, sim, finance, capex, inputs, revealKey, optimize
     { key: "wind", label: "Wind", icon: Wind, color: DATA_COLORS.wind, value: sizes.windMw, unit: "MW" },
     { key: "bess", label: "Battery", icon: BatteryCharging, color: DATA_COLORS.bess, value: sizes.bessMw, unit: "MW",
       extra: split
-        ? `${nf(sizes.bessMwh)} MWh · ${nf(sizes.bessMw * (1 - (sizes.bessWindShare ?? 0.5)))} MW at the solar site, ${nf(sizes.bessMw * (sizes.bessWindShare ?? 0.5))} MW at the wind site · ${nf((sim.wheeledMWh || 0) / 1000, 1)} MU sent between the sites`
+        ? `${nf(sizes.bessMwh)} MWh · ${nf(sizes.bessMw * (1 - (sizes.bessWindShare ?? 0.5)))} MW at the solar site, ${nf(sizes.bessMw * (sizes.bessWindShare ?? 0.5))} MW at the wind site, each charging from its own site only`
         : `${nf(sizes.bessMwh)} MWh · ${nf(dur, 1)} h` },
   ];
   return (

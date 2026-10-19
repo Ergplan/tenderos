@@ -7,7 +7,7 @@
 /** The financial inputs the Live model sheet reads. */
 export const LIVE_FIN_KEYS = [
   "tariffEscalation", "solarOmLakhPerMw", "windOmLakhPerMw", "bessOmLakhPerMwh", "biomassOmLakhPerMw", "omEscalation", "insurancePct", "otherFixedCr",
-  "biomassFuelRsPerKwh", "biomassFuelEscalation", "wheelingRsPerKwh", "sellSurplus", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
+  "biomassFuelRsPerKwh", "biomassFuelEscalation", "sellSurplus", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
   "tenorYears", "repayment", "targetEquityIrr", "discountRate", "taxRate", "taxDepreciation", "wdvRate", "bookLifeYears", "salvagePct", "receivableDays",
 ];
 
@@ -38,8 +38,8 @@ const pct = (v, d = 1) => `${(v * 100).toFixed(d)}%`;
 
 /**
  * The workbook request for the Round the clock plant and its financial model.
- * fin: the model's financial inputs (with demandGrowth and the transmission charge), bess: the
- * battery at the 33 kV bus, sites: { split, chargeRsPerKwh, lossPct } or null.
+ * fin: the model's financial inputs (with demandGrowth), bess: the battery at the 33 kV bus,
+ * sites: { split: true } for solar and wind on separate sites, or null.
  */
 export function rtcModelExport({ inputs, sizes, costs, fin, bess, sites, finance }) {
   const y1 = finance.rows[0];
@@ -81,7 +81,7 @@ export function rtcModelExport({ inputs, sizes, costs, fin, bess, sites, finance
     ...(split ? [
       ["Battery at the solar site (MW / MWh)", `${Math.round(sizes.bessMw * (1 - share))} MW / ${Math.round(sizes.bessMwh * (1 - share))} MWh`, "text"],
       ["Battery at the wind site (MW / MWh)", `${Math.round(sizes.bessMw * share)} MW / ${Math.round(sizes.bessMwh * share)} MWh`, "text"],
-      ["Transmission between the sites", `₹${sites.chargeRsPerKwh}/kWh sent, ${pct(sites.lossPct)} lost`, "text", "solar and wind on separate sites"],
+      ["Separate sites", "each battery charges from its own site only", "text", "split decided by the optimizer"],
     ] : []),
   ];
   const keyInputs = [
@@ -113,8 +113,6 @@ export function rtcModelExport({ inputs, sizes, costs, fin, bess, sites, finance
   add("Plant", "Battery energy", sizes.bessMwh, "MWh");
   if (split) {
     add("Separate sites", "Battery share at the wind site", share, "%");
-    add("Separate sites", "Transmission charge", sites.chargeRsPerKwh, "₹/kWh");
-    add("Separate sites", "Transmission loss", sites.lossPct, "%");
   }
   add("Battery", "Round-trip efficiency at the 33 kV bus", bess.rte, "%");
   add("Battery", "Capacity fade", bess.annualDegradation || 0, "%");
@@ -151,12 +149,11 @@ export function rtcModelExport({ inputs, sizes, costs, fin, bess, sites, finance
     ["Power transformer loss", "trafoLossMu", "mu", "MU"], ["Transmission line loss", "lineLossMu", "mu", "MU"], ["At the 220 kV billing meter", "meterMu", "mu", "MU"],
     ["Delivered to the customer", "deliveredMu", "mu", "MU"], ["DFR (delivered ÷ demand)", "dfr", "pct", "", false],
     ["Surplus sold", "excessMu", "mu", "MU"], ["Curtailed", "curtailMu", "mu", "MU"], ["Shortfall vs target", "shortfallMu", "mu", "MU"],
-    ...(split ? [["Sent between the sites to charge a battery", "wheeledMu", "mu", "MU"]] : []),
     ["Tariff", "tariff", "tariff", "₹/kWh", false],
   ] };
   const revenue = { title: "Revenue", lines: [["Energy revenue", "energyRevenue"], ["Surplus sale revenue", "surplusRevenue"], ["Shortfall penalty", "penalty"], ["Total revenue", "revenue"]] };
   const costsSection = { title: "Operating costs", lines: [
-    ["O&M", "om"], ["Insurance", "insurance"], ["Other fixed cost", "other"], ...(split ? [["Transmission charge between the sites", "wheeling"]] : []), ["Total operating cost", "opex"],
+    ["O&M", "om"], ["Insurance", "insurance"], ["Other fixed cost", "other"], ["Total operating cost", "opex"],
   ] };
   const statements = [
     energy, revenue, costsSection,
@@ -195,7 +192,7 @@ export function rtcModelExport({ inputs, sizes, costs, fin, bess, sites, finance
       bess: pick(bess, ["annualDegradation", "augmentation", "augmentationYear", "costDeclinePct"]),
       // the year-by-year energy of the tab's hourly simulation, from the model's own rows
       ops: finance.rows.map((r) => ({
-        demandMWh: mwh(r.demandMu), deliveredMWh: mwh(r.deliveredMu), excessMWh: mwh(r.excessMu), wheeledMWh: mwh(r.wheeledMu),
+        demandMWh: mwh(r.demandMu), deliveredMWh: mwh(r.deliveredMu), excessMWh: mwh(r.excessMu),
         genBusMWh: mwh(r.genBusMu), injectedMWh: mwh(r.injectedMu), trafoLossMWh: mwh(r.trafoLossMu), lineLossMWh: mwh(r.lineLossMu), meterMWh: mwh(r.meterMu),
       })),
       app: liveResults(finance, fin),

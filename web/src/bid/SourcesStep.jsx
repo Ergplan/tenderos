@@ -169,21 +169,9 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
             </div>
             <small>{splitPossible ? "Separate sites: a battery at the solar site and one at the wind site" : "Needs solar, wind and a battery in the bid"}</small>
           </div>
-          {splitSitesOn(state) && (
-            <div data-testid="bid-wheel-charge">
-              <Field label="Transmission charge between the sites" unit="₹/kWh" value={state.sites.chargeRsPerKwh} onChange={(v) => setSites({ chargeRsPerKwh: v })} step={0.05} min={0}
-                hint="On every kWh sent from one site to charge the other site's battery" />
-            </div>
-          )}
-          {splitSitesOn(state) && (
-            <div data-testid="bid-wheel-loss">
-              <Field label="Transmission loss between the sites" pct value={state.sites.lossPct} onChange={(v) => setSites({ lossPct: v })} step={0.1} min={0} max={49}
-                hint="Share of the energy sent that does not arrive" />
-            </div>
-          )}
         </div>
         {splitSitesOn(state) && (
-          <p className="rtc-note">HiGHS sizes both batteries and decides, hour by hour, whether a battery charges from its own site's output or from the other site's. Energy sent between the sites pays the transmission charge and arrives less the loss. The battery size and duration you set apply to the two batteries together; each keeps the duration. Sizing two sites takes several minutes.</p>
+          <p className="rtc-note" data-testid="bid-sites-rule">Each battery charges only from its own site: solar cannot charge the wind-site battery and wind cannot charge the solar-site battery. HiGHS decides how much battery goes on each site. The battery size and duration you set apply to the two batteries together; each keeps the duration. Sizing two sites takes several minutes.</p>
         )}
       </Section>
 

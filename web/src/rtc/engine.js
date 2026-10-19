@@ -634,19 +634,17 @@ export function simulate(ctx, sizes, opts = {}) {
   const socMax = E * bess.maxSoc;
   let soc = Math.min(socMax, Math.max(socMin, E * bess.initSoc));
   // Separate sites (ctx.sites.split): solar and wind on different sites, the battery split
-  // between them by sizes.bessWindShare (MW and MWh alike). Each site's surplus charges its own
-  // battery first; what it cannot take is sent to the other site's battery, paying the
-  // transmission charge and arriving less the loss. A deficit draws on both batteries.
+  // between them by sizes.bessWindShare (MW and MWh alike; the optimizer decides it). Each
+  // battery charges only from its own site: solar's surplus charges the solar-site battery, wind's
+  // the wind-site battery, never the other way round. A deficit draws on both batteries.
   const split = Boolean(ctx.sites?.split);
   const share = split ? Math.min(1, Math.max(0, sizes.bessWindShare ?? 0.5)) : 0;
-  const arrive = split ? 1 - Math.min(0.5, Math.max(0, ctx.sites.lossPct || 0)) : 1;
   const BA = B * (1 - share);
   const BB = B * share;
   const EA = E * (1 - share);
   const EB = E * share;
   let socA = EA * Math.min(bess.maxSoc, Math.max(bess.minSoc, bess.initSoc));
   let socB = EB * Math.min(bess.maxSoc, Math.max(bess.minSoc, bess.initSoc));
-  let tWheeled = 0;
   const hourly = opts.hourly;
   const H = hourly
     ? {
@@ -699,27 +697,21 @@ export function simulate(ctx, sizes, opts = {}) {
     let dis = 0;
     const deficit = target - direct;
     if (split) {
-      // what each battery can still take (as energy arriving at it)
+      // what each battery can still take
       const roomA = EA > 0 ? Math.max(0, Math.min(BA, (EA * bess.maxSoc - socA) / eta)) : 0;
       const roomB = EB > 0 ? Math.max(0, Math.min(BB, (EB * bess.maxSoc - socB) / eta)) : 0;
-      let chA = 0;
-      let chB = 0;
-      let sentA = 0; // wind sent to the solar-site battery
-      let sentB = 0; // solar sent to the wind-site battery
       if (surplus > 0) {
-        // the surplus is split between the sites so that each battery charges locally first
+        // the customer is served from both sites; the surplus is split between them (solar's
+        // part ss, wind's part surplus - ss) so that each battery takes as much of its own site's
+        // surplus as it can: ss as close to the solar-site battery's room as solar allows
         const ssLo = Math.max(0, surplus - w);
         const ssHi = Math.min(s, surplus);
         const ss = Math.min(ssHi, Math.max(ssLo, roomA));
-        const ws = surplus - ss;
-        chA = Math.min(ss, roomA);
-        chB = Math.min(ws, roomB);
-        if (ss - chA > 0 && roomB - chB > 1e-12 && arrive > 0) sentB = Math.min(ss - chA, (roomB - chB) / arrive);
-        if (ws - chB > 0 && roomA - chA > 1e-12 && arrive > 0) sentA = Math.min(ws - chB, (roomA - chA) / arrive);
-        socA += (chA + sentA * arrive) * eta;
-        socB += (chB + sentB * arrive) * eta;
-        ch = chA + chB + sentA + sentB; // taken from generation, before the transmission loss
-        tWheeled += sentA + sentB;
+        const chA = Math.min(ss, roomA);
+        const chB = Math.min(surplus - ss, roomB);
+        socA += chA * eta;
+        socB += chB * eta;
+        ch = chA + chB;
       }
       if (deficit > 0) {
         const avA = EA > 0 ? Math.max(0, Math.min(BA, (socA - EA * bess.minSoc) * eta)) : 0;
@@ -830,9 +822,6 @@ export function simulate(ctx, sizes, opts = {}) {
     unmetMWh: tUnmet,
     demandAboveCapMWh: aboveCap,
     cycles: usable > 0 ? tDischarge / usable : 0,
-    // separate sites: energy sent from one site to charge the other site's battery (at the bus)
-    wheeledMWh: tWheeled,
-    wheelLossMWh: tWheeled * (1 - arrive),
     hourly: H,
   };
 }
@@ -935,9 +924,7 @@ export function evaluateDesign(ctx, sizes, model) {
   let omPv = 0;
   const om = omCr(sizes, fin) + capex.hard * (fin.insurancePct || 0) + (fin.otherFixedCr || 0);
   const aug = augmentationScheduleCr(sizes, costs, bess, years);
-  // separate sites: the transmission charge on the energy sent between them, at year 1's volume
-  const wheel = (y1.wheeledMWh || 0) * (fin.wheelingRsPerKwh || 0) * RS_CR_PER_MWH_AT_1RS;
-  for (let y = 1; y <= years; y += 1) omPv += (om * (1 + fin.omEscalation) ** (y - 1) + aug[y] + wheel) / (1 + r) ** y;
+  for (let y = 1; y <= years; y += 1) omPv += (om * (1 + fin.omEscalation) ** (y - 1) + aug[y]) / (1 + r) ** y;
   const energy = worst ? (y1.deliveredMWh + worst.deliveredMWh) / 2 : y1.deliveredMWh;
   const excess = worst ? (y1.excessMWh + worst.excessMWh) / 2 : y1.excessMWh;
   const surplusRevenue = fin.sellSurplus ? excess * fin.surplusPrice * RS_CR_PER_MWH_AT_1RS : 0;
@@ -1277,7 +1264,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
       : `Neighbourhood check ${round} (${combos.length} designs, ${span}; ${evals - before} new): no cheaper feasible design; the answer is a local optimum ✓`, { evals });
     if (!improvedBy) break;
   }
-  if (split && !vars.bessWindShare.locked) {
+  if (split) {
     // the battery's split between the sites, swept from all at the solar site to all at the wind site
     let sweptBy = null;
     for (let v = vars.bessWindShare.min; v <= vars.bessWindShare.max + 1e-9; v += vars.bessWindShare.step) {
@@ -1374,7 +1361,7 @@ export function* optimizeSteps(ctx, model, onProgress) {
         for (let d = -2; d <= 2; d += 1) walk(i + 1, { ...cur, [walkFree[i]]: snap(tbest.sizes[walkFree[i]] + d * vars[walkFree[i]].step * 2, vars[walkFree[i]]) });
       };
       walk(0, { ...tbest.sizes });
-      if (split && !vars.bessWindShare.locked) {
+      if (split) {
         for (let v = vars.bessWindShare.min; v <= vars.bessWindShare.max + 1e-9; v += vars.bessWindShare.step) combos.push({ ...tbest.sizes, bessWindShare: snap(v, vars.bessWindShare) });
       }
       const before = tariffEvals;
@@ -1459,7 +1446,7 @@ export function highsPayload(ctx, model, seed) {
     vars,
     seed: seed || null,
     tariffGuess: seed?.tariff || null,
-    ...(ctx.sites?.split ? { sites: { split: true, wheelingRsPerKwh: ctx.sites.chargeRsPerKwh || 0, wheelingLossPct: ctx.sites.lossPct || 0 } } : {}),
+    ...(ctx.sites?.split ? { sites: { split: true } } : {}),
   };
 }
 
@@ -1544,9 +1531,7 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
       plantCost[`${pl.id}Mu`] = (op[`${pl.id}MWh`] || 0) / 1000;
       plantsTotal += fixed + energy;
     }
-    // separate sites (Tender to Bid): transmission charge on the energy sent between them; 0 otherwise
-    const wheeling = (op.wheeledMWh || 0) * (fin.wheelingRsPerKwh || 0) * RS_CR_PER_MWH_AT_1RS;
-    const opex = om + insurance + other + fuel + plantsTotal + wheeling;
+    const opex = om + insurance + other + fuel + plantsTotal;
     const ebitda = revenue - opex;
     // book depreciation (SLM), augmentation depreciated over remaining life
     if (aug[y] > 0) augBookDep += aug[y] / Math.max(1, years - y + 1);
@@ -1624,8 +1609,6 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
       insurance,
       other,
       fuel,
-      wheeling,
-      wheeledMu: (op.wheeledMWh || 0) / 1000,
       biomassMu: (op.biomassMWh || 0) / 1000,
       ...plantCost,
       opex,
@@ -1745,13 +1728,14 @@ export function tariffAgeingBreakdown(ctx, sizes, { costs, fin, bess, dfrTarget 
   };
 }
 
-/** Separate sites are switched on and both transmission figures are entered. */
+/** Solar and wind are on separate sites, each with its own battery. */
 export function splitSitesReady(sites) {
-  return Boolean(sites?.split && Number.isFinite(sites.chargeRsPerKwh) && Number.isFinite(sites.lossPct));
+  return Boolean(sites?.split);
 }
 
 export function buildContext({ demand, solarCf, windCf, plantMw, bess, lossPct = 0, trafoLossPct = 0, lineLossPct = 0, sellSurplus = false, extraExportMw = 0, sites = null }) {
-  // sites: { split, chargeRsPerKwh, lossPct } for solar and wind on separate sites; null for one site
+  // sites: { split: true } for solar and wind on separate sites (each battery charges from its own
+  // site only); null for one site
   return { demand, solarCf, windCf, plantMw, bess, lossPct, trafoLossPct, lineLossPct, sellSurplus, extraExportMw, sites };
 }
 

@@ -319,7 +319,6 @@ export function addLiveModel(wb, m) {
     S.one("thermalRec", "RECs for thermal energy", "₹/kWh", { v: thermal.recRsPerKwh || 0, kind: "input", fmt: "tariff", source: src("thermal.rec") });
     S.one("thermalEsc", "Thermal escalation", "%/yr", { v: thermal.escalation || 0, kind: "input", fmt: "pct", source: src("thermal.escalation") });
   }
-  if (m.split) S.one("wheeling", "Transmission charge between the sites", "₹/kWh sent", { v: fi.wheelingRsPerKwh || 0, kind: "input", fmt: "tariff", source: "Your input (separate sites)" });
 
   S.group("Revenue and supply");
   S.one("sell", "Sell surplus in the market", "Yes / No", { v: fi.sellSurplus ? "Yes" : "No", kind: "input", list: ["Yes", "No"], source: src("market.sell") });
@@ -418,7 +417,6 @@ export function addLiveModel(wb, m) {
   if (on.biomass) S.series("biomassMu", "Biomass generation", "MU", { v: (y) => mu(op(y).biomassMWh), kind: "opt", fmt: "mu", total: true });
   if (hydro) S.series("hydroMu", "Hydro energy", "MU", { v: (y) => mu(op(y).hydroMWh), kind: "opt", fmt: "mu", total: true });
   if (thermal) S.series("thermalMu", "Thermal (non-RE) energy", "MU", { v: (y) => mu(op(y).thermalMWh), kind: "opt", fmt: "mu", total: true });
-  if (m.split) S.series("wheeledMu", "Sent between the sites to charge a battery", "MU", { v: (y) => mu(op(y).wheeledMWh), kind: "opt", fmt: "mu", total: true });
   if (meter) {
     S.series("genBusMu", "Generated at the 33 kV bus", "MU", { v: (y) => mu(op(y).genBusMWh), kind: "opt", fmt: "mu", total: true });
     S.series("injectedMu", "Injected at the 33 kV bus", "MU", { v: (y) => mu(op(y).injectedMWh), kind: "opt", fmt: "mu", total: true });
@@ -496,10 +494,6 @@ export function addLiveModel(wb, m) {
       v: (y) => (S.v("thermalMu", y) * (S.v("thermalEnergy") + S.v("thermalRec")) * S.v("thermalF", y)) / 10, total: true,
     });
     opexKeys.push("thermalFixedCr", "thermalEnergyCr");
-  }
-  if (m.split) {
-    S.series("wheelCr", "Transmission charge between the sites", "₹ cr", { f: (y) => `${S.at("wheeledMu", y)}*${S.s("wheeling")}/10`, v: (y) => (S.v("wheeledMu", y) * S.v("wheeling")) / 10, total: true });
-    opexKeys.push("wheelCr");
   }
   S.series("opex", "Total operating cost", "₹ cr", {
     f: (y) => `SUM(${S.col(y)}${S.cell[opexKeys[0]]}:${S.col(y)}${S.cell[opexKeys[opexKeys.length - 1]]})`,
@@ -854,7 +848,7 @@ export function liveModelInput(raw) {
     fin: {
       ...nums(fin, [
         "tariffEscalation", "solarOmLakhPerMw", "windOmLakhPerMw", "bessOmLakhPerMwh", "biomassOmLakhPerMw", "omEscalation", "insurancePct", "otherFixedCr",
-        "biomassFuelRsPerKwh", "biomassFuelEscalation", "wheelingRsPerKwh", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
+        "biomassFuelRsPerKwh", "biomassFuelEscalation", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
         "tenorYears", "targetEquityIrr", "discountRate", "taxRate", "wdvRate", "bookLifeYears", "salvagePct", "receivableDays",
       ]),
       sellSurplus: Boolean(fin.sellSurplus),
@@ -868,7 +862,7 @@ export function liveModelInput(raw) {
       augmentation: ["annual", "oneTime"].includes(raw.bess?.augmentation) ? raw.bess.augmentation : "none",
     },
     ops: raw.ops.slice(0, 60).map((o) => ({
-      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "wheeledMWh", "genBusMWh", "injectedMWh", "trafoLossMWh", "lineLossMWh", "meterMWh"]),
+      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "genBusMWh", "injectedMWh", "trafoLossMWh", "lineLossMWh", "meterMWh"]),
       ...(finite(o?.surplusRevenueCr) ? { surplusRevenueCr: o.surplusRevenueCr } : {}),
     })),
     sources: Object.fromEntries(Object.entries(raw.sources || {}).slice(0, 200)

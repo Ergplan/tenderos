@@ -55,7 +55,7 @@ export function modelExport({ state, terms, finance, costs, fin, prices, bess, o
     ...(lp.sites?.split ? [
       ["Battery at the solar site (MW / MWh)", `${Math.round(lp.sizes.bessSolarSiteMw)} MW / ${Math.round(lp.sizes.bessSolarSiteMwh)} MWh`, "text"],
       ["Battery at the wind site (MW / MWh)", `${Math.round(lp.sizes.bessWindSiteMw)} MW / ${Math.round(lp.sizes.bessWindSiteMwh)} MWh`, "text"],
-      ["Transmission between the sites", `₹${lp.sites.wheelingRsPerKwh}/kWh sent, ${(lp.sites.wheelingLossPct * 100).toFixed(1)}% lost`, "text", "solar and wind on separate sites"],
+      ["Separate sites", "each battery charges from its own site only", "text", "split decided by HiGHS"],
     ] : []),
     ...(mix.greenShare !== undefined ? [["Green share, year 1", mix.greenShare, "pct"]] : []),
   ];
@@ -115,12 +115,10 @@ export function modelExport({ state, terms, finance, costs, fin, prices, bess, o
   if (state.sources.biomass) plantLines.push(["Biomass fuel", "fuel"]);
   if (state.sources.hydro) plantLines.push(["Hydro fixed + energy cost", "hydroCost"]);
   if (state.sources.thermal) plantLines.push(["Thermal (non-RE) cost incl. RECs", "thermalCost"]);
-  if (lp.sites?.split) plantLines.push(["Transmission charge between the sites", "wheeling"]);
   const energyMu = [];
   if (state.sources.biomass) energyMu.push(["Biomass generation", "biomassMu", "mu", "MU"]);
   if (state.sources.hydro) energyMu.push(["Hydro energy", "hydroMu", "mu", "MU"]);
   if (state.sources.thermal) energyMu.push(["Thermal (non-RE) energy", "thermalMu", "mu", "MU"]);
-  if (lp.sites?.split) energyMu.push(["Sent between the sites to charge a battery", "wheeledMu", "mu", "MU"]);
   const energy = { title: "Energy and tariff", lines: [
     ["Contracted energy", "demandMu", "mu", "MU"], ["Delivered to the procurer", "deliveredMu", "mu", "MU"], ["Delivered ÷ contracted", "dfr", "pct", "", false],
     ["Sold in the market", "excessMu", "mu", "MU"], ...energyMu, ["Tariff", "tariff", "tariff", "₹/kWh", false],

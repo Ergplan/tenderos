@@ -1,7 +1,7 @@
 // Checks for the Live model sheet of the bid workbook (web/lib/liveModel.js): the formulas
 // rebuild the app's financial model (web/src/rtc/engine.js) year by year. Three bids that between
 // them use every branch: all six sources with a flat market price, WDV tax and annual battery
-// augmentation; separate sites with hourly market revenue, annuity repayment, straight-line tax,
+// augmentation; separate sites (no energy between them) with hourly market revenue, annuity repayment, straight-line tax,
 // a one-time augmentation, tariff escalation, a shortfall penalty and tax losses; solar alone
 // with no debt.
 //   1. the values the sheet carries match the app's rows and results;
@@ -69,9 +69,9 @@ const CASES = [
     src: { bess: { augmentation: "annual" } },
     fin: { tariffEscalation: 0.01, repayment: "annuity", taxDepreciation: "slm", shortfallPenalty: 2, tenorYears: 18 },
     market: { sell: true, source: "DAM", escalation: 0, flatPrice: 0 },
-    sites: { split: true, chargeRsPerKwh: 0.45, lossPct: 0.03 },
+    sites: { split: true },
     sizes: { solarMw: 2600, windMw: 900, bessMw: 700, bessMwh: 2800, bessSolarSiteMw: 500, bessSolarSiteMwh: 2000, bessWindSiteMw: 200, bessWindSiteMwh: 800 },
-    lifetime: yearsOf(25, (y) => ({ demandMwh: 1000 * 8760, deliveredMwh: (y % 5 === 0 ? 0.76 : 0.83) * 1000 * 8760, exportMwh: 6e5, exportRevenueCr: 6e5 * (3.1 + 0.02 * y) * 1e-4, wheeledMwh: 2e5 })),
+    lifetime: yearsOf(25, (y) => ({ demandMwh: 1000 * 8760, deliveredMwh: (y % 5 === 0 ? 0.76 : 0.83) * 1000 * 8760, exportMwh: 6e5, exportRevenueCr: 6e5 * (3.1 + 0.02 * y) * 1e-4 })),
     tariffLocked: true, tariff: 2.6,
   })],
   ["solar alone, no debt", bid({
@@ -139,7 +139,7 @@ assert.ok(CASES[0][1].finance.rows.some((r) => r.augCapex > 0) && CASES[0][1].fi
 assert.ok(CASES[1][1].finance.rows.filter((r) => r.augCapex > 0).map((r) => r.year).join() === "10", "one-time augmentation in year 10");
 assert.ok(CASES[1][1].finance.rows.some((r) => r.penalty > 0), "a shortfall penalty");
 assert.ok(CASES[1][1].finance.rows[0].tax === 0 && CASES[1][1].finance.rows.some((r) => r.tax > 0), "tax losses carried, then tax");
-assert.ok(CASES[1][1].finance.rows[0].wheeling > 0 && CASES[1][1].finance.rows[0].surplusRevenue > 0);
+assert.ok(CASES[1][1].finance.rows[0].surplusRevenue > 0);
 assert.ok(CASES[2][1].finance.rows.every((r) => r.dscr === null), "no debt: no DSCR");
 
 // ---- 2 and 3: LibreOffice
@@ -279,15 +279,14 @@ function rtcCase(sites) {
   const demand = E.buildDemand({ annualEnergyMu: inputs.annualEnergyMu });
   const ctx = E.buildContext({ demand, solarCf, windCf, plantMw: inputs.plantCapacityMw, bess: bessBus, lossPct: inputs.lossPct, trafoLossPct: inputs.trafoLossPct, lineLossPct: inputs.lineLossPct, sellSurplus: true, extraExportMw: 0, sites });
   const sizes = E.withDuration({ ...Object.fromEntries(Object.entries(E.DEFAULT_VARS).map(([k, v]) => [k, v.value])), bessWindShare: 0.4 }, bess);
-  const fin = { ...fin0, demandGrowth: 0, wheelingRsPerKwh: sites ? sites.chargeRsPerKwh : 0 };
+  const fin = { ...fin0, demandGrowth: 0 };
   const finance = E.runFinancialModel(ctx, sizes, { costs, fin, bess: bessBus, dfrTarget: inputs.dfrTarget, tariffLocked: false });
   return { finance, body: rtcModelExport({ inputs, sizes, costs, fin, bess: bessBus, sites, finance }) };
 }
 const WORKBOOKS = [
   ["Round the clock, one site", rtcCase(null), "Round the clock"],
-  ["Round the clock, separate sites", rtcCase({ split: true, chargeRsPerKwh: 0.3, lossPct: 0.03 }), "Round the clock"],
+  ["Round the clock, separate sites", rtcCase({ split: true }), "Round the clock"],
 ];
-assert.ok(WORKBOOKS[1][1].finance.rows[0].wheeling > 0 && WORKBOOKS[0][1].finance.rows[0].wheeling === 0, "separate sites pay the transmission charge");
 assert.ok(WORKBOOKS[0][1].finance.rows[0].trafoLossMu > 0, "losses to the 220 kV meter");
 {
   // the first Tender to Bid bid, as its route sends it (the Live model part is what this check built)
@@ -307,7 +306,8 @@ for (const [name, { finance, body }, product] of WORKBOOKS) {
     const text = [];
     wb.getWorksheet(LIVE_SHEET).eachRow((row) => text.push(String(row.getCell(1).value ?? "")));
     assert.ok(text.includes("At the 220 kV billing meter") && text.some((t) => t.startsWith("Energy (the hourly simulation")), name);
-    assert.equal(text.includes("Sent between the sites to charge a battery"), Boolean(req.live.split), name);
+    assert.ok(!text.some((t) => /between the sites/.test(t)), `${name}: nothing is sent between the sites`);
+    if (req.live.split) assert.ok(/% at the wind site/.test(req.live.bessNote), name);
   }
   // the app's values in the sheet, then LibreOffice from no stored value
   const live = addLiveModel(new ExcelJS.Workbook(), liveModelInput(req.live));
