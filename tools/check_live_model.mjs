@@ -29,7 +29,7 @@ const ExcelJS = require("exceljs");
 const close = (a, b, tol = 1e-6) => Math.abs(a - b) <= tol * Math.max(1, Math.abs(b));
 
 // ---- three bids
-function bid({ sources, src = {}, fin = {}, market, sites, years = 25, lifetime, sizes, tariffLocked = false, tariff }) {
+function bid({ sources, src = {}, fin = {}, market, sites, years = 25, lifetime, sizes, tariffLocked = false, tariff, rules = [] }) {
   const s = defaultBidState();
   s.bid = { baseMw: 1000, greenshoe: false };
   s.sources = { solar: false, wind: false, hydro: false, biomass: false, thermal: false, bess: false, ...sources };
@@ -45,7 +45,7 @@ function bid({ sources, src = {}, fin = {}, market, sites, years = 25, lifetime,
   s.market = market || { sell: false, source: "flat", escalation: 0, flatPrice: 0 };
   if (sites) s.sites = sites;
   if (tariffLocked) { s.tariffLocked = true; s.fin.tariff = tariff; }
-  const terms = { years, sale: "allowed" };
+  const terms = { years, sale: "allowed", rules };
   const m = modelInputs(s, terms);
   const lp = { sizes, tariff: 5, perYear: [{ year: 1, minMonthlyDfr: 0.7 }], lifetime, ...(sites?.split ? { sites: { split: true } } : {}), ...(market?.source && market.source !== "flat" ? { market: market.source } : {}) };
   const ops = opsFromLp(lp, m.fin, m.bess);
@@ -76,7 +76,9 @@ const CASES = [
   })],
   ["SECI RTC-TM time-block floors, 1.5x tariff penalty", bid({
     sources: { solar: true, wind: true, bess: true },
-    fin: { blockPenaltyMultiple: 1.5, tariffEscalation: 0.02 },
+    fin: { tariffEscalation: 0.02 },
+    // the tender's time-block floors carry the 1.5x tariff penalty into the financial model
+    rules: [{ id: "peak", basis: "block", hours: "peak", target: 0.9, penaltyMultiple: 1.5 }, { id: "offpeak", basis: "block", hours: "offpeak", target: 0.7, penaltyMultiple: 1.5 }],
     sizes: { solarMw: 900, windMw: 700, bessMw: 300, bessMwh: 1200 },
     lifetime: yearsOf(25, (y) => ({ demandMwh: 300 * 8760, deliveredMwh: 0.8 * 300 * 8760, exportMwh: 0, blockShortfallMwh: 9000 + 400 * y })),
   })],
