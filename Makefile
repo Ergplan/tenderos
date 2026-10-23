@@ -11,7 +11,7 @@ build:
 	cd web && npx next build
 
 test:
-	$(PY) -m pytest -q -m "not slow" tests/engine tests/e2e/test_nhpc_tender.py
+	$(PY) -m pytest -q -m "not slow" tests/engine tests/test_seci_pack.py tests/e2e/test_nhpc_tender.py
 
 # the split-site sizing LP tests (several minutes)
 test-slow:

@@ -412,6 +412,8 @@ export function modelInputs(state, terms) {
     biomassFuelRsPerKwh: on("biomass") ? s.biomass.fuel : 0,
     biomassFuelEscalation: on("biomass") ? s.biomass.fuelEscalation : 0,
     solarDegradation: on("solar") ? s.solar.degradation : 0,
+    // time-block floors with a penalty (SECI RTC-TM: 1.5 x tariff on the energy short)
+    blockPenaltyMultiple: Math.max(0, ...(terms?.rules || []).filter((r) => r.basis === "block" && r.penaltyMultiple != null).map((r) => r.penaltyMultiple)),
     windDegradation: 0,
   };
   const duration = s.bess.duration === "free" ? null : Number(s.bess.duration) || null;
@@ -490,7 +492,7 @@ export function lpPayload(state, terms, { solarCf, windCf }, prices = null) {
     dfrTarget: rules.find((r) => r.hours === "all")?.target ?? 0,
     dfrBasis: "annual",
     vars: m.vars,
-    compliance: rules.map(({ id, label, basis, hours, target }) => ({ id, label, basis, hours, target })),
+    compliance: rules.map(({ id, label, basis, hours, target, penaltyMultiple }) => ({ id, label, basis, hours, target, ...(penaltyMultiple != null ? { penaltyMultiple } : {}) })),
     returnLifetime: true,
     returnHourly: true,
     tariffGuess: state.lp?.tariff || 5.5,
@@ -515,7 +517,7 @@ export function lpPayload(state, terms, { solarCf, windCf }, prices = null) {
     }
   }
   if (splitSitesOn(state)) payload.sites = { split: true };
-  if (rules.some((r) => r.hours === "peak")) payload.peakMask = Array.from(peakMask(terms.peak));
+  if (rules.some((r) => r.hours === "peak" || r.hours === "offpeak")) payload.peakMask = Array.from(peakMask(terms.peak));
   else if (rules.some((r) => r.hours === "any") && terms.peak?.windows?.length) payload.peakMask = Array.from(anyMask(terms.peak));
   return payload;
 }
@@ -633,6 +635,7 @@ export function opsFromLp(lp, fin, bess) {
       biomassMWh: row.biomassMwh || 0,
       hydroMWh: row.hydroMwh || 0,
       thermalMWh: row.thermalMwh || 0,
+      blockShortfallMWh: row.blockShortfallMwh || 0, // short of the time-block floors (SECI RTC-TM)
       // surplus sale revenue at the hourly market price, when the sizing used one
       ...(lp.market && row.exportRevenueCr !== undefined ? { surplusRevenueCr: row.exportRevenueCr } : {}),
     };

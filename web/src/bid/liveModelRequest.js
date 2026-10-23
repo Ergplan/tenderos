@@ -29,7 +29,7 @@ export function liveModelRequest({ state, lp, finance, costs, fin, bess, ops, df
     },
     fin: pick(fin, LIVE_FIN_KEYS),
     bess: pick(bess, ["annualDegradation", "augmentation", "augmentationYear", "costDeclinePct"]),
-    ops: ops.slice(0, n).map((o) => pick(o, ["demandMWh", "deliveredMWh", "excessMWh", "surplusRevenueCr", "biomassMWh", "hydroMWh", "thermalMWh"])),
+    ops: ops.slice(0, n).map((o) => pick(o, ["demandMWh", "deliveredMWh", "excessMWh", "surplusRevenueCr", "biomassMWh", "hydroMWh", "thermalMWh", "blockShortfallMWh"])),
     sources,
     app: liveResults(finance, fin),
   };

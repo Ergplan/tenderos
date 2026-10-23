@@ -195,6 +195,7 @@ export function addLiveModel(wb, m) {
   const sim = m.engine === "simulation";
   const sized = sim ? "Round the clock plant" : "HiGHS sizing";
   const meter = m.ops.some((o) => finite(o.meterMWh) && o.meterMWh > 0);
+  const blocky = m.ops.some((o) => finite(o.blockShortfallMWh) && o.blockShortfallMWh > 0) || (fi.blockPenaltyMultiple || 0) > 0;
   const ys = Array.from({ length: N }, (_, i) => i + 1);
 
   // ---- title, legend and the year header (frozen)
@@ -325,6 +326,7 @@ export function addLiveModel(wb, m) {
   if (!hourly) S.one("flatPrice", "Market sale price", "₹/kWh", { v: fi.surplusPrice || 0, kind: "input", fmt: "tariff", source: fi.sellSurplus ? "Your input (flat price)" : "Not used: no market sale" });
   S.one("target", "Annual supply floor", "% of contracted", { v: m.dfrTarget || 0, kind: "input", fmt: "pct", source: src("target", "Tender") });
   S.one("penalty", "Shortfall penalty", "₹/kWh short", { v: fi.shortfallPenalty || 0, kind: "input", fmt: "tariff", source: src("fin.shortfallPenalty", "Model default") });
+  if (blocky) S.one("blockMult", "Time-block shortfall penalty", "× tariff", { v: fi.blockPenaltyMultiple || 0, kind: "input", fmt: "x", source: src("fin.blockPenaltyMultiple", "Tender"), note: "On the energy short of each time-block's floor, at this multiple of the year's tariff (SECI RTC-TM: 1.5)" });
 
   if (on.bess) {
     S.group("Battery augmentation");
@@ -405,6 +407,7 @@ export function addLiveModel(wb, m) {
     f: (y) => `MAX(0,${S.s("target")}*${S.at("demand", y)}-${S.at("delivered", y)})`,
     v: (y) => Math.max(0, S.v("target") * S.v("demand", y) - S.v("delivered", y)), fmt: "mu", total: true,
   });
+  if (blocky) S.series("blockShort", "Short of the time-block floors", "MU", { v: (y) => mu(op(y).blockShortfallMWh), kind: "opt", fmt: "mu", total: true, note: "Each hour's energy below its floor (peak and off-peak blocks), from the dispatch" });
   S.series("excess", "Sold in the market", "MU", { v: (y) => mu(op(y).excessMWh), kind: "opt", fmt: "mu", total: true });
   if (hourly) {
     S.series("price", `Realised market price${m.market ? ` (IEX ${m.market}, hourly)` : " (hourly)"}`, "₹/kWh", {
@@ -455,9 +458,17 @@ export function addLiveModel(wb, m) {
     v: (y) => (S.v("sell") === "Yes" ? (S.v("excess", y) * S.v("price", y)) / 10 : 0), total: true,
   });
   S.series("penaltyCr", "Shortfall penalty", "₹ cr", { f: (y) => `${S.at("shortfall", y)}*${S.s("penalty")}/10`, v: (y) => (S.v("shortfall", y) * S.v("penalty")) / 10, total: true });
+  if (blocky) {
+    S.series("blockPenCr", "Time-block shortfall penalty", "₹ cr", {
+      f: (y) => `${S.at("blockShort", y)}*${S.s("blockMult")}*${S.at("trf", y)}/10`,
+      v: (y) => (S.v("blockShort", y) * S.v("blockMult") * S.v("trf", y)) / 10, total: true,
+      note: "Energy short of the block floors × multiple × the year's tariff",
+    });
+  }
+  const minusPenalties = (y) => `-${S.at("penaltyCr", y)}${blocky ? `-${S.at("blockPenCr", y)}` : ""}`;
   S.series("revenue", "Total revenue", "₹ cr", {
-    f: (y) => `${S.at("ppaRev", y)}+${S.at("mktRev", y)}-${S.at("penaltyCr", y)}`,
-    v: (y) => S.v("ppaRev", y) + S.v("mktRev", y) - S.v("penaltyCr", y), total: true, bold: true,
+    f: (y) => `${S.at("ppaRev", y)}+${S.at("mktRev", y)}${minusPenalties(y)}`,
+    v: (y) => S.v("ppaRev", y) + S.v("mktRev", y) - S.v("penaltyCr", y) - (blocky ? S.v("blockPenCr", y) : 0), total: true, bold: true,
   });
 
   // ---- operating costs
@@ -848,7 +859,7 @@ export function liveModelInput(raw) {
     fin: {
       ...nums(fin, [
         "tariffEscalation", "solarOmLakhPerMw", "windOmLakhPerMw", "bessOmLakhPerMwh", "biomassOmLakhPerMw", "omEscalation", "insurancePct", "otherFixedCr",
-        "biomassFuelRsPerKwh", "biomassFuelEscalation", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
+        "biomassFuelRsPerKwh", "biomassFuelEscalation", "surplusPrice", "shortfallPenalty", "blockPenaltyMultiple", "debtFraction", "interestRate",
         "tenorYears", "targetEquityIrr", "discountRate", "taxRate", "wdvRate", "bookLifeYears", "salvagePct", "receivableDays",
       ]),
       sellSurplus: Boolean(fin.sellSurplus),
@@ -862,7 +873,7 @@ export function liveModelInput(raw) {
       augmentation: ["annual", "oneTime"].includes(raw.bess?.augmentation) ? raw.bess.augmentation : "none",
     },
     ops: raw.ops.slice(0, 60).map((o) => ({
-      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "genBusMWh", "injectedMWh", "trafoLossMWh", "lineLossMWh", "meterMWh"]),
+      ...nums(o, ["demandMWh", "deliveredMWh", "excessMWh", "biomassMWh", "hydroMWh", "thermalMWh", "blockShortfallMWh", "genBusMWh", "injectedMWh", "trafoLossMWh", "lineLossMWh", "meterMWh"]),
       ...(finite(o?.surplusRevenueCr) ? { surplusRevenueCr: o.surplusRevenueCr } : {}),
     })),
     sources: Object.fromEntries(Object.entries(raw.sources || {}).slice(0, 200)

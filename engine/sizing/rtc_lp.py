@@ -441,9 +441,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     green_min = float(payload.get("greenShareMin") or 0)
     non_green = [pl for pl in plants if not pl["green"]]
 
-    # Optional supply rules (Tender to Bid): each is a floor on delivered ÷ demand over all hours
-    # or over the peak hours (peakMask), for the year or for every month. When given they replace
-    # the single DFR floor.
+    # Optional supply rules (Tender to Bid): each is a floor on delivered ÷ demand over all hours,
+    # the peak hours (peakMask) or the off-peak hours, for the year or for every month; or, with
+    # basis "block", in every hour on its own (a time-block floor, e.g. SECI RTC-TM: 90% in each
+    # peak block, 70% in each off-peak block). A block rule with a penaltyMultiple may fall short:
+    # the shortfall costs penaltyMultiple x the year's tariff per kWh (SECI: 1.5); without one the
+    # floor is hard. When given, the rules replace the single DFR floor.
     rules = []
     for item in payload.get("compliance") or []:
         target = float(item.get("target") or 0)
@@ -452,17 +455,21 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         hours = item.get("hours") or "all"
         # "any": the floor must hold in whichever hours are chosen (the procurer decides the peak
         # hours): it is applied to every hour of the day on its own, within peakMask if given
-        if hours not in ("all", "peak", "any"):
-            raise LpInputError("compliance hours must be 'all', 'peak' or 'any'")
+        if hours not in ("all", "peak", "offpeak", "any"):
+            raise LpInputError("compliance hours must be 'all', 'peak', 'offpeak' or 'any'")
         basis = item.get("basis") or "annual"
-        if basis not in ("annual", "monthly"):
-            raise LpInputError("compliance basis must be 'annual' or 'monthly'")
+        if basis not in ("annual", "monthly", "block"):
+            raise LpInputError("compliance basis must be 'annual', 'monthly' or 'block'")
+        mult = item.get("penaltyMultiple")
+        if mult is not None and (basis != "block" or float(mult) < 0):
+            raise LpInputError("penaltyMultiple applies to block rules only, and is 0 or more")
         rules.append({"id": str(item.get("id") or f"rule{len(rules) + 1}"), "label": str(item.get("label") or ""),
-                      "target": min(1.0, target), "hours": hours, "basis": basis})
+                      "target": min(1.0, target), "hours": hours, "basis": basis,
+                      "penalty": None if mult is None else float(mult)})
     peak_mask = None
     if any(r["hours"] == "any" for r in rules) and payload.get("peakMask") is not None:
         peak_mask = _series(payload.get("peakMask"), "peakMask") > 0.5
-    if any(r["hours"] == "peak" for r in rules):
+    if any(r["hours"] in ("peak", "offpeak") for r in rules):
         peak_mask = _series(payload.get("peakMask"), "peakMask") > 0.5
         if not peak_mask.any():
             raise LpInputError("peakMask marks no peak hours")
@@ -519,6 +526,12 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         # charge level
         SPLIT_BLOCK = blocks
         blocks += 3
+    # time-block floors with a penalty: one shortfall column per hour (at the bus), after the rest
+    block_rules = [r for r in rules if r["basis"] == "block"]
+    penalty_mult = max([r["penalty"] for r in block_rules if r["penalty"] is not None], default=None)
+    if penalty_mult is not None:
+        SF_BLOCK = blocks
+        blocks += 1
     per_year = blocks * HOURS
     n_col = n_size + per_year * len(rep)
     col_lo = np.zeros(n_col)
@@ -550,6 +563,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
     t = np.arange(HOURS)
     ones = np.ones(HOURS)
     deliver_cols: list[list[np.ndarray]] = []  # delivering columns per year (dir, dis[, wind-site dis])
+    sf_cols: list[np.ndarray] = []  # time-block shortfall columns per year (bus MW), with a penalty
     dfr_rows: list[tuple[int, int, int, str]] = []  # (row, year, month or -1, rule id or "dfr")
     demand_by_year = []
     bio_cols: list[np.ndarray] = []  # biomass output columns per modelled year
@@ -581,8 +595,16 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
                 for h in sorted(set(HOUR_OF_DAY[cand].tolist())):
                     out.append((m, in_m & (HOUR_OF_DAY == h) & cand))
             return out
-        hours_mask = peak_mask if rule["hours"] == "peak" else np.ones(HOURS, bool)
+        hours_mask = rule_hours(rule)
         return [(m, ((MONTH_OF_HOUR == m) if m >= 0 else np.ones(HOURS, bool)) & hours_mask) for m in months]
+
+    def rule_hours(rule: dict) -> np.ndarray:
+        """The hours a rule covers: all, the peak hours (peakMask) or the rest."""
+        if rule["hours"] == "peak":
+            return peak_mask
+        if rule["hours"] == "offpeak":
+            return ~peak_mask
+        return np.ones(HOURS, bool)
 
     for yi, year in enumerate(rep):
         f = year_factors(year, fin, bess)
@@ -766,7 +788,22 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         # DFR: delivered >= target share of demand (per year, or per month); with supply rules,
         # one such floor per rule over its hours
         floors = rules or [{"id": "dfr", "target": dfr_target, "hours": "all", "basis": "monthly" if monthly else "annual"}]
+        if penalty_mult is not None:
+            sf_cols.append(base + SF_BLOCK * HOURS + t)
+        for rule in block_rules:
+            # every hour of the rule on its own: delivered (+ shortfall, when it carries a penalty)
+            # >= target x demand
+            idx = t[rule_hours(rule)]
+            r = n_row + np.arange(idx.size)
+            for c in deliver_cols[-1]:
+                add(r, c[idx], np.ones(idx.size))
+            if rule["penalty"] is not None:
+                add(r, sf_cols[-1][idx], np.ones(idx.size))
+            row_lo.append(rule["target"] * dem[idx]); row_hi.append(np.full(idx.size, np.inf))
+            n_row += idx.size
         for rule in floors:
+            if rule.get("basis") == "block":
+                continue
             for m, mask in rule_groups(rule):
                 idx = t[mask]
                 if idx.size == 0:
@@ -846,6 +883,9 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         for yi, cols in enumerate(deliver_cols):
             for c in cols:
                 energy_vec[c] = energy_w[yi] * poi  # billed at the meter
+            if penalty_mult is not None:
+                # a time-block shortfall (at the meter) costs penaltyMultiple x the year's tariff
+                energy_vec[sf_cols[yi]] = -penalty_mult * energy_w[yi] * poi
             if ppa_first:
                 # a sale is worth at most what the same MWh earns on the PPA (0.5% less, so the
                 # PPA wins a tie): supplying the PPA always comes first
@@ -1041,10 +1081,29 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
 
     # reporting: DFR per modelled year, curtailment and the DFR shadow price
     def rule_outcome(rule: dict, delivered: np.ndarray, dem: np.ndarray) -> dict:
+        if rule["basis"] == "block":
+            # each hour on its own: the share of the rule's hours at or above the floor, the
+            # lowest hour, and the energy short of the floor (MU at the meter)
+            hrs = rule_hours(rule)
+            ratio = delivered[hrs] / np.maximum(1e-9, dem[hrs])
+            short = np.maximum(0.0, rule["target"] * dem[hrs] - delivered[hrs])
+            met_share = float((ratio >= rule["target"] - 1e-6).mean()) if ratio.size else 1.0
+            return {"id": rule["id"], "label": rule["label"], "target": rule["target"], "basis": "block",
+                    "achieved": float(ratio.min()) if ratio.size else 1.0, "hoursMet": met_share,
+                    "shortfallMu": float(short.sum() * poi / 1000), "met": met_share >= 1 - 1e-9,
+                    "penaltyMultiple": rule["penalty"]}
         shares = [float(delivered[mask].sum() / max(1e-9, dem[mask].sum())) for _, mask in rule_groups(rule) if mask.any()]
         achieved = min(shares) if shares else 1.0
         return {"id": rule["id"], "label": rule["label"], "target": rule["target"], "achieved": achieved,
                 "met": achieved >= rule["target"] - 1e-6}
+
+    def block_shortfall(delivered: np.ndarray, dem: np.ndarray) -> float:
+        """MWh at the meter short of the time-block floors (each hour: the largest of its rules)."""
+        floor = np.zeros(HOURS)
+        for rule in block_rules:
+            hrs = rule_hours(rule)
+            floor[hrs] = np.maximum(floor[hrs], rule["target"] * dem[hrs])
+        return float(np.maximum(0.0, floor - delivered).sum() * poi)
 
     if x is None:
         raise LpInputError(f"HiGHS found no design: {status_text}. No design within the size ranges meets the supply "
@@ -1076,6 +1135,8 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
             row["divertedMu"] = float(np.minimum(x[ex_cols[yi]], room).sum() * poi / 1000)
         if rules:
             row["rules"] = [rule_outcome(rule, delivered, dem) for rule in rules]
+        if block_rules:
+            row["blockShortfallMu"] = block_shortfall(delivered, dem) / 1000
         year_rows.append(row)
     dfr_price = None
     if duals is not None:
@@ -1127,6 +1188,8 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
         bio_y = yearly_biomass(x)
         rev_y = yearly_export_revenue(x)
         plant_y = yearly_plants(x)
+        short_y = (weights @ np.array([block_shortfall(sum(x[c] for c in deliver_cols[yi]), demand_by_year[yi]) for yi in range(len(rep))])
+                   if block_rules else None)
         if rev_y is None:
             rev_y = ex * surplus_price * RS_CR_PER_MWH_AT_1RS
         result["lifetime"] = [
@@ -1138,6 +1201,7 @@ def solve(payload: dict, on_log=None, on_progress=None, log_limit: int = 1500) -
                 "exportRevenueCr": float(rev_y[y - 1]),
                 "biomassMwh": float(bio_y[y - 1]) if bio_y is not None else 0.0,
                 **{f"{pid}Mwh": float(v[y - 1]) for pid, v in plant_y.items()},
+                **({"blockShortfallMwh": float(short_y[y - 1])} if short_y is not None else {}),
             }
             for y in range(1, n + 1)
         ]

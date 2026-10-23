@@ -1511,7 +1511,12 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
     // op.surplusRevenueCr: surplus sold at hourly market prices (Tender to Bid, IEX); else a flat price
     const surplusRev = fin.sellSurplus ? (op.surplusRevenueCr ?? op.excessMWh * fin.surplusPrice * RS_CR_PER_MWH_AT_1RS) : 0;
     const shortfallMWh = Math.max(0, dfrTarget * op.demandMWh - op.deliveredMWh);
-    const penalty = shortfallMWh * (fin.shortfallPenalty || 0) * RS_CR_PER_MWH_AT_1RS;
+    const annualPenalty = shortfallMWh * (fin.shortfallPenalty || 0) * RS_CR_PER_MWH_AT_1RS;
+    // time-block floors (SECI RTC-TM): energy short of each block's floor, at a multiple of the
+    // year's tariff (1.5x); 0 when the sizing has no block floors
+    const blockShortfallMWh = op.blockShortfallMWh || 0;
+    const blockPenalty = blockShortfallMWh * (fin.blockPenaltyMultiple || 0) * trf * RS_CR_PER_MWH_AT_1RS;
+    const penalty = annualPenalty + blockPenalty;
     const revenue = energyRev + surplusRev - penalty;
     const esc = (1 + fin.omEscalation) ** (y - 1);
     const om = omBase * esc;
@@ -1604,6 +1609,9 @@ function cashflows(ops, sizes, costs, fin, bess, dfrTarget, tariff) {
       energyRevenue: energyRev,
       surplusRevenue: surplusRev,
       penalty,
+      annualPenalty,
+      blockPenalty,
+      blockShortfallMu: blockShortfallMWh / 1000,
       revenue,
       om,
       insurance,

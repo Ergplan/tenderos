@@ -74,6 +74,12 @@ const CASES = [
     lifetime: yearsOf(25, (y) => ({ demandMwh: 1000 * 8760, deliveredMwh: (y % 5 === 0 ? 0.76 : 0.83) * 1000 * 8760, exportMwh: 6e5, exportRevenueCr: 6e5 * (3.1 + 0.02 * y) * 1e-4 })),
     tariffLocked: true, tariff: 2.6,
   })],
+  ["SECI RTC-TM time-block floors, 1.5x tariff penalty", bid({
+    sources: { solar: true, wind: true, bess: true },
+    fin: { blockPenaltyMultiple: 1.5, tariffEscalation: 0.02 },
+    sizes: { solarMw: 900, windMw: 700, bessMw: 300, bessMwh: 1200 },
+    lifetime: yearsOf(25, (y) => ({ demandMwh: 300 * 8760, deliveredMwh: 0.8 * 300 * 8760, exportMwh: 0, blockShortfallMwh: 9000 + 400 * y })),
+  })],
   ["solar alone, no debt", bid({
     sources: { solar: true },
     fin: { debtFraction: 0, tenorYears: 10 },
@@ -93,7 +99,8 @@ const CASES = [
 
 // the sheet's rows that are the app's rows
 const SAME = {
-  ppaRev: "energyRevenue", mktRev: "surplusRevenue", penaltyCr: "penalty", revenue: "revenue", opex: "opex", ebitda: "ebitda", aug: "augCapex",
+  ppaRev: "energyRevenue", mktRev: "surplusRevenue", penaltyCr: "annualPenalty", revenue: "revenue",
+  blockShort: "blockShortfallMu", opex: "opex", ebitda: "ebitda", aug: "augCapex",
   bookDep: "bookDep", openDebt: "openingDebt", interest: "interest", principal: "principal", closeDebt: "closingDebt", taxDep: "taxDep",
   pbt: "pbt", tax: "tax", pat: "pat", recv: "receivables", dWc: "dWc", cfads: "cfads", debtService: "debtService", dscr: "dscr",
   fcfe: "fcfe", cumEq: "cumEquity", projCf: "projectCf", trf: "tariff", delivered: "deliveredMu", demand: "demandMu", excess: "excessMu", dfr: "dfr",
@@ -117,7 +124,8 @@ async function build(c, { bare = false } = {}) {
 // ---- 1. the values the sheet carries are the app's
 for (const [name, c] of CASES) {
   const { live } = await build(c);
-  for (const [key, appKey] of Object.entries(SAME)) {
+  for (const [key, appKey] of Object.entries({ ...SAME, ...(live.rows.blockPenCr ? { blockPenCr: "blockPenalty" } : {}) })) {
+    if (!live.rows[key]) continue;
     for (const row of c.finance.rows) {
       const a = live.rows[key][row.year];
       const b = row[appKey];
@@ -140,7 +148,13 @@ assert.ok(CASES[1][1].finance.rows.filter((r) => r.augCapex > 0).map((r) => r.ye
 assert.ok(CASES[1][1].finance.rows.some((r) => r.penalty > 0), "a shortfall penalty");
 assert.ok(CASES[1][1].finance.rows[0].tax === 0 && CASES[1][1].finance.rows.some((r) => r.tax > 0), "tax losses carried, then tax");
 assert.ok(CASES[1][1].finance.rows[0].surplusRevenue > 0);
-assert.ok(CASES[2][1].finance.rows.every((r) => r.dscr === null), "no debt: no DSCR");
+assert.ok(CASES[3][1].finance.rows.every((r) => r.dscr === null), "no debt: no DSCR");
+{
+  // the block penalty: shortfall x 1.5 x the year's (escalated) tariff
+  const r5 = CASES[2][1].finance.rows[4];
+  assert.ok(Math.abs(r5.blockPenalty - (r5.blockShortfallMu * 1000 * 1.5 * r5.tariff) / 1e4) < 1e-9, "1.5 x tariff on the energy short");
+  assert.ok(r5.blockPenalty > 0 && Math.abs(r5.penalty - r5.annualPenalty - r5.blockPenalty) < 1e-9);
+}
 
 // ---- 2 and 3: LibreOffice
 let soffice = null;
@@ -312,6 +326,7 @@ for (const [name, { finance, body }, product] of WORKBOOKS) {
   // the app's values in the sheet, then LibreOffice from no stored value
   const live = addLiveModel(new ExcelJS.Workbook(), liveModelInput(req.live));
   for (const [key, appKey] of Object.entries(SAME)) {
+    if (!live.rows[key]) continue;
     for (const row of finance.rows) {
       const b = row[appKey];
       if (b === null || b === undefined || Number.isNaN(b)) continue;

@@ -1,0 +1,1079 @@
+{
+ "id": "seci-rtc-tm-v",
+ "short": "SECI RTC-TM-V",
+ "title": "Supply of 1000 MW Round-the-Clock Thermal Mimic (RTC-TM) power from ISTS-connected RE projects",
+ "issuer": "Solar Energy Corporation of India Limited (SECI)",
+ "rfsNo": "SECI/C&P/IPP/13/0020/25-26",
+ "rfsDate": "2026-03-10",
+ "tenderedMw": 1000,
+ "folder": "/tenders/seci-rtc-tm-v/",
+ "documents": [
+  {
+   "id": "rfs",
+   "kind": "tender",
+   "title": "RfS (main tender document)",
+   "ref": "RfS No. SECI/C&P/IPP/13/0020/25-26",
+   "date": "2026-03-10",
+   "file": null,
+   "note": "Not uploaded. Its terms appear here only where an amendment, the clarifications or the PSA quote them."
+  },
+  {
+   "id": "amd1",
+   "kind": "amendment",
+   "title": "Amendment-01",
+   "ref": "SECI/C&P/IPP/13/0020/25-26/Amendment-01",
+   "date": "2026-04-02",
+   "file": "Amendment-01.pdf",
+   "pages": 18,
+   "summary": "Bid size down to 50 MW; DFR now per time-block only (90% peak, 70% off-peak), annual DFR penalty dropped; Peak Hours window 18:00 to 10:00; phased SCSD; new technical criteria; revised penalty illustration."
+  },
+  {
+   "id": "amd2",
+   "kind": "amendment",
+   "title": "Amendment-02",
+   "ref": "SECI/C&P/IPP/13/0020/25-26/Amendment-02",
+   "date": "2026-04-27",
+   "file": "Amendment-02.pdf",
+   "pages": 5,
+   "summary": "BESS co-located with RE; SCSD back to 24 months for the full capacity; EMD, PBG and net worth revised; discrete-component power priced by hour type; clause 34.3 marked 'Not used'."
+  },
+  {
+   "id": "clar1",
+   "kind": "clarification",
+   "title": "Clarifications-01",
+   "ref": "SECI/C&P/IPP/13/0020/25-26/Clarifications-01",
+   "date": "2026-04-27",
+   "file": "Clarifications-01.pdf",
+   "pages": 2,
+   "summary": "SECI's answers to bidders' queries: most requests refused ('Tender conditions remain unchanged'); DFR, Peak Hours and technical criteria referred to the amendments."
+  },
+  {
+   "id": "psa",
+   "kind": "agreement",
+   "title": "Standard Power Sale Agreement (PSA)",
+   "ref": "PSA, SECI and the Buying Entity",
+   "date": null,
+   "file": "Standard-PSA.pdf",
+   "pages": 29,
+   "summary": "The back-to-back sale from SECI to the Buying Entity: tariff plus 7 paise trading margin, DFR as first issued (before Amendment-01), offtake, excess power, compensation."
+  }
+ ],
+ "changes": [
+  {
+   "id": "a1-5.1",
+   "doc": "amd1",
+   "sno": 1,
+   "document": "RfS",
+   "clause": "5.1",
+   "topic": "Bid size",
+   "before": {
+    "doc": "amd1",
+    "page": 1,
+    "quote": "a minimum quantum of cumulative Contracted Capacity of 100 MW and a maximum quantum of 500 MW"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 1,
+    "quote": "a minimum quantum of cumulative Contracted Capacity of 50 MW and a maximum quantum of 500 MW"
+   },
+   "effect": "A bid may now be as small as 50 MW (was 100 MW); 500 MW stays the most."
+  },
+  {
+   "id": "a1-6.3",
+   "doc": "amd1",
+   "sno": 2,
+   "document": "RfS",
+   "clause": "6.3.i",
+   "topic": "Change of Delivery Point",
+   "before": {
+    "doc": "amd1",
+    "page": 1,
+    "quote": "subject to the condition that the Scheduled Commissioning Date of the proposed new Delivery Point is on or before 30th June, 2028"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 1,
+    "quote": "any change in Delivery Point from the one mentioned in the Covering Letter at the time of bid submission shall be allowed till the deadline to apply for connectivity."
+   },
+   "effect": "The Delivery Point can change until the connectivity deadline, without the 30 June 2028 condition."
+  },
+  {
+   "id": "a1-7.5",
+   "doc": "amd1",
+   "sno": 3,
+   "document": "RfS",
+   "clause": "7.5",
+   "topic": "Substation commissioning date",
+   "after": {
+    "doc": "amd1",
+    "page": 2,
+    "quote": "The Bidder is required to provide the proof of SCD of substation in this regard at the time of bid submission, as part of Format-7.1 of the RfS."
+   },
+   "effect": "The chosen ISTS substation must be scheduled for commissioning by 30 June 2028, with proof in Format-7.1."
+  },
+  {
+   "id": "a1-8.1a",
+   "doc": "amd1",
+   "sno": 4,
+   "document": "RfS",
+   "clause": "8.1.a",
+   "topic": "Demand Fulfilment Ratio",
+   "before": {
+    "doc": "psa",
+    "page": 17,
+    "quote": "(ii) a minimum DFR of 80% in each time-block during the off-Peak Hours"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 2,
+    "quote": "(i) a minimum DFR of 90% in each time-block during the Peak Hours; (ii) a minimum DFR of 70% in each time-block during the off-Peak Hours."
+   },
+   "effect": "Off-peak floor down from 80% to 70% in every block; the 90% annual DFR is gone. Peak stays 90% in every block."
+  },
+  {
+   "id": "a1-8.1b",
+   "doc": "amd1",
+   "sno": 5,
+   "document": "RfS",
+   "clause": "8.1.b",
+   "topic": "How DFR is measured",
+   "before": {
+    "doc": "psa",
+    "page": 18,
+    "quote": "(iii) averaging the DFR of all the time-blocks in a Contract Year, to measure the DFR compliance on annual basis."
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 2,
+    "quote": "Penalty for both the above shortfalls will be calculated on time-block-wise basis and will be reconciled on monthly basis."
+   },
+   "effect": "Only the block-wise peak and off-peak shortfalls are measured, monthly; no annual average."
+  },
+  {
+   "id": "a1-8.1c",
+   "doc": "amd1",
+   "sno": 6,
+   "document": "RfS",
+   "clause": "8.1.c",
+   "topic": "Peak Hours",
+   "before": {
+    "doc": "amd1",
+    "page": 2,
+    "quote": "The Buying Entity shall choose any 6 hours on a daily basis between 00:00 Hrs. to 10:00 Hrs. and 18:00 Hrs. to 24:00 Hrs. of a day"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 2,
+    "quote": "The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day"
+   },
+   "effect": "The six peak hours now come from one overnight window, 18:00 to 10:00 the next morning."
+  },
+  {
+   "id": "a1-8.2d",
+   "doc": "amd1",
+   "sno": 7,
+   "document": "RfS",
+   "clause": "8.2.d",
+   "topic": "Penalty in a Contract Year",
+   "before": {
+    "doc": "amd1",
+    "page": 3,
+    "quote": "the higher of the following two penalties shall be applicable: (i) the penalty for shortfall in the minimum annual DFR, or (ii) the aggregate penalty for shortfall in the minimum DFR requirements for Peak and Off-Peak Hours."
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 3,
+    "quote": "In a particular Contract Year, the aggregate penalty for shortfall in the minimum DFR requirements for Peak and Off-Peak Hours shall be levied on the RPD."
+   },
+   "effect": "Only the block-wise penalty applies."
+  },
+  {
+   "id": "a1-9.2a",
+   "doc": "amd1",
+   "sno": 8,
+   "document": "RfS",
+   "clause": "9.2.a",
+   "topic": "Scheduled Commencement of Supply (SCSD)",
+   "before": {
+    "doc": "amd1",
+    "page": 3,
+    "quote": "shall be the date as on 18 months from the Effective Date of the PPA"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 3,
+    "quote": "(ii) Phase-II SCSD: The remaining RE generating component of the Project shall commence supply of power within 24 months from the Effective Date of the PPA."
+   },
+   "effect": "Phased SCSD (ESS with its RE at 18 months, the rest at 24). Superseded by Amendment-02 (24 months for the full capacity)."
+  },
+  {
+   "id": "a1-34.3",
+   "doc": "amd1",
+   "sno": 12,
+   "document": "RfS",
+   "clause": "34.3",
+   "topic": "Technical eligibility",
+   "after": {
+    "doc": "amd1",
+    "page": 4,
+    "quote": "a single Generating Station/ Generating System/ Power Plant/ Power Project of Contracted Capacity not less than ‘4X/5’ MW in last seven years"
+   },
+   "effect": "Experience as Project Owner or EPC contractor: one plant ≥ 4X/5 MW, two ≥ X/2 MW, or three ≥ 2X/5 MW, in the last seven years. Amendment-02 then marks 34.3 'Not used'."
+  },
+  {
+   "id": "a1-40.4",
+   "doc": "amd1",
+   "sno": 13,
+   "document": "RfS",
+   "clause": "40.4",
+   "topic": "Part capacity to the last successful bidder",
+   "before": {
+    "doc": "amd1",
+    "page": 5,
+    "quote": "is lower than 50% of the total quoted capacity by such Bidder or 100 MW"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 5,
+    "quote": "is lower than 50% of the total quoted capacity by such Bidder or 50 MW"
+   },
+   "effect": "The threshold for the last bidder's part capacity follows the new 50 MW minimum."
+  },
+  {
+   "id": "a1-annexA",
+   "doc": "amd1",
+   "sno": 15,
+   "document": "RfS",
+   "clause": "Annexure-A",
+   "topic": "Solar modules",
+   "after": {
+    "doc": "amd1",
+    "page": 6,
+    "quote": "It is mandatory to use both domestically manufactured solar PV Cells and domestically manufactured solar PV modules."
+   },
+   "effect": "Domestic cells and modules (ALMM List-I) for the solar component: a capex input to check."
+  },
+  {
+   "id": "a1-13.1.1",
+   "doc": "amd1",
+   "sno": 8,
+   "document": "PPA",
+   "clause": "13.1.1.(i)",
+   "topic": "Event of Default on DFR",
+   "before": {
+    "doc": "amd1",
+    "page": 12,
+    "quote": "failure to maintain minimum annual DFR requirement as per Article 4.4.1 for a period of 2 (two) consecutive Contract Years"
+   },
+   "after": {
+    "doc": "amd1",
+    "page": 12,
+    "quote": "failure to maintain minimum DFR requirement as per Article 4.4.1 in every time-block during Peak and Off-Peak Hours for a period of 2 (two) consecutive Contract Years"
+   },
+   "effect": "Missing the block floors for two consecutive Contract Years is an Event of Default (wording to confirm: read literally, any block)."
+  },
+  {
+   "id": "a1-annexC",
+   "doc": "amd1",
+   "sno": 17,
+   "document": "RfS",
+   "clause": "Annexure-C",
+   "topic": "Penalty illustration",
+   "after": {
+    "doc": "amd1",
+    "page": 18,
+    "quote": "Penalty for the above month = (1.5 x 4.0 x 375 x 1000)/10000000= INR 22.50 Lakhs"
+   },
+   "effect": "The penalty is 1.5 x the tariff on the energy short of the block floors."
+  },
+  {
+   "id": "a2-6.1",
+   "doc": "amd2",
+   "sno": 1,
+   "document": "RfS",
+   "clause": "6.1",
+   "topic": "Where the battery goes",
+   "before": {
+    "doc": "amd2",
+    "page": 1,
+    "quote": "For a single Project, the RE generation components, along with ESS, may either be co- located, or may be located at different locations."
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 1,
+    "quote": "In case the Battery Energy Storage System (BESS) is utilized as the ESS component, the same shall be co-located with the RE generation component."
+   },
+   "effect": "A battery must sit with RE generation (with at least one component on a multi-site project); only pumped hydro may stand alone."
+  },
+  {
+   "id": "a2-7.10",
+   "doc": "amd2",
+   "sno": 3,
+   "document": "RfS",
+   "clause": "7.10",
+   "topic": "Charges for storage",
+   "after": {
+    "doc": "amd2",
+    "page": 1,
+    "quote": "All charges and losses related to discharging the ESS component up to Delivery Point shall be borne by the RPD"
+   },
+   "effect": "Charges and losses up to the Delivery Point are the developer's."
+  },
+  {
+   "id": "a2-9.2a",
+   "doc": "amd2",
+   "sno": 4,
+   "document": "RfS",
+   "clause": "9.2.a",
+   "topic": "Scheduled Commencement of Supply (SCSD)",
+   "before": {
+    "doc": "amd2",
+    "page": 2,
+    "quote": "Phase-I SCSD: The Energy Storage System (ESS) component proposed to be installed as part of the Project, along with the corresponding co-located RE generating component shall commence supply of power within 18 months from the Effective Date of the PPA."
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 2,
+    "quote": "The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 24 months from the Effective Date of the PPA"
+   },
+   "effect": "One SCSD for the full capacity, 24 months after the PPA's Effective Date."
+  },
+  {
+   "id": "a2-9.2b",
+   "doc": "amd2",
+   "sno": 5,
+   "document": "RfS",
+   "clause": "9.2.b",
+   "topic": "Latest commencement with penalty",
+   "after": {
+    "doc": "amd2",
+    "page": 2,
+    "quote": "shall be limited to the date as on 6 months from the SCSD or the extended SCSD (if applicable)"
+   },
+   "effect": "Up to 6 months late with the PBG encashed pro rata; later than that is a default."
+  },
+  {
+   "id": "a2-11.2",
+   "doc": "amd2",
+   "sno": 7,
+   "document": "RfS",
+   "clause": "11.2",
+   "topic": "Power from a component ready early",
+   "before": {
+    "doc": "amd2",
+    "page": 2,
+    "quote": "such power shall be purchased @ 50% of the PPA Tariff."
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "(i) for power supplied during Peak Hours (as specified by the Buying Entity), @ PPA Tariff; (ii) for power supplied during non-solar hours, other than Peak Hours, @75% of the PPA Tariff; (iii) for power supplied during solar hours, other than Peak Hours, @50% of the PPA Tariff."
+   },
+   "effect": "A component that starts before the rest sells at 100% (peak), 75% (non-solar) or 50% (solar hours) of the tariff."
+  },
+  {
+   "id": "a2-16.1",
+   "doc": "amd2",
+   "sno": 8,
+   "document": "RfS",
+   "clause": "16.1",
+   "topic": "EMD",
+   "before": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "EMD amount = Rs. [9,54,000 * S + 13,32,000 * W + 2,35,450 * E]"
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "EMD amount = Rs. [9,68,000 * S + 13,68,000 * W + 2,40,000 * E]"
+   },
+   "effect": "EMD rises slightly; it depends on the installed solar, wind and storage, not the contracted MW."
+  },
+  {
+   "id": "a2-17.1",
+   "doc": "amd2",
+   "sno": 9,
+   "document": "RfS",
+   "clause": "17.1",
+   "topic": "PBG",
+   "before": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "PBG amount = Rs. [23,85,000* S + 33,30,000* W + 5,88,625 * E]"
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "PBG amount = Rs. [24,20,000* S + 34,20,000* W + 6,00,000 * E]"
+   },
+   "effect": "PBG rises slightly, also on installed capacity."
+  },
+  {
+   "id": "a2-21.1",
+   "doc": "amd2",
+   "sno": 11,
+   "document": "RfS",
+   "clause": "21.1",
+   "topic": "Financial Closure",
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "The Projects shall achieve Financial Closure by the date as on 6 months prior to the SCSD/ extended SCSD."
+   },
+   "effect": "Financial Closure 6 months before the (single) SCSD: 18 months after the PPA."
+  },
+  {
+   "id": "a2-34.3",
+   "doc": "amd2",
+   "sno": 12,
+   "document": "RfS",
+   "clause": "34.3",
+   "topic": "Technical eligibility",
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "12. 34.3 Not used."
+   },
+   "effect": "Amendment-02 lists clause 34.3 as 'Not used'. Read with Clarifications-01 (queries 4 and 11 point to Amendment-02), the technical criterion appears withdrawn: confirm with SECI."
+  },
+  {
+   "id": "a2-35.1",
+   "doc": "amd2",
+   "sno": 13,
+   "document": "RfS",
+   "clause": "35.1",
+   "topic": "Net worth",
+   "before": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "(Rs. 95,40,000 x Rated cumulative Installed Capacity of Solar PV component (MW))"
+   },
+   "after": {
+    "doc": "amd2",
+    "page": 3,
+    "quote": "Minimum Net-Worth requirement = [(Rs. 96,80,000 x Rated cumulative Installed Capacity of Solar PV component (MW)) + (Rs. 1,36,80,000 x Rated cumulative Installed Capacity of Wind Power component and other RE sources (MW)) + (Rs. 24,00,000 x Rated cumulative Installed Capacity of ESS component (MWh))]"
+   },
+   "effect": "The net worth needed rises slightly, on installed capacity."
+  }
+ ],
+ "clarifications": [
+  {
+   "no": 2,
+   "clause": "RfS 8.1(j)",
+   "topic": "Green market sourcing",
+   "page": 1,
+   "request": "Raise green market sourcing from 5% to 15% of annual energy.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "The RPD can source up to 5% RE power (in energy terms) on annual basis from green market sources/bilateral agreements."
+   }
+  },
+  {
+   "no": 3,
+   "clause": "RfS 8.1(c)",
+   "topic": "Peak Hours fixed in advance",
+   "page": 1,
+   "request": "Fix Peak Hours monthly or for the term instead of day-ahead.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "Peak Hours are to be declared by the Buying Entity on a day‑ahead basis"
+   }
+  },
+  {
+   "no": 5,
+   "clause": "RfS 16.1",
+   "topic": "EMD per contracted MW",
+   "page": 1,
+   "request": "EMD of Rs 10 lakh per contracted MW, capped at Rs 35 crore.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "Bidder requests the EMD amount to be INR 10 Lakhs per MW of Bid Capacity (Contracted Capacity) with maximum Cap of INR 35 Crores."
+   }
+  },
+  {
+   "no": 6,
+   "clause": "RfS 17.1",
+   "topic": "PBG per contracted MW",
+   "page": 1,
+   "request": "PBG of Rs 30 lakh per contracted MW.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "Bidder requests the PBG amount to be INR 30 Lakhs per MW of Contracted Capacity"
+   }
+  },
+  {
+   "no": 7,
+   "clause": "RfS 10",
+   "topic": "Relief after ISTS readiness",
+   "page": 1,
+   "request": "120 days instead of 60 after the Delivery Point is ready.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "SCSD for such Projects shall be revised as the date as on 60 days subsequent to the readiness of the Delivery Point"
+   }
+  },
+  {
+   "no": 8,
+   "clause": "RfS 40.2",
+   "topic": "Successful bidder range",
+   "page": 1,
+   "request": "Widen the range from L1 + 2% to L1 + 5%.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 1,
+    "quote": "The Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 2% of the L1 tariff"
+   }
+  },
+  {
+   "no": 13,
+   "clause": "RfS 4.2(iii)",
+   "topic": "Storage developers as lead bidders",
+   "page": 2,
+   "request": "Let storage developers bid as lead with RE tie-ups.",
+   "response": "Tender conditions remain unchanged.",
+   "quote": {
+    "doc": "clar1",
+    "page": 2,
+    "quote": "Energy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power."
+   }
+  },
+  {
+   "no": 14,
+   "clause": "RfS 4.2(iii)",
+   "topic": "Charging the battery from GDAM",
+   "page": 2,
+   "request": "Is buying in the Green Day-Ahead Market to charge the BESS permitted?",
+   "response": "Kindly refer Clause 4.4.9 of the draft PPA (not provided).",
+   "quote": {
+    "doc": "clar1",
+    "page": 2,
+    "quote": "It may please be clarified if procurement for GDAM market for charging of the BESS is permitted?"
+   }
+  },
+  {
+   "no": 15,
+   "clause": "RfS 8.1 a",
+   "topic": "DFR relaxation",
+   "page": 2,
+   "request": "Relax the DFR floors.",
+   "response": "Clause has been suitably modified. Kindly refer amendments-01.",
+   "quote": {
+    "doc": "clar1",
+    "page": 2,
+    "quote": "These stringent DFR requirements, coupled with the inherently uncertain nature of renewable energy generation, expose developers to substantial penalties."
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "id": "scope",
+   "group": "The tender",
+   "label": "What is bought",
+   "value": "1000 MW of Round-the-Clock Thermal Mimic (RTC-TM) power from ISTS-connected RE projects",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 1,
+     "quote": "Supply of 1000 MW of Round-the- Clock Thermal Mimic (RTC-TM) Power from ISTS-connected Renewable Energy (RE) Power Projects in India"
+    }
+   ]
+  },
+  {
+   "id": "bidSize",
+   "group": "What you bid",
+   "label": "Contracted capacity per bidder",
+   "value": "50 MW to 500 MW (all group companies together, one bid)",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 1,
+     "quote": "a minimum quantum of cumulative Contracted Capacity of 50 MW and a maximum quantum of 500 MW"
+    }
+   ]
+  },
+  {
+   "id": "selection",
+   "group": "What you bid",
+   "label": "Who wins",
+   "value": "Bidders within L1 + 2% of the lowest tariff are successful",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "clar1",
+     "page": 1,
+     "quote": "The Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 2% of the L1 tariff"
+    }
+   ]
+  },
+  {
+   "id": "tariff",
+   "group": "What you bid",
+   "label": "Tariff",
+   "value": "One tariff, fixed for the term, at the Delivery Point (the Buying Entity pays SECI 7 paise/kWh more)",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "psa",
+     "page": 8,
+     "quote": "fixed for entire term of agreement at delivery point and in addition thereto a trading margin of Seven (7) paisa/kWh shall be payable by the Buying Entity to SECI"
+    }
+   ]
+  },
+  {
+   "id": "dfrPeak",
+   "group": "Supply",
+   "label": "Peak Hours floor",
+   "value": "At least 90% of contracted capacity in every 15-minute block of the Peak Hours",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "(i) a minimum DFR of 90% in each time-block during the Peak Hours"
+    }
+   ]
+  },
+  {
+   "id": "dfrOffpeak",
+   "group": "Supply",
+   "label": "Off-peak floor",
+   "value": "At least 70% of contracted capacity in every 15-minute block outside the Peak Hours",
+   "status": "amended",
+   "by": "amd1",
+   "was": "80%, relaxable to 70% for two monsoon months",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "(ii) a minimum DFR of 70% in each time-block during the off-Peak Hours."
+    }
+   ]
+  },
+  {
+   "id": "dfrAnnual",
+   "group": "Supply",
+   "label": "Annual DFR",
+   "value": "No annual floor: only the block-wise floors are measured",
+   "status": "removed",
+   "by": "amd1",
+   "was": "90% on annual basis",
+   "sources": [
+    {
+     "doc": "psa",
+     "page": 17,
+     "quote": "(iii) a minimum DFR of 90% on annual basis."
+    },
+    {
+     "doc": "amd1",
+     "page": 3,
+     "quote": "In a particular Contract Year, the aggregate penalty for shortfall in the minimum DFR requirements for Peak and Off-Peak Hours shall be levied on the RPD."
+    }
+   ]
+  },
+  {
+   "id": "dfrDef",
+   "group": "Supply",
+   "label": "How a block's DFR is counted",
+   "value": "Power scheduled ÷ contracted capacity, at most 1; 96 blocks of 15 minutes a day",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "DFR = [Power Injection Scheduled by the RPD (MW) in a particular time block ÷ Contracted Capacity (MW)], subject to the maximum value of DFR being 1."
+    },
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "a day shall consist of 96 time-blocks (each block comprising a 15 minutes’ duration)"
+    }
+   ]
+  },
+  {
+   "id": "peakHours",
+   "group": "Supply",
+   "label": "Peak Hours",
+   "value": "Any 6 hours a day, chosen day-ahead by the Buying Entity, between 18:00 and 10:00 the next morning",
+   "status": "amended",
+   "by": "amd1",
+   "was": "6 hours within 00:00–10:00 and 18:00–24:00",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day"
+    },
+    {
+     "doc": "psa",
+     "page": 18,
+     "quote": "These 6 hours shall be intimated by the Buying Entity on day-ahead basis"
+    }
+   ]
+  },
+  {
+   "id": "penalty",
+   "group": "Supply",
+   "label": "Shortfall penalty",
+   "value": "1.5 × the tariff on the energy short of each block's floor, settled monthly",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 18,
+     "quote": "Penalty for the above month = (1.5 x 4.0 x 375 x 1000)/10000000= INR 22.50 Lakhs"
+    },
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "Penalty for both the above shortfalls will be calculated on time-block-wise basis and will be reconciled on monthly basis."
+    }
+   ]
+  },
+  {
+   "id": "default",
+   "group": "Supply",
+   "label": "Event of Default",
+   "value": "Failing the block floors for two consecutive Contract Years (not counting the first, short one)",
+   "status": "amended",
+   "by": "amd1",
+   "flag": "The literal wording ('in every time-block') would make a single missed block in two years a default: worth a pre-bid query.",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 12,
+     "quote": "failure to maintain minimum DFR requirement as per Article 4.4.1 in every time-block during Peak and Off-Peak Hours for a period of 2 (two) consecutive Contract Years"
+    }
+   ]
+  },
+  {
+   "id": "offtake",
+   "group": "Supply",
+   "label": "Offtake",
+   "value": "The Buying Entity must take all power scheduled up to the contracted capacity; you schedule day-ahead",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "psa",
+     "page": 19,
+     "quote": "The Buying Entity shall compulsorily offtake all the power, subject to the maximum power scheduled in any time-block being equal to the Contracted Capacity."
+    }
+   ]
+  },
+  {
+   "id": "excess",
+   "group": "Supply",
+   "label": "Power above the contracted capacity",
+   "value": "Free to sell to any third party or power exchange, no NOC needed",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "psa",
+     "page": 19,
+     "quote": "the SECI/RPD is free to sell power in excess of the Contracted Capacity in any time-block, to any third party or power exchange, without requiring any NOC from Buying Entity."
+    }
+   ]
+  },
+  {
+   "id": "green",
+   "group": "Supply",
+   "label": "Green market sourcing",
+   "value": "Up to 5% of annual energy from green market or bilateral sources (not modelled)",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "clar1",
+     "page": 1,
+     "quote": "The RPD can source up to 5% RE power (in energy terms) on annual basis from green market sources/bilateral agreements."
+    }
+   ]
+  },
+  {
+   "id": "ess",
+   "group": "Plant",
+   "label": "Storage",
+   "value": "Storage is mandatory and must charge from RE only",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "clar1",
+     "page": 2,
+     "quote": "Energy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power."
+    }
+   ]
+  },
+  {
+   "id": "colocation",
+   "group": "Plant",
+   "label": "Battery location",
+   "value": "A battery is co-located with RE generation (on a multi-site project, with at least one RE component)",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 1,
+     "quote": "In case the Battery Energy Storage System (BESS) is utilized as the ESS component, the same shall be co-located with the RE generation component."
+    }
+   ]
+  },
+  {
+   "id": "modules",
+   "group": "Plant",
+   "label": "Solar modules",
+   "value": "Domestic cells and domestic modules, ALMM List-I",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 6,
+     "quote": "It is mandatory to use both domestically manufactured solar PV Cells and domestically manufactured solar PV modules."
+    }
+   ]
+  },
+  {
+   "id": "charges",
+   "group": "Plant",
+   "label": "Charges and losses",
+   "value": "Up to the Delivery Point: yours; beyond it: the Buying Entity's",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 1,
+     "quote": "All charges and losses related to discharging the ESS component up to Delivery Point shall be borne by the RPD"
+    }
+   ]
+  },
+  {
+   "id": "substation",
+   "group": "Plant",
+   "label": "Delivery Point substation",
+   "value": "One of the four substation choices of cl. 7.5, scheduled to commission by 30 June 2028 (proof in Format-7.1)",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 2,
+     "quote": "The Bidder is required to provide the proof of SCD of substation in this regard at the time of bid submission, as part of Format-7.1 of the RfS."
+    }
+   ]
+  },
+  {
+   "id": "scsd",
+   "group": "Dates",
+   "label": "Supply starts (SCSD)",
+   "value": "24 months after the PPA's Effective Date, for the full capacity",
+   "status": "amended",
+   "by": "amd2",
+   "was": "Phased by Amendment-01: storage at 18 months, the rest at 24",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 2,
+     "quote": "The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 24 months from the Effective Date of the PPA"
+    }
+   ]
+  },
+  {
+   "id": "late",
+   "group": "Dates",
+   "label": "Latest start with penalty",
+   "value": "6 months after the SCSD; the PBG is encashed pro rata for capacity not supplying",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 2,
+     "quote": "shall be limited to the date as on 6 months from the SCSD or the extended SCSD (if applicable)"
+    }
+   ]
+  },
+  {
+   "id": "fc",
+   "group": "Dates",
+   "label": "Financial Closure",
+   "value": "6 months before the SCSD",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "The Projects shall achieve Financial Closure by the date as on 6 months prior to the SCSD/ extended SCSD."
+    }
+   ]
+  },
+  {
+   "id": "emd",
+   "group": "Money at stake",
+   "label": "EMD",
+   "value": "Rs 9.68 lakh × solar MW + Rs 13.68 lakh × wind MW + Rs 2.40 lakh × storage MWh",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "EMD amount = Rs. [9,68,000 * S + 13,68,000 * W + 2,40,000 * E]"
+    }
+   ]
+  },
+  {
+   "id": "pbg",
+   "group": "Money at stake",
+   "label": "Performance Bank Guarantee",
+   "value": "Rs 24.20 lakh × solar MW + Rs 34.20 lakh × wind MW + Rs 6.00 lakh × storage MWh",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "PBG amount = Rs. [24,20,000* S + 34,20,000* W + 6,00,000 * E]"
+    }
+   ]
+  },
+  {
+   "id": "networth",
+   "group": "Eligibility",
+   "label": "Minimum net worth",
+   "value": "Rs 96.8 lakh × solar MW + Rs 1.368 crore × wind and other RE MW + Rs 24 lakh × storage MWh",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "Minimum Net-Worth requirement = [(Rs. 96,80,000 x Rated cumulative Installed Capacity of Solar PV component (MW)) + (Rs. 1,36,80,000 x Rated cumulative Installed Capacity of Wind Power component and other RE sources (MW)) + (Rs. 24,00,000 x Rated cumulative Installed Capacity of ESS component (MWh))]"
+    }
+   ]
+  },
+  {
+   "id": "technical",
+   "group": "Eligibility",
+   "label": "Technical experience",
+   "value": "Unclear: Amendment-01 set the experience test, Amendment-02 marks clause 34.3 'Not used'",
+   "status": "ambiguous",
+   "by": "amd2",
+   "flag": "Ask SECI whether any technical experience criterion remains.",
+   "sources": [
+    {
+     "doc": "amd1",
+     "page": 4,
+     "quote": "a single Generating Station/ Generating System/ Power Plant/ Power Project of Contracted Capacity not less than ‘4X/5’ MW in last seven years"
+    },
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "12. 34.3 Not used."
+    }
+   ]
+  },
+  {
+   "id": "early",
+   "group": "Money at stake",
+   "label": "A component ready before the rest",
+   "value": "Its power may be bought outside the PPA at 100% (peak), 75% (non-solar) or 50% (solar hours) of the tariff",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "(ii) for power supplied during non-solar hours, other than Peak Hours, @75% of the PPA Tariff;"
+    }
+   ]
+  },
+  {
+   "id": "compensation",
+   "group": "Money at stake",
+   "label": "Grid unavailability",
+   "value": "Compensated beyond 175 hours a Contract Year",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "psa",
+     "page": 20,
+     "quote": "Grid unavailability beyond 175 hours in a Contract Year, as defined in SECI-RPD PPA"
+    }
+   ]
+  },
+  {
+   "id": "term",
+   "group": "Gaps",
+   "label": "PPA term",
+   "value": "Not in the documents provided (the PSA runs as long as the PPA). The model uses 25 years until the RfS is added.",
+   "status": "missing",
+   "sources": []
+  },
+  {
+   "id": "ceiling",
+   "group": "Gaps",
+   "label": "Ceiling tariff",
+   "value": "Not in the documents provided",
+   "status": "missing",
+   "sources": []
+  },
+  {
+   "id": "deadline",
+   "group": "Gaps",
+   "label": "Bid submission deadline",
+   "value": "Not in the documents provided (check SECI's latest date extension)",
+   "status": "missing",
+   "sources": []
+  }
+ ],
+ "model": {
+  "minBidMw": 50,
+  "maxBidMw": 500,
+  "years": 25,
+  "peakFloor": 0.9,
+  "offpeakFloor": 0.7,
+  "penaltyMultiple": 1.5,
+  "peakWindow": {
+   "start": 18,
+   "hours": 16
+  },
+  "peakHoursChosen": 6,
+  "scsdMonths": 24,
+  "fcMonthsBefore": 6,
+  "lateMonths": 6,
+  "emdRs": {
+   "solarPerMw": 968000,
+   "windPerMw": 1368000,
+   "storagePerMwh": 240000
+  },
+  "pbgRs": {
+   "solarPerMw": 2420000,
+   "windPerMw": 3420000,
+   "storagePerMwh": 600000
+  },
+  "netWorthRs": {
+   "solarPerMw": 9680000,
+   "windPerMw": 13680000,
+   "storagePerMwh": 2400000
+  },
+  "tradingMarginRsPerKwh": 0.07
+ }
+}

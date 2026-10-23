@@ -7,7 +7,7 @@
 /** The financial inputs the Live model sheet reads. */
 export const LIVE_FIN_KEYS = [
   "tariffEscalation", "solarOmLakhPerMw", "windOmLakhPerMw", "bessOmLakhPerMwh", "biomassOmLakhPerMw", "omEscalation", "insurancePct", "otherFixedCr",
-  "biomassFuelRsPerKwh", "biomassFuelEscalation", "sellSurplus", "surplusPrice", "shortfallPenalty", "debtFraction", "interestRate",
+  "biomassFuelRsPerKwh", "biomassFuelEscalation", "sellSurplus", "surplusPrice", "shortfallPenalty", "blockPenaltyMultiple", "debtFraction", "interestRate",
   "tenorYears", "repayment", "targetEquityIrr", "discountRate", "taxRate", "taxDepreciation", "wdvRate", "bookLifeYears", "salvagePct", "receivableDays",
 ];
 
