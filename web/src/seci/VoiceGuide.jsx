@@ -184,6 +184,8 @@ export default function VoiceGuide({ state, setState, terms, goto, sizing }) {
       if (await speak("The sizing did not finish: see the message on the Size step. Say repeat to try again.")) setPhase("waiting");
       return;
     }
+    // the tab has not re-rendered with the sized plant yet: the results step reads it from here
+    stateRef.current = { ...stateRef.current, lp };
     run(i + 1);
   }, [listen, run, sizing, speak]);
 
