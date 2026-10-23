@@ -61,7 +61,9 @@ def _session(**context):
     sync_playwright = pytest.importorskip("playwright.sync_api").sync_playwright
     errors: list[str] = []
     with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM") or None)
+        # a fake microphone, for the SECI tab's voice agent (getUserMedia)
+        browser = p.chromium.launch(executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM") or None,
+                                    args=["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"])
         ctx = browser.new_context(viewport={"width": 1500, "height": 1000}, accept_downloads=True,
                                   ignore_https_errors=os.environ.get("E2E_IGNORE_HTTPS_ERRORS") == "1", **context)
         page = ctx.new_page()

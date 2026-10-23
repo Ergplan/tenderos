@@ -12,15 +12,16 @@ const STATUS = {
   missing: "Not in the documents",
 };
 const docTitle = (id) => PACK.documents.find((d) => d.id === id)?.title || id;
+const ORDER = ["The tender", "What you bid", "Bid process", "Supply", "Plant", "Dates", "Money at stake", "Eligibility"];
 
 /** Step 2: every bid condition now in force (after both amendments), with its quote and history. */
 export default function ConditionsStep() {
-  const groups = [...new Set(PACK.conditions.map((c) => c.group))];
+  const groups = [...new Set(PACK.conditions.map((c) => c.group))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
   const count = (status) => PACK.conditions.filter((c) => c.status === status).length;
   return (
-    <Section index="2" title="Bid conditions" note="As they stand after Amendment-01, Amendment-02 and Clarifications-01">
+    <Section index="2" title="Bid conditions" note="The RfS as it stands after Amendment-01, Amendment-02 and Clarifications-01">
       <p className="rtc-note" data-testid="seci-cond-summary">
-        {PACK.conditions.length} conditions: {count("amended")} amended, {count("removed")} removed, {count("ambiguous")} unclear, {count("missing")} not in the documents provided.
+        {PACK.conditions.length} conditions: {count("amended")} amended, {count("removed")} removed, {count("ambiguous")} unclear{count("missing") ? `, ${count("missing")} not in the documents` : ""}. Under each amended rule, “RfS as issued” shows the original wording.
       </p>
       {groups.map((g) => (
         <div key={g}>
@@ -34,6 +35,13 @@ export default function ConditionsStep() {
                   {c.was && <em>Was: {c.was}</em>}
                   {c.flag && <span className="seci-flag"><TriangleAlert size={12} /> {c.flag}</span>}
                   {c.sources.map((q, i) => <QuoteLink key={i} quote={q} />)}
+                  {c.rfs && (c.status !== "unchanged" || !c.sources.some((q) => q.doc === "rfs")) && (
+                    <details className="seci-rfs-orig">
+                      <summary>RfS as issued</summary>
+                      <p>{c.rfs.note}</p>
+                      {c.rfs.quotes.map((q, i) => <QuoteLink key={i} quote={q} />)}
+                    </details>
+                  )}
                 </div>
                 <span className={`seci-badge ${c.status}`}>{STATUS[c.status]}{c.by ? ` · ${docTitle(c.by)}` : ""}</span>
               </div>

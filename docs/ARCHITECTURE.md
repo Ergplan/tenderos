@@ -6,6 +6,8 @@ flowchart LR
   W -->|SQL| D[(Postgres 16)]
   W -->|/api/* forwarded when the<br/>user's tabs allow the family| E[engine: FastAPI<br/>extraction, HiGHS sizing,<br/>15-min dispatch]
   E -->|PDF pages, only with a key| A[Anthropic API<br/>claude-fable-5-1]
+  W -->|creates the voice session,<br/>only with a key| O[OpenAI GPT-Live<br/>gpt-live-1]
+  B <-.->|WebRTC audio and events:<br/>the bid agent's tools run in the browser| O
 ```
 
 | Part | Folder | What it does |
@@ -22,7 +24,7 @@ the web app and is the only published service (`docs/DEPLOY.md`).
 | Tab | Engine route families | Purpose |
 | --- | --- | --- |
 | Tender to Bid | `bid`, `rtc` | Takes a tender to a sized plant and a priced bid in six steps (`docs/TENDER_TO_BID.md`) |
-| SECI RTC tender | `rtc`, `bid` | SECI RTC-TM-V: its documents and amendment trail, the bid conditions, what to bid, sizing against the time-block floors, the financial model, the bid forms, and a voice guide through all of it (`docs/SECI_RTC.md`) |
+| SECI RTC tender | `rtc`, `bid` | SECI RTC-TM-V: the RfS, its amendments and clarifications, the bid conditions, what to bid, sizing against the time-block floors, the financial model with the quoted tariff checked against the target IRR, the RfS's bid formats filled and reviewed, a GPT-Live bid agent and a voice guide (`docs/SECI_RTC.md`) |
 | Round the clock | `rtc` | RTC and FDRE sizing and finance with your own inputs |
 | BESS tender | `bess` | Standalone battery tenders: reads the tender, sizes the battery and computes the finance |
 | CfD bid | none | SECI CfD-I strike price, computed in the browser (`docs/CFD.md`) |
@@ -58,8 +60,22 @@ The SECI RTC tender tab follows steps 3 to 6 with terms from its own tender pack
 floors (`basis: "block"`, peak 90% and off-peak 70%, a shortfall priced at 1.5 × the tariff),
 which `rtc_lp.py` models with a shortfall column per hour. The sizing is shared with Tender to Bid
 through `web/src/bid/useSizing.js`. The bid forms go to `POST /api/seci/forms` (a Next route that
-writes a Word file with `web/lib/docx.js`). The voice guide runs in the browser only
+writes a Word file with `web/lib/docx.js`), with every RfS format this bid needs as filled
+(`web/src/seci/formats.js`). The voice guide runs in the browser only
 (`web/src/seci/voice.js`, `VoiceGuide.jsx`).
+
+The bid agent works as follows:
+
+1. `POST /api/seci/live` (a Next route, `OPENAI_API_KEY` on the web server only) creates a
+   GPT-Live session with Responses delegation from the browser's WebRTC offer.
+2. Audio and events then flow between the browser and OpenAI.
+3. The backend model's function calls arrive on the data channel. The browser runs them against
+   the tab's state (`web/src/seci/agent.js`: `createToolRunner`, `LiveEvents`): setting inputs,
+   HiGHS sizing, results, financials, the quote, the tender lookup and the formats.
+4. The browser returns each result as `function_call_output`.
+
+`web/src/bid/quote.js` gives a quoted tariff's equity and project IRR, for Financials on both
+tabs, the bid forms and the agent.
 
 ## Tests
 
@@ -77,7 +93,7 @@ These parts of the FDRE repository were deliberately not carried over:
 * the product page;
 * the Day 1 to 7 platform work on the FDRE `claude/laughing-pascal-7akw12` branch: projects,
   immutable runs, the audit chain, the assistant, the RealTalk voice session and the post-award DPR.
-  (The SECI RTC tab's voice guide is new and runs in the browser only.)
+  (The SECI RTC tab's voice guide and its GPT-Live bid agent are new.)
 
 tender_engine's review workflow (approvals, canonical facts, corrigendum versions) also stays in
 tender_engine. This app uses only its extraction engine.

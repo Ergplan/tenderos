@@ -51,7 +51,29 @@ function bodyXml(b, preparedBy) {
     checks.map((c) => [str(c.label, 120), str(c.detail, 600), STATUS[c.status] || str(c.status, 20), str(c.source, 120)]), { colOpts: [{ bold: true }, {}, {}, {}] }));
   out.push(para("Documents read", { bold: true, size: 24, before: 200 }), table([["Document", 3000], ["Reference", 4500], ["Date", 1200], ["Read", 1200]],
     docs.map((d) => [str(d.title, 120), str(d.ref, 200), fmtDate(d.date), d.provided ? "Yes" : "Not provided"])));
-  out.push(para("The RfS formats (Covering Letter, Format-7.1 and others) are in the main RfS, which was not among the documents read; this pack is the data sheet to fill them.", { italic: true, size: 18, color: "555555", before: 160 }));
+  const formats = (Array.isArray(b.formats) ? b.formats : []).slice(0, 30);
+  if (formats.length) {
+    out.push(para("The RfS formats", { bold: true, size: 28, before: 320 }),
+      para("Each format this bid needs, with every blank as filled in TenderOS. Print each on the paper it names, in the RfS's own wording (pages given), and sign it.", { italic: true, size: 18, color: "555555", after: 120 }));
+    for (const f of formats) {
+      const pages = Array.isArray(f.pages) ? `RfS pp. ${num(f.pages[0], 0)}–${num(f.pages[1], 0)}` : "";
+      out.push(para(`Format ${str(f.id, 20)}: ${str(f.title, 160)}`, { bold: true, size: 24, before: 240 }));
+      out.push(table([["", 2400], ["", 7500]], [
+        ["In the RfS", pages],
+        ["Signed by", str(f.submittedBy, 300)],
+        ["On", str(f.paper, 300)],
+        ["Goes in", str(f.envelope, 200)],
+        ["When", str(f.when, 200)],
+        ["Status", `${f.applies === "later" ? "After the award" : "Needed"}; ${f.reviewed === "current" ? `reviewed ${fmtDate(String(f.reviewedAt || "").slice(0, 10))}` : f.reviewed === "changed" ? "changed since its review" : "not reviewed yet"}`],
+      ], { colOpts: [{ bold: true }, {}], header: false }));
+      const fields = (Array.isArray(f.fields) ? f.fields : []).slice(0, 60);
+      if (fields.length) {
+        out.push(table([["Blank", 3400], ["Entry", 5600], ["Page", 900]], fields.map((x) => [str(x.label, 160), str(x.value, 2000) || "________________", num(x.page, 0)]), { colOpts: [{ bold: true }, {}, {}] }));
+      }
+      const att = (Array.isArray(f.attachments) ? f.attachments : []).slice(0, 12);
+      if (att.length) out.push(table([["Enclose", 7800], ["Ready", 2100]], att.map((a) => [str(a.label, 300), a.done ? "Yes" : "Not yet"]), { colOpts: [{}, { bold: true }] }));
+    }
+  }
   return out.join("");
 }
 

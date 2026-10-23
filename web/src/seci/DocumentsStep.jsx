@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FileText, TriangleAlert } from "lucide-react";
+import { FileText, MessageCircleQuestion } from "lucide-react";
 import { Section } from "../rtc/ui";
 import { PACK } from "./terms";
 
@@ -39,10 +39,22 @@ export default function DocumentsStep() {
             </article>
           ))}
         </div>
-        <p className="rtc-note" data-testid="seci-rfs-missing"><TriangleAlert size={13} /> The main RfS was not provided. Its terms are shown where the amendments, the clarifications or the PSA quote them; the PPA term, any ceiling tariff and the bid forms' exact wording need the RfS.</p>
+        <p className="rtc-note">Where an amendment or a clarification changes the RfS, the amended rule applies; the RfS's original wording is kept beside each condition.</p>
       </Section>
 
-      <Section index="1.1" title="What the amendments changed" note="Each clause as it stood and as amended, quoted from the documents"
+      <Section index="1.1" title="How the bid goes" note="From registration on the portal to the PPA, as the RfS sets it out">
+        <ol className="seci-process" data-testid="seci-process">
+          {PACK.bidProcess.map((p, i) => (
+            <li key={i}>
+              <strong>{p.step}</strong>
+              <span>{p.detail}</span>
+              {p.sources.slice(0, 1).map((q, j) => <QuoteLink key={j} quote={q} />)}
+            </li>
+          ))}
+        </ol>
+      </Section>
+
+      <Section index="1.2" title="What the amendments changed" note="Each clause as it stood and as amended, quoted from the documents"
         actions={(
           <div className="bid-filter" role="tablist">
             {[["all", "All"], ["amd1", "Amendment-01"], ["amd2", "Amendment-02"]].map(([id, label]) => (
@@ -71,7 +83,7 @@ export default function DocumentsStep() {
         </div>
       </Section>
 
-      <Section index="1.2" title="Clarifications-01" note="Bidders' queries and SECI's answers (27.04.2026)">
+      <Section index="1.3" title="Clarifications-01" note="Bidders' queries and SECI's answers (27.04.2026)">
         <div className="seci-changes" data-testid="seci-clarifications">
           {PACK.clarifications.map((c) => (
             <div key={c.no} className="seci-change">
@@ -88,6 +100,12 @@ export default function DocumentsStep() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section index="1.4" title="Points to raise with SECI" note="Where the documents conflict or are unclear; each with the page to cite">
+        <ul className="seci-queries" data-testid="seci-queries">
+          {PACK.queries.map((q, i) => <li key={i}><MessageCircleQuestion size={13} /> <span>{q}</span></li>)}
+        </ul>
       </Section>
     </>
   );

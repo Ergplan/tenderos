@@ -27,6 +27,7 @@ export function defaultSeciState() {
     bid: { baseMw: 300, greenshoe: false },
     sources: { ...Object.fromEntries(Object.keys(base.sources).map((k) => [k, false])), solar: true, wind: true, bess: true },
     seci: { ...DEFAULT_SETTINGS },
-    forms: {},
+    forms: {}, // the particulars and every format's blanks
+    formsReview: {}, // format id -> { at, print }: reviewed, and on which values
   };
 }

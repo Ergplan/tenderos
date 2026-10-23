@@ -11,11 +11,12 @@
   {
    "id": "rfs",
    "kind": "tender",
-   "title": "RfS (main tender document)",
+   "title": "RfS",
    "ref": "RfS No. SECI/C&P/IPP/13/0020/25-26",
    "date": "2026-03-10",
-   "file": null,
-   "note": "Not uploaded. Its terms appear here only where an amendment, the clarifications or the PSA quote them."
+   "file": "RfS.pdf",
+   "pages": 139,
+   "summary": "The tender: 1000 MW RTC-TM from ISTS-connected RE with storage, 25-year PPA from the SCSD, e-bidding and e-Reverse Auction, eligibility, guarantees, milestones and the bid formats (Section 7). Read with the amendments, which override it."
   },
   {
    "id": "amd1",
@@ -589,7 +590,22 @@
      "page": 1,
      "quote": "Supply of 1000 MW of Round-the- Clock Thermal Mimic (RTC-TM) Power from ISTS-connected Renewable Energy (RE) Power Projects in India"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 1,
+      "quote": "Selection of RE Power Developers for Supply of 1000 MW of Round-the-Clock Thermal Mimic (RTC-TM) Power from ISTS-connected Renewable Energy (RE) Power Projects in India"
+     },
+     {
+      "doc": "rfs",
+      "page": 6,
+      "quote": "SECI hereby invites proposals for setting up of ISTS-connected RE Projects for supply of 1000 MW Power on \"Round-the-Clock\" (RTC) basis"
+     }
+    ],
+    "note": "RfS title and cl. 1.5: 1000 MW RTC-TM from ISTS-connected RE projects, Build-Own-Operate. Same as the pack; no amendment."
+   }
   },
   {
    "id": "bidSize",
@@ -604,7 +620,27 @@
      "page": 1,
      "quote": "a minimum quantum of cumulative Contracted Capacity of 50 MW and a maximum quantum of 500 MW"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 11,
+      "quote": "shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 100 MW and a maximum quantum of 500 MW, in the prescribed formats"
+     },
+     {
+      "doc": "rfs",
+      "page": 11,
+      "quote": "The cumulative Contracted Capacity shall be quoted in integral values only."
+     },
+     {
+      "doc": "rfs",
+      "page": 11,
+      "quote": "The cumulative Contracted Capacity to be allocated to a Bidder including its Parent, Affiliate or Ultimate Parent or any Group Company shall be limited to 500 MW."
+     }
+    ],
+    "note": "RfS cl. 5.1 said 100-500 MW, whole MW only, 500 MW group cap (cl. 5.2). Amendment-01 lowered the minimum to 50 MW; the pack's 50-500 MW is current."
+   }
   },
   {
    "id": "selection",
@@ -618,7 +654,22 @@
      "page": 1,
      "quote": "The Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 2% of the L1 tariff"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 58,
+      "quote": "The Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 2% of the L1 tariff-hereinafter referred to as \"the range\"- will be declared as Successful Bidders under the RfS"
+     },
+     {
+      "doc": "rfs",
+      "page": 58,
+      "quote": "In other words, in every possible scenario, the total capacity to be awarded under the RfS shall be limited to SE."
+     }
+    ],
+    "note": "RfS cl. 40.2: post e-RA, bidders within L1 + 2% win, but total award is capped at SE (80% of qualified bid capacity, max 1000 MW). Unchanged (Clarifications-01 Q8 refused L1+5%)."
+   }
   },
   {
    "id": "tariff",
@@ -632,7 +683,32 @@
      "page": 8,
      "quote": "fixed for entire term of agreement at delivery point and in addition thereto a trading margin of Seven (7) paisa/kWh shall be payable by the Buying Entity to SECI"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 54,
+      "quote": "quoting a single \"First Round Tariff\" in"
+     },
+     {
+      "doc": "rfs",
+      "page": 55,
+      "quote": "The tariff shall be quoted in Indian Rupee per kWh up to two places of decimal only."
+     },
+     {
+      "doc": "rfs",
+      "page": 108,
+      "quote": "3. Tariff requirement shall be quoted as a fixed amount in Indian Rupees only. Conditional proposal shall be summarily rejected."
+     },
+     {
+      "doc": "rfs",
+      "page": 67,
+      "quote": "shall mean the margin on sale of RE power to the Buying Entity(ies) under this RfS being charged by SECI and shall be @ INR 0.07/kWh."
+     }
+    ],
+    "note": "RfS cl. 38.3 and Format 7.10: one fixed tariff in INR/kWh (2 decimals) for all projects; SECI trading margin Rs 0.07/kWh (cl. 42.62). Consistent with the pack; no amendment."
+   }
   },
   {
    "id": "dfrPeak",
@@ -646,7 +722,17 @@
      "page": 2,
      "quote": "(i) a minimum DFR of 90% in each time-block during the Peak Hours"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "(i) a minimum DFR of 90% in each time-block during the Peak Hours;"
+     }
+    ],
+    "note": "RfS cl. 8.1.a(i): 90% in every Peak-Hours block. Amendment-01 restated it unchanged."
+   }
   },
   {
    "id": "dfrOffpeak",
@@ -662,7 +748,22 @@
      "page": 2,
      "quote": "(ii) a minimum DFR of 70% in each time-block during the off-Peak Hours."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "(ii) a minimum DFR of 80% in each time-block during the off-Peak Hours;"
+     },
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "any two calendar months between (and including) July and September, during which the minimum DFR requirement in each time-block during the off-Peak Hours shall stand relaxed to 70%"
+     }
+    ],
+    "note": "RfS cl. 8.1.a(ii): 80% off-peak, relaxable to 70% for two RPD-designated months in Jul-Sep (notice by 31 May). Amendment-01 replaced 8.1.a: 70% in every off-peak block all year; the pack's 70% is current."
+   }
   },
   {
    "id": "dfrAnnual",
@@ -683,7 +784,22 @@
      "page": 3,
      "quote": "In a particular Contract Year, the aggregate penalty for shortfall in the minimum DFR requirements for Peak and Off-Peak Hours shall be levied on the RPD."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "(iii) a minimum DFR of 90% on annual basis."
+     },
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "In a Contract Year, higher of the two penalties ((sum of (i) and (ii) for all the months of the Contract Year), (iii)) shall be levied on the RPD"
+     }
+    ],
+    "note": "RfS cl. 8.1.a(iii)/8.1.b(iii) had a 90% annual DFR with the higher-of-two penalty. Amendment-01 removed it; the pack's 'removed' is correct."
+   }
   },
   {
    "id": "dfrDef",
@@ -703,7 +819,17 @@
      "page": 2,
      "quote": "a day shall consist of 96 time-blocks (each block comprising a 15 minutes’ duration)"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "DFR = [Power Injection Scheduled by the RPD (MW) in a particular time block ÷ Contracted Capacity (MW)], subject to the maximum value of DFR being 1."
+     }
+    ],
+    "note": "RfS cl. 8.1.b: same formula. Amendment-01 added the explicit 96 blocks of 15 minutes; the pack is current."
+   }
   },
   {
    "id": "peakHours",
@@ -724,7 +850,22 @@
      "page": 18,
      "quote": "These 6 hours shall be intimated by the Buying Entity on day-ahead basis"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "The Buying Entity shall choose any 6 hours on a daily basis between 00:00 Hrs. to 10:00 Hrs. and 18:00 Hrs. to 24:00 Hrs. of a day, which shall be the 'Peak Hours' for that day."
+     },
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "In case of non-receipt of Peak Hours schedule from the Buying Entity, the Peak Hours for that day shall be considered same as the Peak Hours of the preceding day."
+     }
+    ],
+    "note": "RfS cl. 8.1.c: 6 hours within 00:00-10:00 and 18:00-24:00 of the same day, declared day-ahead; if not received, previous day's hours apply. Amendment-01 changed the window to 18:00-10:00 next morning; the pack is current. The default-to-previous-day rule is not in the pack."
+   }
   },
   {
    "id": "penalty",
@@ -744,7 +885,22 @@
      "page": 2,
      "quote": "Penalty for both the above shortfalls will be calculated on time-block-wise basis and will be reconciled on monthly basis."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 18,
+      "quote": "shall be equal to 1.5 times the cost of this shortfall in energy terms, calculated at the PPA tariff."
+     },
+     {
+      "doc": "rfs",
+      "page": 16,
+      "quote": "This aggregate penalty of both the above shortfalls shall be recovered on monthly basis from the subsequent monthly bill."
+     }
+    ],
+    "note": "RfS cl. 8.2.b: 1.5 x PPA tariff on the shortfall energy, recovered monthly. Rate unchanged; Amendment-01 removed the annual higher-of comparison (cl. 8.2.d). Pack is current."
+   }
   },
   {
    "id": "default",
@@ -774,7 +930,17 @@
      "page": 19,
      "quote": "The Buying Entity shall compulsorily offtake all the power, subject to the maximum power scheduled in any time-block being equal to the Contracted Capacity."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "The RPD shall schedule power on day-ahead basis. The Buying Entities shall compulsorily off-take all such power, subject to the maximum power scheduled in any time-block being equal to the Contracted Capacity."
+     }
+    ],
+    "note": "RfS cl. 8.1.i: same as the pack. Unchanged."
+   }
   },
   {
    "id": "excess",
@@ -788,7 +954,27 @@
      "page": 19,
      "quote": "the SECI/RPD is free to sell power in excess of the Contracted Capacity in any time-block, to any third party or power exchange, without requiring any NOC from Buying Entity."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 18,
+      "quote": "the RPD is allowed to supply power in excess of the Contracted Capacity in any time-block, to any third party or power exchange, without requiring any No-Objection Certificate (NOC) from SECI/Buying Entity."
+     },
+     {
+      "doc": "rfs",
+      "page": 18,
+      "quote": "In case such power is purchased by the Buying Entity, it shall be purchased at the PPA tariff (plus SECI's trading margin)."
+     },
+     {
+      "doc": "rfs",
+      "page": 18,
+      "quote": "Any instance of third-party sale of power from the Project by the RPD, while the Contracted Capacity in any-time block remains unfulfilled, shall constitute a breach"
+     }
+    ],
+    "note": "RfS cl. 8.3: excess above Contracted Capacity can be sold freely; if the Buying Entity buys it, at PPA tariff. RfS adds a 2x market-rate penalty for third-party sales while a block is short (see newConditions). Unchanged."
+   }
   },
   {
    "id": "green",
@@ -802,7 +988,27 @@
      "page": 1,
      "quote": "The RPD can source up to 5% RE power (in energy terms) on annual basis from green market sources/bilateral agreements."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "The RPD can, however, source up to 5% RE power (in energy terms), on annual basis, from the green market sources/bilateral agreements outside the PPA"
+     },
+     {
+      "doc": "rfs",
+      "page": 17,
+      "quote": "RPD shall not be entitled for energy payment against such excess energy supplied"
+     },
+     {
+      "doc": "rfs",
+      "page": 18,
+      "quote": "only the energy discharged from the ESS shall be considered for calculating the 5% requirement, and not the corresponding charging energy required."
+     }
+    ],
+    "note": "RfS cl. 8.1.j: up to 5% of annual energy from green market/bilateral; energy above 5% is not paid and not counted; for ESS only discharged energy counts. Unchanged (Clarifications-01 Q2 refused 15%)."
+   }
   },
   {
    "id": "ess",
@@ -816,7 +1022,27 @@
      "page": 2,
      "quote": "Energy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 10,
+      "quote": "Energy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power."
+     },
+     {
+      "doc": "rfs",
+      "page": 10,
+      "quote": "ESS may be owned by the RPD or may be tied-up separately with a third party by the RPD, for supply of power."
+     },
+     {
+      "doc": "rfs",
+      "page": 10,
+      "quote": "The ESS technology can be changed by the RPD at any time during the Term of the PPA."
+     }
+    ],
+    "note": "RfS cl. 4.2.iii: storage mandatory, RE-charged only; may be owned or tied up with a third party; technology changeable during the term at RPD's risk. Unchanged."
+   }
   },
   {
    "id": "colocation",
@@ -831,7 +1057,22 @@
      "page": 1,
      "quote": "In case the Battery Energy Storage System (BESS) is utilized as the ESS component, the same shall be co-located with the RE generation component."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 12,
+      "quote": "For a single Project, the RE generation components, along with ESS, may either be co-located, or may be located at different locations."
+     },
+     {
+      "doc": "rfs",
+      "page": 65,
+      "quote": "It may be noted that the sources of generation and ESS shall be co-located, to be considered as part of a single Project."
+     }
+    ],
+    "note": "RfS cl. 6.1 allowed ESS anywhere, but definition 42.47 required co-location (internal conflict). Amendment-02 settled it: BESS co-located with RE (at least one component); pumped hydro may stand alone. Pack is current."
+   }
   },
   {
    "id": "modules",
@@ -846,7 +1087,17 @@
      "page": 6,
      "quote": "It is mandatory to use both domestically manufactured solar PV Cells and domestically manufactured solar PV modules."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 50,
+      "quote": "The solar PV modules and solar PV cells used in the Projects under this RfS shall be from the models and manufacturers included in ALMM List-I (for solar PV modules) and ALMM List-II (for solar PV cells)"
+     }
+    ],
+    "note": "RfS cl. 34.4 already required ALMM List-I modules and List-II cells (valid on the date of module invoicing). Amendment-01 revised Annexure-A standards and restated domestic cells and modules; the rule itself predates the amendment."
+   }
   },
   {
    "id": "charges",
@@ -861,7 +1112,27 @@
      "page": 1,
      "quote": "All charges and losses related to discharging the ESS component up to Delivery Point shall be borne by the RPD"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 13,
+      "quote": "any other charges from the Project up to and including at the Interconnection Point will be borne by the RPD."
+     },
+     {
+      "doc": "rfs",
+      "page": 15,
+      "quote": "shall bear all transmission charges and losses and any other charges as applicable under the respective regulations beyond the Delivery Point and up to the drawl point."
+     },
+     {
+      "doc": "rfs",
+      "page": 15,
+      "quote": "In case the ESS component is located separately from the RE generating components of a Project, the charges for charging the ESS, as applicable under GNA regulations"
+     }
+    ],
+    "note": "RfS cl. 7.3/7.9/7.10: RPD bears all costs up to the Interconnection Point (and ESS charging if separate); Buying Entity takes GNA and charges beyond. Amendment-02 rewrote 7.10 for discharge and standalone PSP; the split is the same."
+   }
   },
   {
    "id": "substation",
@@ -876,7 +1147,27 @@
      "page": 2,
      "quote": "The Bidder is required to provide the proof of SCD of substation in this regard at the time of bid submission, as part of Format-7.1 of the RfS."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 14,
+      "quote": "Bids indicating substations outside the above four choices will be liable for rejection."
+     },
+     {
+      "doc": "rfs",
+      "page": 14,
+      "quote": "should have a scheduled commissioning date on or before 30th June, 2028. The Bidder is required to provide the proof of SCD of substation in this regard at the time of bid submission, as part of Format-"
+     },
+     {
+      "doc": "rfs",
+      "page": 13,
+      "quote": "Minimum voltage level for interconnection at the ISTS shall be 220 kV."
+     }
+    ],
+    "note": "RfS cl. 7.5: substation from one of four lists, SCD on/before 30 June 2028, proof in Format 7.1; ISTS at 220 kV or above (cl. 7.1). Amendment-01 restated 7.5 unchanged. Pack is current."
+   }
   },
   {
    "id": "scsd",
@@ -892,7 +1183,17 @@
      "page": 2,
      "quote": "The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 24 months from the Effective Date of the PPA"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 22,
+      "quote": "The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 18 months from the Effective Date of the PPA"
+     }
+    ],
+    "note": "RfS cl. 9.2.a: 18 months. Amendment-01 phased it 18/24; Amendment-02 set 24 months for the full capacity. The pack's 24 months is current."
+   }
   },
   {
    "id": "late",
@@ -907,7 +1208,22 @@
      "page": 2,
      "quote": "shall be limited to the date as on 6 months from the SCSD or the extended SCSD (if applicable)"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 22,
+      "quote": "shall be limited to the date as on 6 months from the SCSD or the extended SCSD (if applicable)"
+     },
+     {
+      "doc": "rfs",
+      "page": 22,
+      "quote": "the Contracted Capacity shall stand reduced/amended to the Project Capacity that has commenced supply of power"
+     }
+    ],
+    "note": "RfS cl. 9.2.b-d: 6 months grace with pro-rata PBG encashment; after that the capacity not supplying is cut and its PPA terminated. Same in Amendment-02. Pack is current."
+   }
   },
   {
    "id": "fc",
@@ -922,7 +1238,17 @@
      "page": 3,
      "quote": "The Projects shall achieve Financial Closure by the date as on 6 months prior to the SCSD/ extended SCSD."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 36,
+      "quote": "The Projects shall achieve Financial Closure by the date as on 6 months prior to the SCSD/ extended SCSD."
+     }
+    ],
+    "note": "RfS cl. 21.1: FC 6 months before SCSD. Amendment-01 tied it to Phase-I SCSD; Amendment-02 restored the RfS wording (now 18 months after Effective Date, as SCSD is 24). Pack is current."
+   }
   },
   {
    "id": "emd",
@@ -937,7 +1263,22 @@
      "page": 3,
      "quote": "EMD amount = Rs. [9,68,000 * S + 13,68,000 * W + 2,40,000 * E]"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 27,
+      "quote": "EMD amount = Rs. [9,54,000 * S + 13,32,000 * W + 2,35,450 * E],"
+     },
+     {
+      "doc": "rfs",
+      "page": 27,
+      "quote": "Based on the cumulative Installed Capacity committed by the Bidder as part of its response to RfS"
+     }
+    ],
+    "note": "RfS cl. 16.1: Rs 9.54 lakh/MW solar + 13.32 lakh/MW wind + 2.3545 lakh/MWh ESS, on installed capacity. Amendment-02 raised it to 9.68/13.68/2.40; the pack's figures are current."
+   }
   },
   {
    "id": "pbg",
@@ -952,7 +1293,22 @@
      "page": 3,
      "quote": "PBG amount = Rs. [24,20,000* S + 34,20,000* W + 6,00,000 * E]"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 29,
+      "quote": "PBG amount = Rs. [23,85,000* S + 33,30,000* W + 5,88,625 * E],"
+     },
+     {
+      "doc": "rfs",
+      "page": 29,
+      "quote": "with a validity period up to (& including) the date as on 9 months after the SCSD of the Project."
+     }
+    ],
+    "note": "RfS cl. 17.1: Rs 23.85/33.30 lakh/MW + 5.88625 lakh/MWh, valid to SCSD + 9 months. Amendment-02 raised it to 24.20/34.20/6.00; the pack's figures are current."
+   }
   },
   {
    "id": "networth",
@@ -967,7 +1323,22 @@
      "page": 3,
      "quote": "Minimum Net-Worth requirement = [(Rs. 96,80,000 x Rated cumulative Installed Capacity of Solar PV component (MW)) + (Rs. 1,36,80,000 x Rated cumulative Installed Capacity of Wind Power component and other RE sources (MW)) + (Rs. 24,00,000 x Rated cumulative Installed Capacity of ESS component (MWh))]"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 51,
+      "quote": "Minimum Net-Worth requirement = [(Rs. 95,40,000 x Rated cumulative Installed Capacity of Solar PV component (MW)) + (Rs. 1,33,20,000 x Rated cumulative Installed Capacity of Wind Power component and other RE sources (MW))"
+     },
+     {
+      "doc": "rfs",
+      "page": 51,
+      "quote": "The above Net-Worth amount shall be demonstrated by the Bidder as on the last of previous Financial Year, i.e., FY 2024-25 or as on the day at least 7 days prior to the bid submission deadline."
+     }
+    ],
+    "note": "RfS cl. 35.1: Rs 95.4 lakh/MW solar + 1.332 Cr/MW wind + 23.545 lakh/MWh ESS, as on 31.03.2025 or a date 7+ days before the deadline. Amendment-02 raised the rates (pack current); the as-on date is unchanged."
+   }
   },
   {
    "id": "technical",
@@ -988,7 +1359,22 @@
      "page": 3,
      "quote": "12. 34.3 Not used."
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 50,
+      "quote": "The Bidder should have successfully commissioned a single RE Project, as defined under the Guidelines, of Contracted Capacity not less than '4X/5' MW"
+     },
+     {
+      "doc": "rfs",
+      "page": 50,
+      "quote": "In case of the Bidder being a Bidding Consortium, the above technical requirement shall be met by the Lead Member of the Consortium."
+     }
+    ],
+    "note": "RfS cl. 34.3 required own RE-project experience (one plant 4X/5, two X/2 or three 2X/5 MW in 7 years), Lead Member, affiliates allowed. Amendment-01 widened it to EPC and any plant; Amendment-02 says 'Not used'. Pack's 'ambiguous' stands."
+   }
   },
   {
    "id": "early",
@@ -1003,7 +1389,17 @@
      "page": 3,
      "quote": "(ii) for power supplied during non-solar hours, other than Peak Hours, @75% of the PPA Tariff;"
     }
-   ]
+   ],
+   "rfs": {
+    "quotes": [
+     {
+      "doc": "rfs",
+      "page": 24,
+      "quote": "In case Buying Entity/SECI decides to buy such discrete component's power outside the PPA, such power shall be purchased @ 50% of the PPA Tariff."
+     }
+    ],
+    "note": "RfS cl. 11.2: power from a component ready ahead of the rest bought at 50% of tariff. Amendment-02 made it 100%/75%/50% by hour type; the pack is current."
+   }
   },
   {
    "id": "compensation",
@@ -1021,27 +1417,828 @@
   },
   {
    "id": "term",
-   "group": "Gaps",
+   "group": "Dates",
    "label": "PPA term",
-   "value": "Not in the documents provided (the PSA runs as long as the PPA). The model uses 25 years until the RfS is added.",
-   "status": "missing",
-   "sources": []
+   "value": "25 years from the Scheduled Commencement of Supply Date (SCSD); an extension only by mutual agreement",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 34,
+     "quote": "The PPAs shall be valid for a period of 25 years from the SCSD."
+    },
+    {
+     "doc": "rfs",
+     "page": 6,
+     "quote": "for purchase of power for a period of 25 years based on the terms, conditions and provisions of the RfS and PPA."
+    }
+   ]
   },
   {
    "id": "ceiling",
-   "group": "Gaps",
+   "group": "What you bid",
    "label": "Ceiling tariff",
-   "value": "Not in the documents provided",
-   "status": "missing",
-   "sources": []
+   "value": "None stated in the RfS. SECI may annul the process or cancel bids if the tariff discovered is high or no buyer is found",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 60,
+     "quote": "SECI reserves the right to cancel any or all of the bids in view of higher tariff discovered after e-RA."
+    }
+   ]
   },
   {
    "id": "deadline",
-   "group": "Gaps",
+   "group": "Bid process",
    "label": "Bid submission deadline",
-   "value": "Not in the documents provided (check SECI's latest date extension)",
-   "status": "missing",
-   "sources": []
+   "value": "As per the NIT on the ISN-ETS portal (no date in the RfS); the original EMD must reach SECI within 2 working days after the deadline",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 4,
+     "quote": "OFFLINE & ONLINE BID- SUBMISSION DEADLINE As per NIT on ISN-ETS portal"
+    },
+    {
+     "doc": "rfs",
+     "page": 4,
+     "quote": "TECHNO- COMMERCIAL BID OPENING As per NIT on ISN-ETS portal"
+    }
+   ]
+  },
+  {
+   "id": "docFee",
+   "group": "Money at stake",
+   "label": "Cost of RfS document",
+   "value": "Rs 50,000 + GST, non-refundable, paid by NEFT/RTGS to SECI with the bid; the transaction receipt goes in the online bid",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 3,
+     "quote": "Amount: INR 50,000/- (Indian Rupees Fifty Thousand Only) + applicable GST, to be submitted through NEFT/ RTGS transfer in the account of SECI, along with the response to RfS"
+    },
+    {
+     "doc": "rfs",
+     "page": 25,
+     "quote": "Payments against Cost of RfS document and Bid Processing Fee shall be done only through NEFT/RTGS (electronic transfer), and the Bidder shall submit the transaction receipt, as part of the online bid submission."
+    }
+   ]
+  },
+  {
+   "id": "processingFee",
+   "group": "Money at stake",
+   "label": "Bid processing fee",
+   "value": "Rs 20,000 per quoted contracted MW + GST, capped at Rs 20 lakh + GST; not refunded once bids are opened",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 4,
+     "quote": "Rs. 20,000/MW + applicable GST corresponding to the quoted Contracted Capacity, subject to a maximum amount of Rs. 20,00,000 + applicable GST for the response to RfS"
+    },
+    {
+     "doc": "rfs",
+     "page": 46,
+     "quote": "Note: In the event of opening of bids, Bid Processing Fee will not be refunded."
+    }
+   ]
+  },
+  {
+   "id": "mseExemption",
+   "group": "Money at stake",
+   "label": "MSE exemption",
+   "value": "MSEs with valid UDYAM registration on the bid deadline pay no document fee, processing fee or EMD (every consortium member must be an MSE, and any affiliate relied on for eligibility must be an MSE too)",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 25,
+     "quote": "MSEs (Micro and Small Enterprises) having valid UDYAM registration as on the last date of bid submission only are exempted from submission of Cost of the RfS document, Bid Processing Fee & Earnest Money Deposit (EMD)."
+    },
+    {
+     "doc": "rfs",
+     "page": 25,
+     "quote": "all the members of the Consortium shall be registered as MSE."
+    }
+   ]
+  },
+  {
+   "id": "emdInstrument",
+   "group": "Money at stake",
+   "label": "EMD form and validity",
+   "value": "Bank guarantee (Format 7.3A, Indian branch of a scheduled commercial bank, e-BG allowed), REC/PFC Payment on Order Instrument (7.3B) or insurance surety bond (7.3C); in the name of the Bidding Company/Lead Member; valid 12 months from the bid deadline with a claim period 30 days longer; issued on or before the deadline; original delivered to SECI within 2 working days after the deadline; one EMD or one per project",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 27,
+     "quote": "valid for 12 months from the last date of bid submission"
+    },
+    {
+     "doc": "rfs",
+     "page": 27,
+     "quote": "The claim period of the EMD shall be at least 30 days beyond the expiry of the validity period."
+    },
+    {
+     "doc": "rfs",
+     "page": 27,
+     "quote": "The Bank Guarantees towards EMD have to be issued in the name of the Bidding Company/ Lead Member of Bidding Consortium."
+    },
+    {
+     "doc": "rfs",
+     "page": 28,
+     "quote": "the Bidder also has an option to submit a letter of undertaking issued by either of the following two organizations, viz. (i) Power Finance Corporation Limited or (ii) REC Limited."
+    },
+    {
+     "doc": "rfs",
+     "page": 28,
+     "quote": "the bidder also has an option to submit Insurance Surety Bond from an Insurer as per the guidelines issued by the Insurance Regulatory and Development Authority of India (IRDAI)."
+    },
+    {
+     "doc": "rfs",
+     "page": 42,
+     "quote": "One EMD may be submitted for the cumulative capacity quoted by the Bidder, or individual EMDs may be submitted for each Project."
+    },
+    {
+     "doc": "rfs",
+     "page": 42,
+     "quote": "shall be issued on or before the bid submission deadline. These instruments issued after the expiry of the deadline will be summarily rejected."
+    }
+   ]
+  },
+  {
+   "id": "emdForfeit",
+   "group": "Money at stake",
+   "label": "When the EMD is lost",
+   "value": "Withdrawing or varying the bid during validity, not submitting PPA documents or not signing the PPA in time, misleading documents found after LoA, failing to furnish the PBG, or refusing a last-bidder part award of 50% or more",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 28,
+     "quote": "If the Bidder withdraws or varies the bid after due date and time of bid submission and during the validity of bid;"
+    },
+    {
+     "doc": "rfs",
+     "page": 28,
+     "quote": "If the Bidder fails to furnish required Performance Bank Guarantee/POI/Surety Bond in accordance with Clause 17 of the RfS."
+    },
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "In case the last Successful Bidder refuses to accept such partial capacity offered by SECI, the Bank Guarantee(s)/POI/Surety Bond against EMD submitted by such Bidder shall be encashed by SECI."
+    }
+   ]
+  },
+  {
+   "id": "pbgInstrument",
+   "group": "Money at stake",
+   "label": "PBG form, timing and validity",
+   "value": "BG (Format 7.3D), REC/PFC POI (7.3E) or surety bond (7.3F), one per Project, in the name of the PPA-signing entity, submitted before PPA signing (within 30 days of SECI's call); valid to SCSD + 9 months (SCSD now 24 months after Effective Date) with 30 more days to claim; revised if installed capacity changes; returned within 45 days of full supply start",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 29,
+     "quote": "PBG shall be submitted by the Bidders prior to signing of PPA, in line with provisions as per Clause 20.4 of the RfS."
+    },
+    {
+     "doc": "rfs",
+     "page": 29,
+     "quote": "with a validity period up to (& including) the date as on 9 months after the SCSD of the Project."
+    },
+    {
+     "doc": "rfs",
+     "page": 30,
+     "quote": "PBG shall be submitted separately for each Project."
+    },
+    {
+     "doc": "rfs",
+     "page": 29,
+     "quote": "The PBG is required to be submitted in the name of the entity signing the PPA."
+    },
+    {
+     "doc": "rfs",
+     "page": 31,
+     "quote": "The PBGs of RPDs shall be returned to them, within 45 days of successful commencement of supply of power from the full Project Capacity/capacity finally accepted by SECI"
+    }
+   ]
+  },
+  {
+   "id": "bidValidity",
+   "group": "Bid process",
+   "label": "Bid validity",
+   "value": "12 months from the last date of bid submission; after LoA the discovered tariff stays valid until the PPA is signed",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 45,
+     "quote": "The Bidder shall submit the response to RfS which shall remain valid up to the date as on 12 months from the last date of submission of response to RfS (\"Bid Validity\")."
+    },
+    {
+     "doc": "rfs",
+     "page": 45,
+     "quote": "subsequent to issuance of LoAs, the discovered tariffs shall be deemed to be valid until the signing of PPA"
+    }
+   ]
+  },
+  {
+   "id": "liquidity",
+   "group": "Eligibility",
+   "label": "Liquidity (at least one)",
+   "value": "Turnover of Rs 4 Cr per quoted contracted MW in FY 2024-25 (excluding other income), or PBDIT of Rs 80 lakh/MW, or a bank's in-principle line of credit of Rs 1 Cr/MW (may be in an affiliate's name); consortium figures are summed",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 52,
+     "quote": "A minimum annual turnover of INR 4,00,00,000/MW (Indian Rupees Four Crores/ MW) of the quoted Contracted Capacity during the previous financial year, 2024-25"
+    },
+    {
+     "doc": "rfs",
+     "page": 52,
+     "quote": "Profit Before Depreciation Interest and Taxes (PBDIT) excluding other and exceptional income for a minimum amount of INR 80,00,000/MW (Indian Rupees Eighty Lakhs/MW) of the quoted"
+    },
+    {
+     "doc": "rfs",
+     "page": 52,
+     "quote": "committing a Line of Credit for a minimum amount of INR 1,00,00,000/MW (Indian Rupees One Crore/MW) of the quoted Contracted Capacity"
+    },
+    {
+     "doc": "rfs",
+     "page": 53,
+     "quote": "the financial requirement (both the Net-Worth and Liquidity requirements) to be met by the Consortium shall be computed on aggregate basis"
+    }
+   ]
+  },
+  {
+   "id": "networthBasis",
+   "group": "Eligibility",
+   "label": "How net worth is shown",
+   "value": "Companies Act net worth as on 31.03.2025 or a date at least 7 days before the deadline; affiliates count only if they give board resolutions to fund equity and the PBG if the bidder fails; a CA/statutory auditor certificate is required; re-shown if installed capacity rises",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 51,
+     "quote": "The above Net-Worth amount shall be demonstrated by the Bidder as on the last of previous Financial Year, i.e., FY 2024-25 or as on the day at least 7 days prior to the bid submission deadline."
+    },
+    {
+     "doc": "rfs",
+     "page": 52,
+     "quote": "the Bidder shall be required to submit Board Resolutions from the respective Affiliate(s), undertaking to contribute the required equity funding and Performance Bank Guarantees/POI/Surety Bond"
+    }
+   ]
+  },
+  {
+   "id": "whoMayBid",
+   "group": "Eligibility",
+   "label": "Who may bid",
+   "value": "An Indian company or a consortium of companies with one Lead Member holding at least 51%; every member needs non-zero equity; proprietorships, partnerships, trusts, NGOs and LLPs are barred; no wilful defaulters or blacklisted entities",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "33.1 The Bidder shall be a Company as defined."
+    },
+    {
+     "doc": "rfs",
+     "page": 64,
+     "quote": "There shall be only one Lead Member, having the shareholding of not less than 51% in the Bidding Consortium."
+    },
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "a Consortium of 2 members with a 100:0 arrangement of equity commitment will not be eligible as a bidder under this RfS."
+    },
+    {
+     "doc": "rfs",
+     "page": 48,
+     "quote": "Proprietorships, Partnerships, Trusts, NGOs and Limited Liability Partnership (LLPs) are not eligible for participation on an individual basis or as a part of a Consortium."
+    },
+    {
+     "doc": "rfs",
+     "page": 49,
+     "quote": "Bidder or any of its Affiliates should not be a willful defaulter to any lender."
+    }
+   ]
+  },
+  {
+   "id": "foreignBidders",
+   "group": "Eligibility",
+   "label": "Foreign bidders",
+   "value": "Allowed alone or in a consortium; a standalone foreign winner must form an Indian subsidiary SPV (51%+) before the PPA; bidders from countries sharing a land border with India must be registered with the Competent Authority",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "A foreign company can also participate on standalone basis or as a member of consortium at the RfS stage."
+    },
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "with at least 51% shareholding in the SPV, before signing of PPA."
+    },
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "Any Bidder from a country which shares a land border with India will be eligible to bid in this tender only if the bidder is registered with the Competent Authority"
+    }
+   ]
+  },
+  {
+   "id": "spv",
+   "group": "Eligibility",
+   "label": "Project company (SPV)",
+   "value": "The winner may sign through an SPV that is its immediate subsidiary (51%+, no intermediate company), registered in India before PPA signing; a consortium's project company must mirror the Consortium Agreement shareholding",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 48,
+     "quote": "having at least 51% shareholding in the SPV, which has to be registered under the Indian Companies Act, 2013, before signing of PPA."
+    },
+    {
+     "doc": "rfs",
+     "page": 49,
+     "quote": "should be an immediate subsidiary of the bidder, without any intermediaries involved."
+    },
+    {
+     "doc": "rfs",
+     "page": 47,
+     "quote": "the shareholding pattern of the Project Company shall be the identical to the shareholding pattern of the Consortium as indicated in the Consortium Agreement"
+    }
+   ]
+  },
+  {
+   "id": "lockIn",
+   "group": "Eligibility",
+   "label": "Shareholding lock-in",
+   "value": "No change in controlling shareholding from bid to PPA; the winner keeps 51%+ of the SPV and promoters keep control until 1 year after SCSD, unless SECI approves",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 37,
+     "quote": "No change in the controlling shareholding of the Bidding Company or Bidding Consortium shall be permitted from the date of submission of response to RfS till the execution of the PPA."
+    },
+    {
+     "doc": "rfs",
+     "page": 37,
+     "quote": "shall not fall below 51% at any time prior to 01 (one) year after SCSD, except with the prior approval of SECI."
+    }
+   ]
+  },
+  {
+   "id": "singleBid",
+   "group": "Bid process",
+   "label": "One bid per group",
+   "value": "A bidder with its parent, affiliates and group companies submits one bid; several bids from a group make all of them invalid. Bidders sharing a 10-26% common shareholder may each bid but must file Format 7.8A",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 11,
+     "quote": "multiple bids from same company including its Parent/ Ultimate Parent/Affiliates/Group Companies shall make all the bids submitted by the group invalid."
+    },
+    {
+     "doc": "rfs",
+     "page": 11,
+     "quote": "In case a common Company/Companies directly or indirectly hold(s) more than 10% but less than 26% shareholding in more than one Bidder participating in the RfS, each of such Bidders will be required to submit the Disclosure as per Format 7.8A."
+    }
+   ]
+  },
+  {
+   "id": "tariffFormat",
+   "group": "What you bid",
+   "label": "How the tariff is quoted",
+   "value": "One First Round Tariff in Rs/kWh for all projects, entered in the portal's financial e-form; 2 decimals, extra digits dropped (4.337 counts as 4.33); words prevail over figures; two tariffs or conditions make the bid non-responsive",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 55,
+     "quote": "If it is quoted with more than two digits after the decimal, digits after the first two decimal places shall be ignored."
+    },
+    {
+     "doc": "rfs",
+     "page": 108,
+     "quote": "1. There can be only one tariff for all the projects applied for."
+    },
+    {
+     "doc": "rfs",
+     "page": 108,
+     "quote": "In the event of any discrepancy between the values entered in figures and in words, the values entered in words shall be considered."
+    }
+   ]
+  },
+  {
+   "id": "techEval",
+   "group": "Bid process",
+   "label": "Techno-commercial evaluation",
+   "value": "Envelope I is opened only after the 2-working-day EMD delivery window; SECI checks eligibility and may ask for clarifications, which must be answered within 7 days by email/portal; only qualified bidders' Envelope II is opened",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 54,
+     "quote": "Bid opening (online) will be done only after the deadline for submission of Bank Guarantee."
+    },
+    {
+     "doc": "rfs",
+     "page": 54,
+     "quote": "Bidders shall be required to respond to any clarifications/additional documents sought by SECI within 07 (seven) days from the date of such intimation from SECI."
+    },
+    {
+     "doc": "rfs",
+     "page": 54,
+     "quote": "Second Envelope (containing First Round Tariff) of only those Bidders shall be opened whose technical bids are found to be qualified as per the RfS."
+    }
+   ]
+  },
+  {
+   "id": "eraShortlist",
+   "group": "Bid process",
+   "label": "Who goes to the e-Reverse Auction",
+   "value": "Award cap SE = 80% of total qualified bid capacity, at most 1000 MW. All qualified bidders go to e-RA, except that the single highest-tariff (H1) bidder is dropped when 80% of total capacity exceeds 1000 MW, if 80% of the rest still exceeds 1000 MW and at least 3 remain. With only 1-2 qualified bidders SECI decides whether to open price bids",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 56,
+     "quote": "(ii) In case ST > 1000 MW, SE = 0.8 X ST subject to maximum eligible capacity being 1000 MW."
+    },
+    {
+     "doc": "rfs",
+     "page": 56,
+     "quote": "The lowest ranked bidder, i.e., the bidder quoting the highest tariff (the \"H1 bidder\") shall be eliminated at this stage"
+    },
+    {
+     "doc": "rfs",
+     "page": 56,
+     "quote": "the minimum number of shortlisted bidders for e-RA after elimination at this stage remains 3."
+    },
+    {
+     "doc": "rfs",
+     "page": 55,
+     "quote": "if it is found that only one or two Bidder(s) is/are eligible for the next stage, opening of the financial bid of the Bidder(s) will be at the discretion of SECI."
+    }
+   ]
+  },
+  {
+   "id": "eraRules",
+   "group": "Bid process",
+   "label": "e-Reverse Auction rules",
+   "value": "Starts from your first-round tariff; 30 minutes, extended 8 minutes (no limit) whenever a bid moves a bidder between Green/Orange/Red zones; each bid at least Rs 0.01/kWh below your last; no increases; capacity cannot change; date emailed a week ahead, invitation 2 hours before. Equal final tariffs rank by who quoted first, then lower first-round tariff, then draw of lots",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 57,
+     "quote": "The minimum decrement value for tariff shall be INR 0.01 per kWh."
+    },
+    {
+     "doc": "rfs",
+     "page": 57,
+     "quote": "During reverse auction, the Bidder shall not have the option of changing the total Contracted capacity quoted, while quoting the tariff."
+    },
+    {
+     "doc": "rfs",
+     "page": 57,
+     "quote": "The initial auction period will be of 30 (thirty) minutes with a provision of auto extension by 8 (eight) minutes from the scheduled/ extended closing time."
+    },
+    {
+     "doc": "rfs",
+     "page": 123,
+     "quote": "Tariff quoted by the bidders in Financial Bid (Second Envelope)"
+    },
+    {
+     "doc": "rfs",
+     "page": 57,
+     "quote": "At least one week prior to reverse auction, an advance intimation regarding the date and time of the reverse auction will be sent by e-mail"
+    },
+    {
+     "doc": "rfs",
+     "page": 58,
+     "quote": "with preference to be given to that Bidder who has quoted his last tariff during the e-RA, earlier than others."
+    }
+   ]
+  },
+  {
+   "id": "lastBidder",
+   "group": "What you bid",
+   "label": "Part award to the last winner",
+   "value": "No project below 50 MW. If the last winner is offered less than 50% of its quoted capacity or 50 MW, it may refuse within 7 days of LoA and get its EMD back; at 50% or more it must accept or lose the EMD. Projects are allotted by the preference given in Format 7.1",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "However, in no case, shall the capacity of a single Project selected under this RfS, be less than 50 MW."
+    },
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "is lower than 50% of the total quoted capacity by such Bidder or 100 MW, the Bidder shall have an option to refuse such offered partial capacity"
+    },
+    {
+     "doc": "amd1",
+     "page": 5,
+     "quote": "is lower than 50% of the total quoted capacity by such Bidder or 50 MW"
+    },
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "Such refusal shall be intimated to SECI not later than 7 days of issuance of LoAs by SECI"
+    },
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "it shall be mandatory for the last Bidder to accept the partial capacity offered against its quoted capacity"
+    }
+   ]
+  },
+  {
+   "id": "loa",
+   "group": "Bid process",
+   "label": "LoA and PSA-linked PPA",
+   "value": "LoA (to the Lead Member for a consortium) at the awarded capacity. PPAs follow only after SECI signs PSAs with buyers; if less is sold, your capacity may be cut and you may exit without penalty. SECI may annul for high tariffs or no buyers; LoA lapses (EMD returned) if SECI has not signed the PPA within 12 months",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "In case of a Consortium being selected as the successful Bidder, the LoA will be issued to the Lead Member of the Consortium."
+    },
+    {
+     "doc": "rfs",
+     "page": 60,
+     "quote": "the respective Bidder may choose to reject such modified capacity, and will be allowed to exit the process without any liability to either party"
+    },
+    {
+     "doc": "rfs",
+     "page": 60,
+     "quote": "In case of delay in signing of PPA by SECI beyond the date as on 12 months subsequent to issuance of LoAs, the LoA shall stand cancelled"
+    }
+   ]
+  },
+  {
+   "id": "successCharges",
+   "group": "Money at stake",
+   "label": "Success charges",
+   "value": "Rs 1 lakh per MW of Installed Capacity (ESS counted in MWh) + taxes: 50% within 30 days of LoA (late: Rs 1,000/MW/day + GST), 50% before the PPA-signing document deadline. Amendment-02 deleted the 'at most 7 days before signing' due date for the second half",
+   "status": "amended",
+   "by": "amd2",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 32,
+     "quote": "The Selected Bidders shall have to pay Success Charges @ INR 1,00,000/MW (Indian Rupees One Lakhs only/MW)+ applicable taxes, corresponding to the Installed Capacity committed as per the PPA to be signed"
+    },
+    {
+     "doc": "rfs",
+     "page": 32,
+     "quote": "the Installed Capacity shall include the rated capacity of the ESS component (in MWh)"
+    },
+    {
+     "doc": "rfs",
+     "page": 32,
+     "quote": "1st installment of the Success Charges, i.e. 50% of the above amount shall be paid to SECI within 30 days after issuance of LoA"
+    },
+    {
+     "doc": "amd2",
+     "page": 3,
+     "quote": "For the second installment, the due date shall be the date as intimated by SECI, which shall be at most 7 days prior to signing of PPA."
+    }
+   ]
+  },
+  {
+   "id": "ppaSigning",
+   "group": "Dates",
+   "label": "PPA signing and Effective Date",
+   "value": "Within 30 days of SECI's written call you submit documents (Annexure-F), the PBG and the second success-charge instalment; the Effective Date is 15 days after SECI's call whatever the signing date; delay costs Rs 1,000/MW/day + GST, paid in advance, for up to 30 days, then SECI's discretion",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 35,
+     "quote": "within 30 days of the above intimation issued by SECI."
+    },
+    {
+     "doc": "rfs",
+     "page": 35,
+     "quote": "Notwithstanding the actual PPA signing date, the Effective Date of the PPA shall be the date as on 15 days after the date of above intimation by SECI."
+    },
+    {
+     "doc": "rfs",
+     "page": 35,
+     "quote": "delay charges @Rs. 1000/MW/day + applicable GST corresponding to the unsigned PPA capacity shall be levied on the Bidder on per-day basis"
+    }
+   ]
+  },
+  {
+   "id": "connectivityMilestone",
+   "group": "Dates",
+   "label": "Land, connectivity and approvals",
+   "value": "Land and connectivity are the developer's. Apply for connectivity at the Format 7.1 substation within 30 days of the Effective Date and send SECI copies within 15 days; another 90 days if CTU rejects. Apply for all approvals within 90 days of the Effective Date. The Delivery Point may change until the connectivity deadline (Amendment-01). No land deadline before commissioning: proof of land possession or right to use is due with the pre-trial-run documents",
+   "status": "amended",
+   "by": "amd1",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 3,
+     "quote": "Land and Connectivity shall be in the scope of the RE Power Developer."
+    },
+    {
+     "doc": "rfs",
+     "page": 15,
+     "quote": "latest by the date as on 30 days after the Effective Date of PPA, and shall furnish copies of the application, complete in all respect, to SECI within 15 days of date of filing of application."
+    },
+    {
+     "doc": "rfs",
+     "page": 16,
+     "quote": "In such case the RPD will be allowed for another 90 days to apply for connectivity from the date of rejection by the CTU."
+    },
+    {
+     "doc": "rfs",
+     "page": 27,
+     "quote": "the RPD should apply for all the necessary approvals, permits and clearances not more than 90 days from the Effective Date of the PPA"
+    },
+    {
+     "doc": "amd1",
+     "page": 1,
+     "quote": "any change in Delivery Point from the one mentioned in the Covering Letter at the time of bid submission shall be allowed till the deadline to apply for connectivity."
+    },
+    {
+     "doc": "rfs",
+     "page": 20,
+     "quote": "Documents to prove the clear possession of or right to use the identified land."
+    }
+   ]
+  },
+  {
+   "id": "fcRequirements",
+   "group": "Dates",
+   "label": "What Financial Closure needs",
+   "value": "Certificates for 100% of funding (debt and equity) and equipment details with purchase orders, filed 14 days before the FC date; a miss can be extended at Rs 100/MW/day + GST paid in advance (refunded if supply starts on time), otherwise the PBG is encashed and the PPA may be terminated",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 36,
+     "quote": "At the stage of Financial Closure, the RPDs shall report 100% tie-up of Financing Arrangements for the Projects."
+    },
+    {
+     "doc": "rfs",
+     "page": 36,
+     "quote": "An extension may however be considered, on the sole request of RPD, on advance payment of extension charges of INR 100/- per day per MW (of Contracted Capacity) + applicable GST."
+    },
+    {
+     "doc": "rfs",
+     "page": 37,
+     "quote": "The RPD will have to submit the required documents to SECI at least 14 days prior to the scheduled Financial Closure date."
+    }
+   ]
+  },
+  {
+   "id": "partCommencement",
+   "group": "Dates",
+   "label": "Commissioning and part supply",
+   "value": "Notices to SECI and buyer 60 and 30 days before commissioning, 7 days before trial run; documents 30 days before trial run; NOC from SECI before COD. Parts of at least 50 MW accepted (last part the balance); DFR scaled to the part; SCSD unchanged",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 19,
+     "quote": "a preliminary notice not later than 60 days prior and advance notice not later than 30 days prior to the proposed commissioning date."
+    },
+    {
+     "doc": "rfs",
+     "page": 21,
+     "quote": "the minimum capacity for acceptance of first and subsequent part(s) shall be 50 MW (with the last part being the balance Contracted Capacity)"
+    },
+    {
+     "doc": "rfs",
+     "page": 22,
+     "quote": "However, the Scheduled Commencement of Supply Date will not get altered due to part commencement of supply."
+    }
+   ]
+  },
+  {
+   "id": "earlySupply",
+   "group": "Supply",
+   "label": "Supply before SCSD",
+   "value": "Allowed for full or part capacity if connectivity and GNA exist, on 15 days' notice; the buyer then SECI has first refusal at the PPA tariff, otherwise sale to the market until SCSD. Infirm power before COD needs an NOC and, if the buyer takes it, is paid 50% of tariff",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 23,
+     "quote": "The RPD shall be permitted for commencement of supply of power from full as well as part capacity of the Project even prior to the SCSD, subject to availability of transmission connectivity and General Network Access (GNA)."
+    },
+    {
+     "doc": "rfs",
+     "page": 23,
+     "quote": "such power will be purchased by SECI at the PPA"
+    },
+    {
+     "doc": "rfs",
+     "page": 21,
+     "quote": "In case the infirm power is off-taken by Buying Entity, then such power shall be purchased at 50% of the Applicable Tariff"
+    }
+   ]
+  },
+  {
+   "id": "thirdPartyPenalty",
+   "group": "Supply",
+   "label": "Selling elsewhere while short",
+   "value": "Selling to a third party while any block's contracted capacity is unmet is a breach, with an extra penalty of 2x the highest exchange rate (DAM/G-DAM/RTM) that day on the quantity sold",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 18,
+     "quote": "Any instance of third-party sale of power from the Project by the RPD, while the Contracted Capacity in any-time block remains unfulfilled, shall constitute a breach"
+    },
+    {
+     "doc": "rfs",
+     "page": 18,
+     "quote": "liable for additional penalty @2 times of extant market rate/kWh"
+    }
+   ]
+  },
+  {
+   "id": "psm",
+   "group": "Money at stake",
+   "label": "Payment security (optional)",
+   "value": "Cover under the PPA's payment security mechanism costs a Rs 0.02/kWh discount on every bill for the whole term; opt in or out in Format 7.1 (cannot join later)",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 32,
+     "quote": "the RPD will undertake to pay PSM Charges @Rs. 0.02/kWh to SECI, by offering a commensurate discount in the monthly tariff payment being made by SECI."
+    },
+    {
+     "doc": "rfs",
+     "page": 33,
+     "quote": "it shall not be eligible to be covered under the PSM for the entire term of the PPA."
+    }
+   ]
+  },
+  {
+   "id": "configChange",
+   "group": "Plant",
+   "label": "Installed capacity and configuration",
+   "value": "Installed capacity (solar/wind/other RE/ESS) is declared in Format 7.1, must be at least the contracted MW and may be changed until SCSD (with revised PBG, success charges and net worth). Project split may change within 30 days of LoA. Award is on contracted MW only",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 11,
+     "quote": "The above configuration can be changed by the RPD until the Scheduled Commencement of Supply Date (SCSD)/extended SCSD of the Project."
+    },
+    {
+     "doc": "rfs",
+     "page": 65,
+     "quote": "shall be greater than or equal to the Contracted Capacity."
+    },
+    {
+     "doc": "rfs",
+     "page": 34,
+     "quote": "this breakup may be changed by the RPD subsequent to issuance of LoA up to the date as on 30 days from issuance of LoA."
+    },
+    {
+     "doc": "rfs",
+     "page": 55,
+     "quote": "irrespective of the Installed Capacities quoted by the Bidders, shortlisting and award of capacities under the RfS will be carried out based on the cumulative Contracted Capacities quoted by them."
+    }
+   ]
+  },
+  {
+   "id": "existingProjects",
+   "group": "The tender",
+   "label": "Existing or under-construction plants",
+   "value": "Untied capacity of commissioned or under-construction RE/storage may bid and gets a longer PPA for supply before SCSD; capacity whose PPA with an MNRE agency or state DISCOM was terminated between RfS issue and the deadline cannot",
+   "status": "unchanged",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 7,
+     "quote": "Bidders who have already commissioned Renewable Energy (RE) Projects/storage projects or are in process of constructing such projects and have untied capacity may also participate under this RfS."
+    },
+    {
+     "doc": "rfs",
+     "page": 7,
+     "quote": "are not allowed to participate in this RfS for the respective Project(s)."
+    }
+   ]
   }
  ],
  "model": {
@@ -1075,5 +2272,3264 @@
    "storagePerMwh": 2400000
   },
   "tradingMarginRsPerKwh": 0.07
- }
+ },
+ "formats": [
+  {
+   "id": "7.1",
+   "title": "Covering Letter",
+   "pages": [
+    68,
+    71
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / Lead Member of Consortium (authorised signatory)",
+   "paper": "Letterhead of the Bidding Company/ Lead Member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "The bid itself: projects, contracted and installed capacity, location, substation, EMD particulars and the bidder's declarations",
+   "heading": {
+    "doc": "rfs",
+    "page": 68,
+    "quote": "Format 7.1 COVERING LETTER"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "(The Covering Letter should be submitted on the Letter Head of the Bidding Company/ Lead Member of Consortium) Ref. No."
+     }
+    },
+    {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "Ref. No. _________ Date: ___________"
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / Lead Member name",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "address",
+     "label": "Bidder address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "phone",
+     "label": "Telephone",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "Tel.#:"
+     }
+    },
+    {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "E-mail address#"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date (also asked as dd/mm/yyyy in para 1)",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "(Insert title of the RfS)"
+     }
+    },
+    {
+     "key": "groupDisclosure",
+     "label": "Group bidding declaration (strike out the other)",
+     "kind": "choice",
+     "options": [
+      "No group company has bid (Format 7.8)",
+      "Common shareholder >10% <26% in other bidders (Format 7.8A)"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 68,
+      "quote": "(as mentioned in Format 7.8 under Disclosure). (strike out if not applicable)"
+     }
+    },
+    {
+     "key": "projects",
+     "label": "Project table: one row per project",
+     "kind": "table",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "We are submitting RfS for the development of following Project(s):"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Contracted capacity offered (MW, per project)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Contracted Capacity offered (MW)"
+     }
+    },
+    {
+     "key": "solarMw",
+     "label": "Solar PV component (MW)",
+     "kind": "number",
+     "maps": "solarMw",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Solar PV component:"
+     }
+    },
+    {
+     "key": "windMw",
+     "label": "Wind power component (MW)",
+     "kind": "number",
+     "maps": "windMw",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Wind power component:"
+     }
+    },
+    {
+     "key": "otherReMw",
+     "label": "Other RE generating component (MW)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Other RE power generating component:"
+     }
+    },
+    {
+     "key": "bessMw",
+     "label": "ESS component (MW)",
+     "kind": "number",
+     "maps": "bessMw",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "ESS component:"
+     }
+    },
+    {
+     "key": "bessMwh",
+     "label": "ESS component (MWh)",
+     "kind": "number",
+     "maps": "bessMwh",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "ESS component:"
+     }
+    },
+    {
+     "key": "location",
+     "label": "Project location(s): village, tehsil, district, state",
+     "kind": "textarea",
+     "maps": "solarSite",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Location(s) of Project (Village, Tehsil, Dist., State)"
+     }
+    },
+    {
+     "key": "substation",
+     "label": "Interconnection point(s) / Delivery Point substation",
+     "kind": "text",
+     "maps": "substation",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Inter- connection Point(s) Details"
+     }
+    },
+    {
+     "key": "preference",
+     "label": "Project preference (used only for the last successful bidder)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "Project preference*"
+     }
+    },
+    {
+     "key": "emdAmount",
+     "label": "EMD amount (INR)",
+     "kind": "number",
+     "maps": "emdAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "We have enclosed EMD of INR"
+     }
+    },
+    {
+     "key": "emdForm",
+     "label": "EMD instrument",
+     "kind": "choice",
+     "options": [
+      "Bank Guarantee (7.3A)",
+      "Payment on Order Instrument (7.3B)",
+      "Insurance Surety Bond (7.3C)"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "in the form of Bank Guarantee no./ Payment on Order Instrument/Surety Bond No."
+     }
+    },
+    {
+     "key": "emdNumber",
+     "label": "EMD instrument number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "[Insert bank guarantee/POI/Surety Bond number]"
+     }
+    },
+    {
+     "key": "emdDate",
+     "label": "EMD instrument date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "[Insert date of bank guarantee/POI/Surety Bond]"
+     }
+    },
+    {
+     "key": "emdIssuer",
+     "label": "Issuing bank / REC-PFC / insurer",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "[Insert name of bank providing bank guarantee/POI/Surety Bond issuing agency]"
+     }
+    },
+    {
+     "key": "emdValidUpTo",
+     "label": "EMD valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "in terms of Clause No. 16 of this RfS"
+     }
+    },
+    {
+     "key": "totalContractedMw",
+     "label": "Cumulative contracted capacity quoted (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "[Insert cumulative Contracted Capacity proposed]"
+     }
+    },
+    {
+     "key": "alreadyCommissioned",
+     "label": "Declaration for already-commissioned capacity (cl. 1.8)",
+     "kind": "choice",
+     "options": [
+      "Applicable",
+      "Struck off"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 70,
+      "quote": "(applicable only in case of already commissioned Projects. Strike-off if not applicable)"
+     }
+    },
+    {
+     "key": "psmRebate",
+     "label": "Rs 0.02/kWh payment-security rebate",
+     "kind": "choice",
+     "options": [
+      "Accepted (covered by PSM)",
+      "Struck out (no PSM cover)"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 70,
+      "quote": "(Strike out if not accepted by the Bidder)"
+     }
+    },
+    {
+     "key": "contactName",
+     "label": "Contact person name",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Contact Person Details of the representative to be contacted by SECI are furnished as under:"
+     }
+    },
+    {
+     "key": "contactDesignation",
+     "label": "Contact designation",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Designation"
+     }
+    },
+    {
+     "key": "contactCompany",
+     "label": "Contact company",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Company"
+     }
+    },
+    {
+     "key": "contactAddress",
+     "label": "Contact address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Address"
+     }
+    },
+    {
+     "key": "contactPhone",
+     "label": "Contact phone",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Phone Nos."
+     }
+    },
+    {
+     "key": "contactMobile",
+     "label": "Contact mobile",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Mobile Nos."
+     }
+    },
+    {
+     "key": "contactEmail",
+     "label": "Contact e-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "E-mail address :"
+     }
+    },
+    {
+     "key": "signedDate",
+     "label": "Dated (day, month, year)",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory name, designation, seal",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Proof of scheduled commissioning date (SCD) of the chosen ISTS substation",
+     "context": {
+      "doc": "rfs",
+      "page": 71,
+      "quote": "Enclosure: Proof of SCD of the Interconnection Point in line with Clause 7.5 of the RfS."
+     }
+    },
+    {
+     "label": "Annexure-I undertaking and copy of connectivity application/grant, if relying on another entity's connectivity",
+     "context": {
+      "doc": "rfs",
+      "page": 14,
+      "quote": "the Bidder is required to submit an Undertaking from the connectivity applicant/ grantee as per Annexure-I, along with copy of the application/ in-"
+     }
+    },
+    {
+     "label": "Digitally signed RfS, PPA, PSA, amendments and clarifications",
+     "context": {
+      "doc": "rfs",
+      "page": 69,
+      "quote": "In token of our acceptance to the RfS, PPA and PSA documents along with the amendments and clarifications issued by SECI, the same have been digitally signed by us and enclosed with the response to RfS."
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.2",
+   "title": "Power of Attorney",
+   "pages": [
+    72,
+    73
+   ],
+   "applies": "consortium",
+   "submittedBy": "Each consortium member other than the Lead Member, in favour of the Lead Member; accepted by the Lead Member; notarised",
+   "paper": "Non-judicial stamp paper of appropriate value",
+   "envelope": "techno-commercial (cl. 23 asks for the original)",
+   "when": "with the bid",
+   "purpose": "Authorises the Lead Member to submit and act on the bid for the consortium until the PPA is signed",
+   "heading": {
+    "doc": "rfs",
+    "page": 72,
+    "quote": "Format 7.2 FORMAT FOR POWER OF ATTORNEY"
+   },
+   "fields": [
+    {
+     "key": "members",
+     "label": "Names and registered offices of all members",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "(Insert names and registered offices of all Members of the Consortium)"
+     }
+    },
+    {
+     "key": "consortiumName",
+     "label": "Consortium name (if finalised)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "(insert name of the Consortium if finalized)"
+     }
+    },
+    {
+     "key": "consortiumAgreementDate",
+     "label": "Consortium Agreement date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "vide Consortium Agreement dated"
+     }
+    },
+    {
+     "key": "leadMember",
+     "label": "Lead Member name",
+     "kind": "text",
+     "maps": "leadMember",
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "as the Lead Member of the said Consortium do hereby constitute, nominate and appoint"
+     }
+    },
+    {
+     "key": "leadMemberCountry",
+     "label": "Lead Member's country of incorporation",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "a company incorporated under the laws of"
+     }
+    },
+    {
+     "key": "leadMemberOffice",
+     "label": "Lead Member registered/head office",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "as our duly constituted lawful Attorney"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "in regard to submission of the response to RfS No"
+     }
+    },
+    {
+     "key": "executedOn",
+     "label": "Day and month of execution",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "have executed these presents on this"
+     }
+    },
+    {
+     "key": "memberSignatory",
+     "label": "Member's board-authorised signatory (name, designation, place, date)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 72,
+      "quote": "(Signature of person authorized by the board)"
+     }
+    },
+    {
+     "key": "leadAcceptance",
+     "label": "Lead Member's acceptance (signature, name, designation, address)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 73,
+      "quote": "(Signature, Name, Designation and Address of the person authorized by the board of the Lead Member)"
+     }
+    },
+    {
+     "key": "notary",
+     "label": "Notary attestation, place and date",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 73,
+      "quote": "(Signature & stamp of Notary of the place of execution)"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3A",
+   "title": "Bank Guarantee for EMD",
+   "pages": [
+    74,
+    75
+   ],
+   "applies": "emd-bg",
+   "submittedBy": "Issuing bank (Indian branch of a scheduled commercial bank), on behalf of the Bidding Company/ Lead Member",
+   "paper": "Non-judicial stamp paper of appropriate value",
+   "envelope": "techno-commercial (scan) + offline original",
+   "when": "with the bid; original to SECI within 2 working days after the deadline",
+   "purpose": "Bid security under cl. 16, payable to SECI on first demand",
+   "heading": {
+    "doc": "rfs",
+    "page": 74,
+    "quote": "Format 7.3A FORMAT FOR BANK GUARANTEE TOWARDS EARNEST MONEY DEPOSIT (EMD)"
+   },
+   "fields": [
+    {
+     "key": "reference",
+     "label": "Reference",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "Reference:"
+     }
+    },
+    {
+     "key": "bgNo",
+     "label": "Bank Guarantee number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "Bank Guarantee No.:"
+     }
+    },
+    {
+     "key": "bgDate",
+     "label": "BG date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "Bank Guarantee No.: ........................… Date:"
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidder name (repeated in the text)",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[Insert name of the Bidder] (hereinafter referred to as 'Bidder')"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Cumulative contracted capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[Insert cumulative Contracted capacity proposed]"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "in response to the RfS No."
+     }
+    },
+    {
+     "key": "bank",
+     "label": "Bank name and address",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[Insert name & address of bank]"
+     }
+    },
+    {
+     "key": "place",
+     "label": "Place of payment (from SECI's address)",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[Insert Name of the Place from the address of SECI]"
+     }
+    },
+    {
+     "key": "emdAmount",
+     "label": "Amount (Rs), not less than cl. 16 formula; also in words",
+     "kind": "number",
+     "maps": "emdAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[Insert amount not less than that derived in line with Clause 16 of the RfS]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "[insert date of validity in accordance with Clause No. 16 of this RfS]"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 16 of this RfS]"
+     }
+    },
+    {
+     "key": "bankSignatory",
+     "label": "Bank officer name and power of attorney no.",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "Power of Attorney No.:"
+     }
+    },
+    {
+     "key": "bankContact",
+     "label": "Bank contact details and e-mail",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "E-mail ID of the Bank:"
+     }
+    },
+    {
+     "key": "dated",
+     "label": "Dated",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "Dated this ____ day of ____, 20__"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3B",
+   "title": "Payment on Order Instrument for EMD (REC/PFC)",
+   "pages": [
+    76,
+    78
+   ],
+   "applies": "emd-poi",
+   "submittedBy": "REC Limited or Power Finance Corporation (General Manager), on behalf of the Bidder",
+   "paper": "Issuer's letter (letter of undertaking)",
+   "envelope": "techno-commercial (scan) + offline original",
+   "when": "with the bid; original to SECI within 2 working days after the deadline",
+   "purpose": "Alternative to the EMD bank guarantee under cl. 16.4",
+   "heading": {
+    "doc": "rfs",
+    "page": 76,
+    "quote": "Format 7.3 B FORMAT OF PAYMENT ON ORDER INSTRUMENT TO BE ISSUED BY REC/PFC (IN LIEU OF BG TOWARDS EMD)"
+   },
+   "fields": [
+    {
+     "key": "poiNo",
+     "label": "POI number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "(IN LIEU OF BG TOWARDS EMD) No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidder name (repeated)",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "Reg: M/s"
+     }
+    },
+    {
+     "key": "emdAmount",
+     "label": "POI amount (Rs, also in words and lakhs)",
+     "kind": "number",
+     "maps": "emdAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "Issuance of Payment on Order Instrument for an amount of Rs."
+     }
+    },
+    {
+     "key": "issuer",
+     "label": "Issuing agency (REC/PFC)",
+     "kind": "choice",
+     "options": [
+      "REC Limited",
+      "Power Finance Corporation Limited"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "(insert name of the POI issuing Agency)"
+     }
+    },
+    {
+     "key": "loanAmount",
+     "label": "Sanctioned non-fund based limit (Rs)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "has sanctioned a non-fund based limit loan of Rs."
+     }
+    },
+    {
+     "key": "loanAgreementDate",
+     "label": "Loan Agreement date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "under the Loan Agreement executed on"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Cumulative contracted capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "[Insert cumulative Contracted capacity proposed]"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "in response to the RfS No."
+     }
+    },
+    {
+     "key": "issuerAddress",
+     "label": "REC/PFC name, address and registered office",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "[insert name & address of PFC/REC]"
+     }
+    },
+    {
+     "key": "place",
+     "label": "Place of payment",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "[Insert Name of the Place from the address of SECI]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 77,
+      "quote": "this POI is and shall remain valid upto"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 77,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 16 of this RfS]"
+     }
+    },
+    {
+     "key": "umbrellaDate",
+     "label": "REC/PFC-SECI Umbrella Agreement date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 77,
+      "quote": "have signed an Umbrella Agreement dated"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3C",
+   "title": "Insurance Surety Bond for EMD",
+   "pages": [
+    79,
+    80
+   ],
+   "applies": "emd-surety",
+   "submittedBy": "Insurer (IRDAI-compliant), on behalf of the Bidder",
+   "paper": "Non-judicial stamp paper / e-stamp paper in the name of the bidder or insurer",
+   "envelope": "techno-commercial (scan) + offline original",
+   "when": "with the bid; original to SECI within 2 working days after the deadline",
+   "purpose": "Alternative to the EMD bank guarantee under cl. 16.5",
+   "heading": {
+    "doc": "rfs",
+    "page": 79,
+    "quote": "Format 7.3 C FORMAT OF INSURANCE SURETY BOND TOWARDS EMD"
+   },
+   "fields": [
+    {
+     "key": "bondNo",
+     "label": "Surety bond number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "Insurance Surety Bond No.:"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "In accordance with your RfS No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidder name",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert name of the Bidder] having its Registered/Head Office"
+     }
+    },
+    {
+     "key": "address",
+     "label": "Bidder address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert address of the bidder]"
+     }
+    },
+    {
+     "key": "title",
+     "label": "Name of the RfS",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert name of the RfS]"
+     }
+    },
+    {
+     "key": "emdAmount",
+     "label": "Amount (not less than cl. 16 formula)",
+     "kind": "number",
+     "maps": "emdAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert amount not less than that derived in line with Clause No. 16 of the RfS]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[insert date of validity in accordance with Clause No. 16 of this RfS]"
+     }
+    },
+    {
+     "key": "insurer",
+     "label": "Insurer name",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert name of the 'Insurer']"
+     }
+    },
+    {
+     "key": "insurerAddress",
+     "label": "Insurer head office address",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "[Insert address of the Insurer]"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 80,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 16 of this RfS]"
+     }
+    },
+    {
+     "key": "executed",
+     "label": "Day, month, year and place of execution",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 80,
+      "quote": "has set its hand and stamp on"
+     }
+    },
+    {
+     "key": "insurerSignatory",
+     "label": "Insurer officer name, designation, power of attorney no.",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 80,
+      "quote": "(Designation with Insurer Stamp)"
+     }
+    },
+    {
+     "key": "branchEmail",
+     "label": "Branch e-mail for confirmation",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 80,
+      "quote": "Email id of the Branch for confirmation of this Bond:"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3D",
+   "title": "Performance Bank Guarantee",
+   "pages": [
+    81,
+    83
+   ],
+   "applies": "pbg-bg",
+   "submittedBy": "Issuing bank (Indian branch of a scheduled commercial bank), for the RPD/SPV signing the PPA; one per Project",
+   "paper": "Non-judicial stamp paper in the name of the executing bank",
+   "envelope": "offline (to SECI before PPA signing)",
+   "when": "after award, before PPA signing",
+   "purpose": "Performance security under cl. 17, valid to SCSD + 9 months",
+   "heading": {
+    "doc": "rfs",
+    "page": 81,
+    "quote": "Format 7.3 D FORMAT FOR PERFORMANCE BANK GUARANTEE (PBG)"
+   },
+   "fields": [
+    {
+     "key": "bgNo",
+     "label": "Reference, BG number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "Bank Guarantee No.:"
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Selected RPD name (repeated)",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert name of the Bidder] (hereinafter"
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert title of the RfS]"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Contracted capacity per PPA (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[enter Contracted Capacity as per the PPA]"
+     }
+    },
+    {
+     "key": "installedMw",
+     "label": "Committed installed capacity per PPA (MW)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert committed Installed Capacity as per the PPA]"
+     }
+    },
+    {
+     "key": "location",
+     "label": "Project location(s)",
+     "kind": "text",
+     "maps": "solarSite",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert name of the Project location(s)]"
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "in response to the RfS dated"
+     }
+    },
+    {
+     "key": "loaNo",
+     "label": "Letter of Award number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "issuing Letter of Award No."
+     }
+    },
+    {
+     "key": "spv",
+     "label": "SPV name, if applicable",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "{a Special Purpose Vehicle (SPV) formed for this purpose}"
+     }
+    },
+    {
+     "key": "bank",
+     "label": "Bank name and address",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert name & address of Bank]"
+     }
+    },
+    {
+     "key": "pbgAmount",
+     "label": "Amount (Rs, also in words)",
+     "kind": "number",
+     "maps": "pbgAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Total Value]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to (SCSD + 9 months)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "This guarantee shall be valid and binding on this Bank up to and including"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 82,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 17 of this RfS]"
+     }
+    },
+    {
+     "key": "bankSignatory",
+     "label": "Bank officer, power of attorney no., contact and e-mail",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 82,
+      "quote": "Power of Attorney No.:"
+     }
+    },
+    {
+     "key": "witnesses",
+     "label": "Two witnesses (name, address)",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 83,
+      "quote": "Witness:"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3E",
+   "title": "Payment on Order Instrument in lieu of PBG (REC/PFC)",
+   "pages": [
+    84,
+    86
+   ],
+   "applies": "pbg-poi",
+   "submittedBy": "REC Limited or Power Finance Corporation (General Manager), for the PPA-signing entity",
+   "paper": "Issuer's letter (letter of undertaking)",
+   "envelope": "offline (to SECI before PPA signing)",
+   "when": "after award, before PPA signing",
+   "purpose": "Alternative to the PBG under cl. 17.12",
+   "heading": {
+    "doc": "rfs",
+    "page": 84,
+    "quote": "Format 7.3 E FORMAT OF PAYMENT ON ORDER INSTRUMENT TO BE ISSUED BY REC/PFC (IN LIEU OF PBG)"
+   },
+   "fields": [
+    {
+     "key": "ppaEntity",
+     "label": "PPA-signing entity",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "(insert name of the PPA signing entity)"
+     }
+    },
+    {
+     "key": "projectId",
+     "label": "Project ID issued by SECI",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "(insert project ID issued by SECI)"
+     }
+    },
+    {
+     "key": "pbgAmount",
+     "label": "POI amount (Rs, also in words and lakhs)",
+     "kind": "number",
+     "maps": "pbgAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "Issuance of Payment on Order Instrument for an amount of Rs."
+     }
+    },
+    {
+     "key": "issuer",
+     "label": "Issuing agency",
+     "kind": "choice",
+     "options": [
+      "REC Limited",
+      "Power Finance Corporation Limited"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "(insert name of the POI issuing Agency)"
+     }
+    },
+    {
+     "key": "loanAmount",
+     "label": "Sanctioned non-fund based limit and loan agreement date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "has sanctioned a non-fund based limit loan of Rs."
+     }
+    },
+    {
+     "key": "spv",
+     "label": "SPV name",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "(insert name of the SPV)"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Contracted capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "selection of Contracted Capacity of"
+     }
+    },
+    {
+     "key": "installedMw",
+     "label": "Installed capacity (MW)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "through an Installed Capacity of"
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS name",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "(insert name of the RfS)"
+     }
+    },
+    {
+     "key": "loaNo",
+     "label": "LoA number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "issuing Letter of Award No"
+     }
+    },
+    {
+     "key": "issuerAddress",
+     "label": "REC/PFC name, address, registered office",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "[insert name & address of PFC/REC]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 85,
+      "quote": "this POI is and shall remain valid upto"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 85,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 17 of this RfS]"
+     }
+    },
+    {
+     "key": "umbrellaDate",
+     "label": "Umbrella Agreement date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 85,
+      "quote": "have signed an Umbrella Agreement"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.3F",
+   "title": "Insurance Surety Bond in lieu of PBG",
+   "pages": [
+    87,
+    89
+   ],
+   "applies": "pbg-surety",
+   "submittedBy": "Insurer (IRDAI-compliant), for the RPD; two witnesses",
+   "paper": "Non-judicial stamp paper / e-stamp paper in the name of the RPD or insurer",
+   "envelope": "offline (to SECI before PPA signing)",
+   "when": "after award, before PPA signing",
+   "purpose": "Alternative to the PBG under cl. 17.13",
+   "heading": {
+    "doc": "rfs",
+    "page": 87,
+    "quote": "Format 7.3 F FORMAT OF INSURANCE SURETY BOND TOWARDS PERFORMANCE SECURITY"
+   },
+   "fields": [
+    {
+     "key": "bondNo",
+     "label": "Surety bond number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "Insurance Surety Bond No.:"
+     }
+    },
+    {
+     "key": "rpd",
+     "label": "RE Power Developer name and registered office",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "[Insert name of RE Power Developer]"
+     }
+    },
+    {
+     "key": "capacityMw",
+     "label": "Project capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "the Project of capacity of"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "in response to the RfS No."
+     }
+    },
+    {
+     "key": "loaNo",
+     "label": "LoA number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "Letter of Award No."
+     }
+    },
+    {
+     "key": "spv",
+     "label": "SPV name, if applicable",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "{a Special Purpose Vehicle (SPV) formed for this purpose}"
+     }
+    },
+    {
+     "key": "pbgAmount",
+     "label": "Amount (Rs)",
+     "kind": "number",
+     "maps": "pbgAmount",
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "[Total Value]"
+     }
+    },
+    {
+     "key": "insurer",
+     "label": "Insurer name and address",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "[Name & Address of the Insurer]"
+     }
+    },
+    {
+     "key": "validUpTo",
+     "label": "Valid up to",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "[days/month/year]"
+     }
+    },
+    {
+     "key": "claimUpTo",
+     "label": "Claim date (validity + at least 30 days)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 89,
+      "quote": "[Insert a date which is at least 30 days beyond the expiry of the validity period on the basis of Clause No. 17 of this RfS]"
+     }
+    },
+    {
+     "key": "executed",
+     "label": "Date and place of execution",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 89,
+      "quote": "Dated this"
+     }
+    },
+    {
+     "key": "insurerSignatory",
+     "label": "Insurer officer, designation, power of attorney no.",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 89,
+      "quote": "Authorized vide Power of Attorney No."
+     }
+    },
+    {
+     "key": "branchEmail",
+     "label": "Branch e-mail for confirmation",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 89,
+      "quote": "Email id of the Branch for confirmation of this Bond:"
+     }
+    },
+    {
+     "key": "witnesses",
+     "label": "Two witnesses (name, official address)",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 89,
+      "quote": "WITNESS :"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.4",
+   "title": "Board Resolutions",
+   "pages": [
+    90,
+    91
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company; for a consortium each member (and the Lead Member for the extra-equity resolution); affiliates relied on for net worth also give resolutions (cl. 35.3)",
+   "paper": "Certified true copy on company letterhead, signed by Company Secretary/ Director",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Authorises the signatory and commits 100% of the equity (or each member's share)",
+   "heading": {
+    "doc": "rfs",
+    "page": 90,
+    "quote": "Format 7.4 FORMAT FOR BOARD RESOLUTIONS"
+   },
+   "fields": [
+    {
+     "key": "meetingDate",
+     "label": "Board meeting date",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "at the duly convened Meeting on"
+     }
+    },
+    {
+     "key": "authorisedPerson",
+     "label": "Person authorised to sign the bid",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "RESOLVED THAT Mr/Ms"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "to RfS vide RfS No."
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "(insert title of the RfS)"
+     }
+    },
+    {
+     "key": "equityPct",
+     "label": "Equity commitment % (consortium member)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "[Insert the % equity commitment as specified in Consortium Agreement]"
+     }
+    },
+    {
+     "key": "otherMembers",
+     "label": "Other consortium members",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "[Insert the name of other Members in the Consortium]"
+     }
+    },
+    {
+     "key": "caSignatory",
+     "label": "Person authorised to execute the Consortium Agreement",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "is hereby authorized to execute the Consortium Agreement."
+     }
+    },
+    {
+     "key": "consortiumAgreementDate",
+     "label": "Consortium Agreement date (Lead Member extra equity)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 90,
+      "quote": "terms and conditions contained in the Consortium Agreement dated"
+     }
+    },
+    {
+     "key": "certifiedBy",
+     "label": "Company Secretary/ Director name, ACS No./ DIN",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 91,
+      "quote": "(Signature, Name and Stamp of Company Secretary/ Director)"
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Legal counsel's unqualified opinion (foreign entity only)",
+     "context": {
+      "doc": "rfs",
+      "page": 91,
+      "quote": "the foreign entity shall submit an unqualified opinion issued by the legal counsel of such foreign entity"
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.5",
+   "title": "Consortium Agreement",
+   "pages": [
+    92,
+    95
+   ],
+   "applies": "consortium",
+   "submittedBy": "All consortium members (authorised signatories with witnesses), notarised",
+   "paper": "Non-judicial stamp paper of appropriate value",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Names the Lead Member and fixes each member's equity share in the project company",
+   "heading": {
+    "doc": "rfs",
+    "page": 92,
+    "quote": "Format 7.5 FORMAT FOR CONSORTIUM AGREEMENT"
+   },
+   "fields": [
+    {
+     "key": "executedOn",
+     "label": "Execution date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "THIS Consortium Agreement (\"Agreement\") executed on this"
+     }
+    },
+    {
+     "key": "leadMember",
+     "label": "Member-1 (Lead Member) name",
+     "kind": "text",
+     "maps": "leadMember",
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "[Insert name of Lead Member]"
+     }
+    },
+    {
+     "key": "leadCountry",
+     "label": "Country of incorporation and registered office (each member)",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "a Company incorporated under the laws of"
+     }
+    },
+    {
+     "key": "otherMembers",
+     "label": "Member-2 ... Member-n names and registered offices",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "[The Bidding Consortium should list the details of all the Consortium Members]"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "against RfS No."
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "(insert title of the RfS)"
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 92,
+      "quote": "had invited response to RfS vide its Request for Selection (RfS) dated"
+     }
+    },
+    {
+     "key": "equitySplit",
+     "label": "Equity share of each member (totals 100%)",
+     "kind": "table",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 93,
+      "quote": "the share of each Member of the Consortium in the issued equity share capital of the Project Company"
+     }
+    },
+    {
+     "key": "signatories",
+     "label": "Each member's signatory and board resolution date, with two witnesses",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 94,
+      "quote": "(Signature, Name & Designation of the person authorized vide Board Resolution Dated"
+     }
+    },
+    {
+     "key": "notary",
+     "label": "Notary signature and stamp",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 95,
+      "quote": "Signature and stamp of Notary of the place of execution"
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Board resolution of each member for participating in the consortium",
+     "context": {
+      "doc": "rfs",
+      "page": 39,
+      "quote": "along with Board resolution from each Member of the Consortium for participating in Consortium."
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.6",
+   "title": "Financial Requirement",
+   "pages": [
+    96,
+    99
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / Lead Member authorised signatory and a practising Chartered Accountant/ statutory auditor (consortium exhibits per member)",
+   "paper": "Letterhead of the Bidding Company/ Lead Member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Shows the net worth and liquidity (turnover or PBDIT) criteria of cl. 35 are met",
+   "heading": {
+    "doc": "rfs",
+    "page": 96,
+    "quote": "Format 7.6 FORMAT FOR FINANCIAL REQUIREMENT"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number and date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "(This should be submitted on the Letter Head of the Bidding Company/ Lead Member of Consortium) Ref. No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / Lead Member name and address",
+     "kind": "textarea",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "phoneEmail",
+     "label": "Telephone and e-mail",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Tel.#:"
+     }
+    },
+    {
+     "key": "rfs",
+     "label": "RfS number, date and title",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Response to RfS No."
+     }
+    },
+    {
+     "key": "affiliateSupport",
+     "label": "Relying on affiliates?",
+     "kind": "choice",
+     "options": [
+      "Yes, with affiliates",
+      "No (strike out)"
+     ],
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "with the support of its Affiliates, (strike out if not applicable)"
+     }
+    },
+    {
+     "key": "netWorthCr",
+     "label": "Net worth (Rs crore, also in words)",
+     "kind": "number",
+     "maps": "netWorthCr",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "by demonstrating a Net Worth of Rs."
+     }
+    },
+    {
+     "key": "netWorthYear",
+     "label": "Net worth as on",
+     "kind": "choice",
+     "options": [
+      "31.03.2025 (FY 2024-25)",
+      "A date at least 7 days before the bid deadline"
+     ],
+     "maps": "netWorthYear",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "as on the last date of Financial Year 2024-25 or as on the date at least 7 days prior to the bid submission deadline"
+     }
+    },
+    {
+     "key": "netWorthTable",
+     "label": "Exhibit (i)/(ii): net worth by company/affiliate and relationship",
+     "kind": "table",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Exhibit (i): Applicable in case of Bidding Company"
+     }
+    },
+    {
+     "key": "memberNetWorthReq",
+     "label": "Net worth requirement to be met by each consortium member (Rs crore)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 97,
+      "quote": "Net Worth Requirement to be met by Member: INR"
+     }
+    },
+    {
+     "key": "turnover",
+     "label": "Annual turnover (Rs, also in words)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 97,
+      "quote": "by demonstrating an Annual Turnover of INR"
+     }
+    },
+    {
+     "key": "turnoverTable",
+     "label": "Turnover by company/affiliate (and per member)",
+     "kind": "table",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 98,
+      "quote": "Annual Turnover Requirement to be met by Member: INR"
+     }
+    },
+    {
+     "key": "pbdit",
+     "label": "PBDIT (Rs, also in words)",
+     "kind": "number",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 98,
+      "quote": "by demonstrating a PBDIT of INR"
+     }
+    },
+    {
+     "key": "pbditTable",
+     "label": "PBDIT by company/affiliate (and per member)",
+     "kind": "table",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "PBDIT Requirement to be met by Member: INR"
+     }
+    },
+    {
+     "key": "caDetails",
+     "label": "CA signature, stamp, membership no., firm regn. no., UDIN, date",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "(Signature and Stamp of CA)"
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "CA-certified computation of net worth and turnover/PBDIT on the CA firm's letterhead",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "provide details of computation of Net Worth and Annual Turnover/PBDIT (as applicable) duly certified by the Chartered Accountant."
+     }
+    },
+    {
+     "label": "Certified balance sheet, P&L, schedules, cash flow and notes",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "Certified copies of Balance sheet, Profit & Loss Account, Schedules and Cash Flow Statements are to be enclosed in complete form along with all the Notes to Accounts."
+     }
+    },
+    {
+     "label": "Bank's in-principle line-of-credit letter, if liquidity is shown that way",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "In case of the Bidder choosing to meet the Liquidity criteria through an In-principle sanction letter, such document shall be separately submitted"
+     }
+    },
+    {
+     "label": "CS/CA-certified proof of affiliate relationship",
+     "context": {
+      "doc": "rfs",
+      "page": 97,
+      "quote": "evidence to establish the relationship, duly certified by a practicing company secretary/ chartered accountant is required to be attached with the format."
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.7",
+   "title": "Undertaking (not a wilful defaulter or blacklisted)",
+   "pages": [
+    100,
+    100
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / each consortium member",
+   "paper": "Letterhead of the Bidding Company/ each member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Undertaking under cl. 33.8 on wilful default and blacklisting",
+   "heading": {
+    "doc": "rfs",
+    "page": 100,
+    "quote": "Format 7.7 UNDERTAKING"
+   },
+   "fields": [
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 100,
+      "quote": "in respect to our response to RfS vide RfS No."
+     }
+    },
+    {
+     "key": "lastBidDate",
+     "label": "Last date of bid submission (twice)",
+     "kind": "date",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 100,
+      "quote": "[Insert last date of bid submission]"
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidder name (twice)",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 100,
+      "quote": "(insert name of the Bidder), or any of its Affiliates is not a willful defaulter"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 100,
+      "quote": "(Name and Signature of the Authorized Signatory)"
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.8",
+   "title": "Disclosure (no group company bidding)",
+   "pages": [
+    101,
+    102
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / each consortium member",
+   "paper": "Letterhead of the Bidding Company/ each member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Declares no related company is bidding, names the promoters, and confirms the land-border OM and ALMM rules (use 7.8A instead if a 10-26% common shareholder exists)",
+   "heading": {
+    "doc": "rfs",
+    "page": 101,
+    "quote": "Format 7.8 FORMAT FOR DISCLOSURE"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number and date",
+     "kind": "text",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "DISCLOSURE Ref. No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / Lead Member name and address",
+     "kind": "textarea",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "phoneEmail",
+     "label": "Telephone and e-mail",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "Tel. #:"
+     }
+    },
+    {
+     "key": "seciAddress",
+     "label": "SECI address",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(Enter Address of SECI)"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number, date and title",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "for the RfS No."
+     }
+    },
+    {
+     "key": "promoters",
+     "label": "Promoter(s) with control",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(enter name of the Promoter/Promoters)"
+     }
+    },
+    {
+     "key": "biddingEntity",
+     "label": "Bidding company / consortium member name",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(enter name of the bidding company/member in a consortium)"
+     }
+    },
+    {
+     "key": "title",
+     "label": "Name of the RfS (ALMM declaration)",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(Enter the name of the RfS)"
+     }
+    },
+    {
+     "key": "dated",
+     "label": "Dated",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 102,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 102,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Annexure to Format 7.8/7.8A (land-border declaration)",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "Accordingly, we are also enclosing necessary certificates (Annexure to this format) in support of the above compliance"
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.8A",
+   "title": "Disclosure (common shareholder 10-26%)",
+   "pages": [
+    103,
+    104
+   ],
+   "applies": "common-shareholding",
+   "submittedBy": "Each Bidding Company / consortium member sharing a common shareholder with other bidders",
+   "paper": "Letterhead of the Bidding Company/ each member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Replaces 7.8 when a common company holds more than 10% but less than 26% in more than one bidder; undertakes no collusion",
+   "heading": {
+    "doc": "rfs",
+    "page": 103,
+    "quote": "Format 7.8A FORMAT FOR DISCLOSURE"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number and date",
+     "kind": "text",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "DISCLOSURE Ref. No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / Lead Member name and address",
+     "kind": "textarea",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "phoneEmail",
+     "label": "Telephone and e-mail",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "Tel. #:"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number, date and title",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "commonShareholder",
+     "label": "Common shareholder (Group Company) name (repeated)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "(enter name of the common shareholder) is our Group Company"
+     }
+    },
+    {
+     "key": "promoters",
+     "label": "Promoter(s) with control",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "(enter name of the Promoter/Promoters)"
+     }
+    },
+    {
+     "key": "biddingEntity",
+     "label": "Bidding company / consortium member name",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "(enter name of the bidding company/member in the consortium)"
+     }
+    },
+    {
+     "key": "title",
+     "label": "Name of the RfS (ALMM declaration)",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 104,
+      "quote": "(Enter the name of the RfS)"
+     }
+    },
+    {
+     "key": "dated",
+     "label": "Dated",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 104,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 104,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Annexure to Format 7.8/7.8A (land-border declaration)",
+     "context": {
+      "doc": "rfs",
+      "page": 104,
+      "quote": "Accordingly, we are also enclosing necessary certificates (Annexure to this format) in support of the above compliance"
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.8-annex",
+   "title": "Annexure to Format 7.8/7.8A: land-border declaration",
+   "pages": [
+    105,
+    105
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / each consortium member",
+   "paper": "Letterhead of the Bidding Company/ each member",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Certifies the bidder is not from a country sharing a land border with India, or is registered with the Competent Authority (MoF OM 23.02.2023)",
+   "heading": {
+    "doc": "rfs",
+    "page": 105,
+    "quote": "Annexure to Format 7.8/7.8A DECLARATION"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number and date",
+     "kind": "text",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "(To be submitted on the Letter Head of the Bidding Company/ Each Member of Consortium) Ref. No."
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / member name and address",
+     "kind": "textarea",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "(Insert name and address of Bidding Company/Member of Consortium)"
+     }
+    },
+    {
+     "key": "phoneEmail",
+     "label": "Telephone and e-mail",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Tel#:"
+     }
+    },
+    {
+     "key": "rfs",
+     "label": "RfS number, date and tender name",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Sub: Response to RfS No"
+     }
+    },
+    {
+     "key": "dated",
+     "label": "Dated",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Evidence of registration with the Competent Authority (if from a land-border country)",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Where applicable, evidence of valid registration by the Competent Authority shall be attached."
+     }
+    },
+    {
+     "label": "Copy of MoF OM dated 23.02.2023",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Encl: OM dated 23.02.2023, as referred above."
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.9",
+   "title": "Integrity Pact",
+   "pages": [
+    106,
+    106
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company; every consortium member signs and stamps",
+   "paper": "SECI-signed document downloaded from the ETS portal (addendum to the RfS)",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Integrity Pact with SECI, monitored by the Independent External Monitors named in cl. 19",
+   "heading": {
+    "doc": "rfs",
+    "page": 106,
+    "quote": "Format 7.9 INTEGRITY PACT"
+   },
+   "fields": [],
+   "attachments": [
+    {
+     "label": "Signed and stamped scan of the SECI-signed Integrity Pact from the ETS portal",
+     "context": {
+      "doc": "rfs",
+      "page": 106,
+      "quote": "Bidders are required to submit duly signed and stamped scanned copy of the document available on ETS portal."
+     }
+    }
+   ]
+  },
+  {
+   "id": "7.10",
+   "title": "Financial Bid covering letter",
+   "pages": [
+    107,
+    108
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / Lead Member of Consortium (authorised signatory)",
+   "paper": "Letterhead of the Bidding Company/ Lead Member",
+   "envelope": "financial",
+   "when": "with the bid",
+   "purpose": "Covers the financial bid; the tariff itself is entered once in the ISN-ETS financial e-form",
+   "heading": {
+    "doc": "rfs",
+    "page": 107,
+    "quote": "Format 7.10 FORMAT FOR SUBMISSION OF FINANCIAL BID"
+   },
+   "fields": [
+    {
+     "key": "refNo",
+     "label": "Reference number",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "(The Covering Letter should be submitted on the Letter Head of the Bidding Company/ Lead Member of Consortium) Ref. No."
+     }
+    },
+    {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Ref. No. _________ Date: ___________"
+     }
+    },
+    {
+     "key": "bidder",
+     "label": "Bidding Company / Lead Member name",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "address",
+     "label": "Address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
+     "key": "phone",
+     "label": "Telephone",
+     "kind": "text",
+     "maps": "phone",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Tel.#:"
+     }
+    },
+    {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "E-mail address#"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "bidderName",
+     "label": "Bidder name in the letter body",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "(Insert Name of the Bidder) enclose herewith the Financial Proposal"
+     }
+    },
+    {
+     "key": "contractedMw",
+     "label": "Contracted capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "for a Contracted Capacity of"
+     }
+    },
+    {
+     "key": "tariff",
+     "label": "First Round Tariff (Rs/kWh, 2 decimals; entered in the portal e-form)",
+     "kind": "number",
+     "maps": "tariff",
+     "context": {
+      "doc": "rfs",
+      "page": 108,
+      "quote": "5. Tariff should be in Indian Rupee up to two decimal places only."
+     }
+    },
+    {
+     "key": "tariffWords",
+     "label": "Tariff in words (prevails over figures)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 108,
+      "quote": "In the event of any discrepancy between the values entered in figures and in words, the values entered in words shall be considered."
+     }
+    },
+    {
+     "key": "signedDate",
+     "label": "Dated (day, month, year)",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 107,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "7.11",
+   "title": "Preliminary Estimate of Cost of RE Power Project",
+   "pages": [
+    109,
+    109
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / Lead Member; separately for each Project",
+   "paper": "Not specified (any format for the break-up)",
+   "envelope": "financial",
+   "when": "with the bid",
+   "purpose": "Project cost break-up for SECI's records only; no bearing on Change in Law claims",
+   "heading": {
+    "doc": "rfs",
+    "page": 109,
+    "quote": "Format 7.11 PRELIMINARY ESTIMATE OF COST OF RE POWER PROJECT"
+   },
+   "fields": [
+    {
+     "key": "contractedMw",
+     "label": "Contracted capacity (MW)",
+     "kind": "number",
+     "maps": "contractedMw",
+     "context": {
+      "doc": "rfs",
+      "page": 109,
+      "quote": "Contracted Capacity:"
+     }
+    },
+    {
+     "key": "location",
+     "label": "Location",
+     "kind": "text",
+     "maps": "solarSite",
+     "context": {
+      "doc": "rfs",
+      "page": 109,
+      "quote": "Location:"
+     }
+    },
+    {
+     "key": "costBreakup",
+     "label": "Cost break-up (any format)",
+     "kind": "textarea",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 109,
+      "quote": "Bidder may use any format to provide the break-up."
+     }
+    },
+    {
+     "key": "signedDate",
+     "label": "Dated",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 109,
+      "quote": "Dated the"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 109,
+      "quote": "Name, Designation, Seal and Signature of Authorized Person in whose name Power of Attorney/ Board Resolution/ Declaration."
+     }
+    }
+   ],
+   "attachments": []
+  },
+  {
+   "id": "Annexure-B",
+   "title": "Special Instructions for e-Tendering and Reverse Auction",
+   "pages": [
+    116,
+    124
+   ],
+   "applies": "always",
+   "submittedBy": "Bidding Company / Lead Member (authorised signatory)",
+   "paper": "Scanned copy of the RfS annexure, signed and stamped",
+   "envelope": "techno-commercial",
+   "when": "with the bid",
+   "purpose": "Signed acceptance of the e-tendering and e-reverse-auction rules",
+   "heading": {
+    "doc": "rfs",
+    "page": 116,
+    "quote": "Annexure – B SPECIAL INSTRUCTIONS TO BIDDERS FOR e-TENDERING AND REVERSE AUCTION"
+   },
+   "fields": [],
+   "attachments": [
+    {
+     "label": "Signed and stamped scan of Annexure-B",
+     "context": {
+      "doc": "rfs",
+      "page": 55,
+      "quote": "the Bidders shall submit the scanned copy of Annexure-B of the RfS duly signed and stamped by the Authorized signatory, as an acceptance of the provisions contained therein"
+     }
+    }
+   ]
+  },
+  {
+   "id": "Annexure-I",
+   "title": "Undertaking for utilisation of connectivity",
+   "pages": [
+    139,
+    139
+   ],
+   "applies": "other: only if the substation SCD proof relies on another entity's connectivity application/grant",
+   "submittedBy": "The connectivity applicant/grantee (CEO/ MD/ Director), not the bidder",
+   "paper": "Letterhead of the Connectivity Applicant",
+   "envelope": "techno-commercial (part of Format 7.1)",
+   "when": "with the bid",
+   "purpose": "Lets the bidder use a related company's connectivity, as allowed under the GNA Regulations",
+   "heading": {
+    "doc": "rfs",
+    "page": 139,
+    "quote": "Annexure – I UNDERTAKING FOR UTILIZATION OF CONNECTIVITY BY THE BIDDING COMPANY"
+   },
+   "fields": [
+    {
+     "key": "applicant",
+     "label": "Connectivity applicant/grantee name (repeated)",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "{Insert name of the connectivity applicant}"
+     }
+    },
+    {
+     "key": "connectivity",
+     "label": "Application number and date / grant",
+     "kind": "text",
+     "maps": "connectivity",
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "vide application number"
+     }
+    },
+    {
+     "key": "biddingCompany",
+     "label": "Bidding Company name (repeated)",
+     "kind": "text",
+     "maps": "bidder",
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "{Insert name of the Bidding Company}"
+     }
+    },
+    {
+     "key": "rfsNo",
+     "label": "RfS number and date",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "is participating in the RfS issued by SECI vide RfS No."
+     }
+    },
+    {
+     "key": "relationship",
+     "label": "Relationship to the Bidding Company",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "{Relationship with the Bidding Company}"
+     }
+    },
+    {
+     "key": "signatory",
+     "label": "CEO/ MD/ Director of the applicant",
+     "kind": "text",
+     "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "(Name and Signature of the CEO/ MD/ Director of the Connectivity Applicant)"
+     }
+    }
+   ],
+   "attachments": [
+    {
+     "label": "Shareholding certificates proving the relationship",
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "Enclosure: Shareholding certificates to establish the relationship with the Bidding Company"
+     }
+    }
+   ]
+  }
+ ],
+ "bidProcess": [
+  {
+   "step": "Register and download",
+   "detail": "Get a Class III DSC, register on ISN-ETS (bharat-electronictender.com) and download the official RfS copy; only then can you upload a bid.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 25,
+     "quote": "The Bidder shall be eligible to submit/ upload the bid document only after logging into the ISN-ETS portal and downloading the official copy of RfS."
+    },
+    {
+     "doc": "rfs",
+     "page": 116,
+     "quote": "Procure a Class III Digital Signing Certificate (DSC)."
+    }
+   ]
+  },
+  {
+   "step": "Pay fees",
+   "detail": "Pay the Rs 50,000 + GST document cost and the processing fee by NEFT/RTGS and email finance@seci.co.in with payment details and GSTIN; missing fees or EMD means rejection.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 25,
+     "quote": "Bids submitted without cost of the RfS document and/or Bid Processing Fee and/or Bank Guarantee/ POI/ Surety Bond against EMD (including partial submission of any one of the above amounts/ instruments), shall be summarily rejected."
+    }
+   ]
+  },
+  {
+   "step": "Queries and pre-bid meeting",
+   "detail": "Send queries by email or the portal; SECI answers at the pre-bid meeting and posts amendments on ISN-ETS, with at least 7 days after any amendment to bid. No clarifications after the deadline.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 46,
+     "quote": "No clarification on the RfS will be issued subsequent to the bid submission deadline."
+    },
+    {
+     "doc": "rfs",
+     "page": 46,
+     "quote": "the Bidders shall be provided a period of at least 7 days therefrom, for submission of bids."
+    }
+   ]
+  },
+  {
+   "step": "Online submission (two envelopes)",
+   "detail": "By the NIT deadline upload Envelope I (Formats 7.1-7.9, attachments, fee receipts, EMD scan, technical e-form) and Envelope II (Formats 7.10 and 7.11, plus one tariff in the financial e-form), every page signed and stamped and digitally signed.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 44,
+     "quote": "(a) Formats - 7.1, 7.2 (if applicable), 7.3 A/ 7.3B/ 7.3C, 7.4, 7.5 (if applicable), 7.6, 7.7, 7.8/7.8A and 7.9"
+    },
+    {
+     "doc": "rfs",
+     "page": 44,
+     "quote": "only a single tariff bid for all the Projects applied for, shall have to be filled online in the Electronic Form provided at the ISN-ETS portal."
+    }
+   ]
+  },
+  {
+   "step": "Pass-phrases",
+   "detail": "After the deadline and before the techno-commercial opening, put each envelope's pass-phrase into the Time Locked Electronic Key Box; they are also delivered offline in a sealed envelope.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 40,
+     "quote": "is submitted into the 'Time Locked Electronic Key Box (EKB)' after the deadline of Bid submission, and before the commencement of the Online Tender Opening Event (TOE) of Techno-commercial bid."
+    },
+    {
+     "doc": "rfs",
+     "page": 42,
+     "quote": "Pass-phrases for Techno-commercial and Financial bids submitted on the ETS portal."
+    }
+   ]
+  },
+  {
+   "step": "Offline originals",
+   "detail": "Deliver the original EMD instrument (and pass-phrases) to SECI by hand or post within 2 working days of the deadline, in an envelope with the RfS sticker; otherwise the online bid is archived and fees forfeited.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 42,
+     "quote": "at the office of SECI until the date as on 2 working days after the closing date of bid submission."
+    },
+    {
+     "doc": "rfs",
+     "page": 43,
+     "quote": "then the same shall be treated as incomplete bid and Cost of RfS, Bid Processing Fee submitted at this stage will be encashed"
+    }
+   ]
+  },
+  {
+   "step": "Techno-commercial opening and evaluation",
+   "detail": "Envelope I is opened online after the EMD delivery window; SECI checks eligibility and may seek clarifications (7-day reply).",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 54,
+     "quote": "Bid opening (online) will be done only after the deadline for submission of Bank Guarantee."
+    }
+   ]
+  },
+  {
+   "step": "Financial opening and ranking",
+   "detail": "Envelope II of qualified bidders is opened and bidders are ranked L1, L2 ... on the first-round tariff; equal tariffs share a rank.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 54,
+     "quote": "evaluation of Techno-Commercially Qualified Bids shall be done based on the \"First Round Tariff\" quoted by the Bidder in the Electronic Form of Financial Bid."
+    }
+   ]
+  },
+  {
+   "step": "e-RA shortlist and invitation",
+   "detail": "SE and the shortlist are fixed by cl. 39.2; date emailed a week ahead and a system invitation sent at least 2 hours before to shortlisted bidders only.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 57,
+     "quote": "a system generated email for invitation for Reverse Auction will be sent to all those Bidders only who have been shortlisted"
+    }
+   ]
+  },
+  {
+   "step": "e-Reverse Auction",
+   "detail": "30 minutes plus 8-minute extensions; bid down in steps of at least 1 paisa from your first-round tariff; capacity fixed; sign the final bid digitally after the event.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 55,
+     "quote": "The reverse auction for the total tendered capacity shall be conducted on the portal"
+    },
+    {
+     "doc": "rfs",
+     "page": 121,
+     "quote": "It is important to digitally-sign your 'Final bid' after the end of e-Reverse Auction bidding event."
+    }
+   ]
+  },
+  {
+   "step": "Selection",
+   "detail": "Green and Orange zone bidders listed by final tariff; those within L1 + 2% win, up to SE MW in total.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 58,
+     "quote": "Subsequent to conclusion of the e-RA process, the Bidders in the \"Green\" and \"Orange\" zones as per Clause 39.4 (vi) above, will be listed in the increasing order of the tariffs"
+    }
+   ]
+  },
+  {
+   "step": "LoA",
+   "detail": "LoAs issued (to the Lead Member for consortia); the last winner may refuse a small part award within 7 days; losing EMDs released within 15 days of the e-RA.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 59,
+     "quote": "At the end of selection process, Letters of Award (LoAs) will be issued to the Successful Bidders discovered as above."
+    },
+    {
+     "doc": "rfs",
+     "page": 31,
+     "quote": "SECI may release the Bank Guarantees/POI towards EMD of the unsuccessful Bidders within 15 days after the completion of e-Reverse Auction (e-RA)."
+    }
+   ]
+  },
+  {
+   "step": "After LoA",
+   "detail": "Pay 50% success charges within 30 days; project split may change for 30 days; SPV MoA/AoA before PPA.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 32,
+     "quote": "1st installment of the Success Charges, i.e. 50% of the above amount shall be paid to SECI within 30 days after issuance of LoA"
+    }
+   ]
+  },
+  {
+   "step": "PSA, then PPA",
+   "detail": "SECI signs PSAs with buyers, then invites winners in writing; within 30 days submit Annexure-F documents, the PBG and the second success-charge instalment; Effective Date is 15 days after the invitation; PPA per project with SECI. EMD returned once the PBG is verified.",
+   "sources": [
+    {
+     "doc": "rfs",
+     "page": 34,
+     "quote": "The PPA(s) will be signed after signing of PSA(s) for the respective Contracted Capacity(ies)."
+    },
+    {
+     "doc": "rfs",
+     "page": 29,
+     "quote": "It may be noted that PPA will be signed only upon successful verification of the PBG submitted by the RPD."
+    }
+   ]
+  }
+ ],
+ "queries": [
+  "No bid deadline in the RfS: Bid Information Sheet (K) says 'As per NIT on ISN-ETS portal' (p.4). The dates in cl. 26.1 (22.11.2026) and 37.1 (05.11.2026) are worked examples only (p.42, p.54).",
+  "No ceiling or maximum tariff anywhere in the RfS; SECI may only annul or cancel for high tariffs or no buyers (cl. 41.2-41.3, p.60). Ask whether an undisclosed benchmark exists.",
+  "PPA term is 25 years from the SCSD (cl. 20.2, p.34), not from the Effective Date; the pack's 'term' gap can be closed.",
+  "Cl. 34.3 (technical criterion) is 'Not used' per Amendment-02 while Clarifications-01 Q4 says it was 'suitably modified': still ask whether any experience test survives (RfS original p.50).",
+  "Cl. 34.1 says technology is declared 'in the prescribed Format 7.9' (p.50), but 7.9 is the Integrity Pact (p.106) and no format asks for technology. Ask where to declare it.",
+  "Cross-reference errors: cl. 26.2 lists formats 'as elaborated in Clause 22' and attachments 'under the sub-clause xi' (p.44), but they are cl. 23 and sub-clause x (p.38-39); Annexure-B says offline documents are 'as per Clause 29' (p.118), really cl. 26.1; cl. 12 points to Annexure-D for portal login (p.25), but Annexure-D is the progress report format (p.128).",
+  "Tariff validity cites three different clauses: cl. 28 cites 41.4 (p.45), Format 7.1 para 14 cites 41.5 (p.71), and Format 7.10 cites 'Clause 42.4' (p.107), which is a definition.",
+  "Cl. 23(ii) wants the consortium Power of Attorney 'in original' (p.38), but cl. 26.1 lists only the EMD instrument and pass-phrases as offline originals (p.42). Ask whether the original PoA must be couriered.",
+  "ESS unit for PBG: cl. 17.1 says the installed capacity for PBG includes ESS 'in MW' (p.29), but the formula's E and definition 42.48 use MWh (p.65-66). Success charges explicitly count ESS in MWh (p.32), so Rs 1 lakh x MWh could be large: worth confirming.",
+  "EMD (cl. 16.1), PBG (17.1) and net worth (35.1) scale with installed capacity (solar/wind MW, ESS MWh) but liquidity (35.2) and processing fee scale with contracted MW (p.27, p.29, p.51-52, p.4). The pack's EMD/PBG/net-worth model should take installed capacity, which bidders may revise up to SCSD.",
+  "Original cl. 6.1 let ESS sit anywhere (p.12) while definition 42.47 required co-location (p.65); Amendment-02 resolves this (BESS co-located, PSP may be separate).",
+  "Pack 'modules' marks domestic cells as an Amendment-01 change, but RfS cl. 34.4 already required ALMM List-II cells (p.50); Amendment-01 only revised the Annexure-A standards.",
+  "Annexure-A Sl. 9 (p.112) only shows a 50 MW solar row and requires DC arrays in 10 MW units, written for a solar-only tender. Its relevance to hybrid/RTC capacity is unclear.",
+  "Last-bidder rule after Amendment-01: 'lower than 50% of the total quoted capacity ... or 50 MW' (p.59; amd1 p.5) does not say whether the lower or higher threshold governs. Format 7.1 para 7 commits the bidder to accept any offer of 50% or more (p.70).",
+  "Substation SCD: cl. 7.5 still needs the initial substation's SCD on or before 30.06.2028 with proof (p.14), but Amendment-01 dropped that condition for later Delivery Point changes up to the connectivity deadline. Confirm a changed substation has no SCD limit.",
+  "PBG validity is SCSD + 9 months (p.29); with SCSD now 24 months (Amendment-02) a PBG must run about 33 months from the Effective Date. Bank tenor and cost should use the amended SCSD.",
+  "Annexure-C in the RfS (p.125-127) still shows 80% off-peak and the annual DFR penalty; Amendment-01 replaced it. Use only the revised Annexure-C.",
+  "Cl. 8.2(a) says shortfall penalties are as 'provided in the PSA' (p.18). The Standard PSA in the pack still carries the pre-Amendment-01 DFR, so the PSA wording should be confirmed as amended (Amendment-01 amends PSA 2.11.3).",
+  "No land milestone before commissioning: land possession proof is due only with the pre-trial-run documents (p.20), and FC (cl. 21.2, p.36) asks only for financing and equipment, so a land-readiness check at FC is not in the RfS."
+ ]
 }

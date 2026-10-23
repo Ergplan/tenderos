@@ -95,8 +95,8 @@ export function seciTerms(settings = DEFAULT_SETTINGS) {
     solarMultiple: null,
     sale: "allowed", // power above the contracted capacity may be sold (PSA 2.11.5)
     site: null,
-    years: m.years, // not in the documents provided: see the 'term' gap
-    yearsAssumed: true,
+    years: m.years, // RfS cl. 20.2: 25 years from the SCSD
+    yearsAssumed: false,
     supplyStart: dates?.scsd || null,
     ceiling: null,
     emdPerMw: null, // EMD and PBG are on installed capacity here: see moneyAtStake
@@ -115,8 +115,8 @@ export function seciTerms(settings = DEFAULT_SETTINGS) {
       "peak.hours": { ...prov("peakHours"), display: `${plan.label} (the Buying Entity picks 6 hours between 18:00 and 10:00, day-ahead)` },
       "market.sale": prov("excess", "Sale above the contracted capacity"),
       start: prov("scsd", "Supply start"),
-      years: { label: "PPA term", display: "25 years (assumed: the RfS was not provided)", page: null, quote: null, located: true },
-      ceiling: null,
+      years: { ...prov("term", "PPA term"), display: "25 years from the SCSD" },
+      ceiling: { ...prov("ceiling", "Ceiling tariff"), display: "None stated in the RfS" },
     },
   };
 }

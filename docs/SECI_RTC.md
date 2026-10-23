@@ -1,52 +1,68 @@
 # SECI RTC tender tab
 
-The **SECI RTC tender** tab takes one named tender, SECI's RTC-TM-V (1,000 MW of firm and
-dispatchable RE power, ISTS-connected, RfS No. SECI/C&P/IPP/13/0002/25-26), from its documents to a
-priced, sized bid and a filled bid pack. A voice guide can walk the bidder through the tab from
-start to finish.
+The **SECI RTC tender** tab takes one tender from its documents to a priced, sized bid and a
+filled bid pack. The tender is SECI's RTC-TM-V: 1,000 MW of round-the-clock power from
+ISTS-connected RE projects with storage, RfS No. SECI/C&P/IPP/13/0020/25-26 dated 10.03.2026.
+
+Two voice helpers can walk the bidder through the tab from start to finish:
+
+* the **bid agent**, a GPT-Live voice conversation that works the bid on screen;
+* the **voice guide**, a fixed script with the browser's own speech.
 
 ## The documents
 
-These documents are in `web/public/tenders/seci-rtc-tm-v/`:
+The five documents are in `web/public/tenders/seci-rtc-tm-v/`:
 
-* Amendment-01
-* Amendment-02
-* Clarifications-01
-* the Standard PSA
+* the RfS (139 pages);
+* Amendment-01;
+* Amendment-02;
+* Clarifications-01;
+* the Standard PSA.
 
-**The main RfS was not provided.** The tab says so on its first screen. It shows the RfS's terms
-only where an amendment, the clarifications or the PSA quote them.
-
-These terms are not in any of the four documents:
-
-* the PPA term (25 years is assumed and marked "assumed");
-* any ceiling tariff;
-* the bid deadline;
-* the exact wording of the bid formats.
+Where an amendment or a clarification changes the RfS, the amended rule applies. The RfS's
+original wording is kept beside each condition, under "RfS as issued".
 
 The tender pack `web/src/seci/seci-rtc-tm-v.json` holds the following, each item with its
 document, page and quote:
 
-* 23 amendment changes, each clause as it was and as it is now;
-* 9 clarifications;
-* 31 bid conditions.
+* 61 bid conditions, in force after the amendments. 30 of them are stated only in the RfS, for
+  example the fees, the EMD and PBG instruments, liquidity, who may bid, the e-Reverse Auction and
+  its 80% cap, success charges, PPA signing and Financial Closure.
+* The RfS's original wording for 26 conditions.
+* 23 amendment changes, each clause as it was and as it is now.
+* 9 clarifications.
+* 14 steps of the bid process, from registration on the portal to the PPA.
+* 20 bid formats (Section 7 and the annexures signed with the bid), with 221 blanks. Each blank
+  carries the RfS's words around it and the page.
+* 19 points to raise with SECI, where the documents conflict or are unclear. Each names the page
+  to cite. For example:
+  * clause 34.1 sends the technology declaration to Format 7.9, which is the Integrity Pact;
+  * the PBG counts storage in MW in one place and in MWh in another.
 
-`tests/test_seci_pack.py` (part of `make test`) checks that every quote is on its page.
+`tests/test_seci_pack.py` (part of `make test`) checks that every one of these quotes is printed
+on the page it cites, plus checks on the conditions and formats themselves.
 
-Clause 34.3 (technical eligibility) is shown as **unclear**. Amendment-02 marks it "Not used", but
-other clauses still refer to it.
+Three items the four smaller documents left open are now answered by the RfS:
+
+* **PPA term:** 25 years from the SCSD (cl. 20.2).
+* **Ceiling tariff:** none is stated. SECI may annul the process if the tariff discovered is high
+  (cl. 41.2).
+* **Bid deadline:** as per the NIT on the ISN-ETS portal.
+
+Clause 34.3 (technical eligibility) stays **unclear**. Amendment-02 marks it "Not used", but other
+clauses still refer to it.
 
 ## The steps
 
 | Step | What it shows | Code |
 | --- | --- | --- |
-| Documents | The documents, the amendment trail (filter by amendment), SECI's answers to the clarifications; each quote links to its page in the PDF | `DocumentsStep.jsx` |
-| Conditions | The 31 conditions grouped, each marked as from the PSA, amended, clarified, removed or unclear | `ConditionsStep.jsx` |
+| Documents | The documents, how the bid goes, the amendment trail (filter by amendment), SECI's clarifications and the points to raise with SECI; each quote links to its page in the PDF | `DocumentsStep.jsx` |
+| Conditions | The 61 conditions grouped, each marked as issued, amended, removed or unclear, with the RfS's original wording | `ConditionsStep.jsx` |
 | What you bid | The contracted MW (50 to 500), the Peak Hours plan, the shortfall plan, the PPA date and the dates that follow from it (Amendment-02: SCSD 24 months after the PPA, Financial Closure 6 months before the SCSD, latest start SCSD + 6 months), and the EMD, PBG and net worth on the sized plant | `BidStep.jsx`, `terms.js` |
 | Supply sources | Solar, wind, biomass and the mandatory battery, with costs (Tender to Bid's step) | `../bid/SourcesStep.jsx` |
 | Size | HiGHS sizes the least-tariff plant against every peak and off-peak block | `../bid/SizeStep.jsx`, `../bid/useSizing.js` |
-| Financials | The financial model and the Excel workbook with its Live model tab (every cell a formula) | `../bid/FinanceStep.jsx`, `web/lib/liveModel.js` |
-| Bid forms | The bidder's particulars, the tariff, the substation, connectivity, net worth and experience, checked against the tender; the bid pack as Word | `BidForms.jsx`, `forms.js`, `POST /api/seci/forms` |
+| Financials | The tariff for the target equity IRR, the equity and project IRR, **your quote** checked against the target, and the Excel workbook with its Live model tab (every cell a formula) | `../bid/FinanceStep.jsx`, `../bid/QuoteCheck.jsx`, `web/lib/liveModel.js` |
+| Bid forms | The particulars, asked once; every RfS format this bid needs, filled and reviewed one by one beside the RfS page; the checks against the tender; the bid pack as Word | `BidForms.jsx`, `forms.js`, `formats.js`, `POST /api/seci/forms` |
 
 ## How the tender's supply rules reach the engine
 
@@ -87,10 +103,152 @@ rows as Excel formulas.
 
 Excess power above the contracted capacity may be sold (PSA 2.11.5).
 
+## Your quote against the target IRR
+
+`quotedReturns(state, terms, tariff)` (`web/src/bid/quote.js`) runs the financial model of the
+sized plant twice:
+
+* once solved for the target equity IRR, which gives the tariff the target needs;
+* once at the tariff the bidder will quote, which gives the equity and project IRR that tariff
+  earns.
+
+A quote more than half a paisa below the target tariff is **warned**. The warning gives:
+
+* how far below the target the quote is;
+* the equity IRR and the project IRR at the quote;
+* "the equity loses money at this tariff" when the equity IRR is zero or less, or no IRR exists.
+
+The quote is shown and checked in three places:
+
+* on Financials, under "Your quote";
+* under the tariff in the bid forms, where it is the same value;
+* in the "Tariff quoted" check.
+
+The bid agent's `check_tariff` gives the same figures. Tender to Bid's Financials has the same
+"Your quote" panel.
+
+## The bid forms
+
+**Particulars.** The bid forms start with the particulars, asked once. They are:
+
+* the bidder, consortium or single company, and the address;
+* the signatory, the date on the letters and the place;
+* the tariff;
+* the EMD instrument;
+* the substation and its SCD, and connectivity;
+* where the battery sits;
+* net worth and experience;
+* whether a common shareholder holds 10–26% in another bidder.
+
+**Formats.** Each RfS format is then a page of its own. `formats.js` decides whether this bid needs
+the format:
+
+* Format 7.2 and Format 7.5 only for a consortium;
+* only the EMD format of the chosen instrument (7.3A, 7.3B or 7.3C);
+* 7.3D to 7.3F after the award;
+* 7.8A only with a common shareholder;
+* Annexure-I only when another entity's connectivity is used.
+
+The formats are grouped as submitted: Envelope I, Envelope II, after the award, and not needed.
+
+**Where each blank's value comes from:**
+
+* **Your bid:** the contracted MW, the installed solar, wind and storage, the EMD and PBG amounts,
+  and the RfS's number, date and title. These are not editable on the format.
+* **Your particulars:** editable on any format; an edit changes every format that uses it.
+* **This format:** a blank only this format has, such as a reference number, the board meeting
+  date or the turnover.
+
+**Beside the blanks:** each blank shows the RfS's words around it. Clicking them shows that page of
+the RfS beside the blanks. The format also lists what to enclose, with a tick for each.
+
+**Review.** "Mark reviewed" records the values reviewed. A later edit shows the format as "changed
+since review".
+
+**The bid pack.** `POST /api/seci/forms` writes the Word bid pack with `web/lib/docx.js`. It
+contains:
+
+* the offer;
+* the dates;
+* the particulars;
+* the checks with their sources;
+* the documents read;
+* every format this bid needs, with its signer, paper, envelope and RfS pages, every blank as
+  filled, the enclosures and whether it was reviewed.
+
+**Print each format in the RfS's own wording** (the pages are given), on the paper it names.
+
+**Checks.** `bidChecks` checks the bid against the tender:
+
+* the capacity band;
+* the tariff against the target IRR;
+* the mandatory storage and its co-location;
+* the substation SCD (by 30.06.2028);
+* the net worth against the sized plant;
+* the experience, where cl. 34.3 still applies;
+* the EMD and PBG amounts;
+* the PPA dates;
+* how many formats are reviewed.
+
+## The bid agent (GPT-Live)
+
+The agent is a voice conversation with OpenAI's `gpt-live-1`. A backend model works the bid on
+screen while it talks; this is GPT-Live's Responses delegation, with `OPENAI_LIVE_BACKEND_MODEL`,
+default `gpt-6-luna`.
+
+**How a session starts:**
+
+1. The browser makes a WebRTC offer with the microphone.
+2. `POST /api/seci/live` creates the session with OpenAI (`POST /v1/live/sessions`). It uses the
+   server's `OPENAI_API_KEY`, which never reaches the browser.
+3. The route returns the answer.
+4. Audio flows over WebRTC. Events flow on the data channel.
+
+**Tools.** The backend's function tools (`web/src/seci/agent.js`, `AGENT_TOOLS`) run in the
+browser, against the same state the screen shows:
+
+| Tool | Does |
+| --- | --- |
+| `get_status` | The bid as it stands: inputs missing, sizing, financials, the quote, forms |
+| `tender_brief`, `tender_lookup` | The key conditions; a search of conditions, amendments and clarifications, each with document, page and quote |
+| `next_question` | The next input of the guided exercise, in the guide's order, with its current value and benchmark; `keep` / `keep_rest` accept values as they stand |
+| `list_inputs`, `set_input` | Any input on screen (bid, planning choices, sources on or off, sizes, every source and finance input, market sale, separate sites, particulars and format blanks); spoken values are read and range-checked; a change that affects the sizing clears it |
+| `use_benchmarks` | Fill empty inputs with industry benchmarks |
+| `go_to_step` | Show a step |
+| `run_optimizer`, `stop_optimizer` | Size with HiGHS (again) and return the result |
+| `get_results`, `get_financials` | The plant, floors met, shortfall, EMD, PBG, net worth, dates; tariff, equity and project IRR, DSCR, penalties |
+| `check_tariff` | Equity and project IRR at a quoted tariff, with the warning; records it as the quote |
+| `review_bid_forms`, `open_format`, `mark_format_reviewed` | The formats this bid needs, a format's blanks with their input keys, and the bidder's review (only on their word) |
+
+**Rules for the backend model.** Its instructions (`BACKEND_INSTRUCTIONS`) are:
+
+* tender facts come only from the lookup tools, with document and page;
+* numbers come only from the model;
+* inputs change only through `set_input` with the value the user gave.
+
+`LiveEvents` handles the session's events:
+
+* transcripts;
+* the backend's function calls, each answered with `response.item.create`;
+* `response.create` to continue.
+
+**Offered when, and what it needs.** The tab offers the agent only when `GET /api/seci/live` says
+the server has a key. The voice guide stays as the fallback. The microphone needs HTTPS or
+localhost.
+
+**Tested here** with a stand-in for OpenAI:
+
+* the tools and the event loop (`tools/check_seci_agent.mjs`);
+* the route and the browser's WebRTC offer (`tests/e2e/test_seci_tab.py`).
+
+**Not yet tested:** a conversation with the real service, because no OpenAI key was available here.
+
 ## Voice guide
 
-The guide (`VoiceGuide.jsx`, `voice.js`) is a guided model-filling exercise that runs in a fixed
-order:
+The guide (`VoiceGuide.jsx`, `voice.js`) is the scripted fallback. It needs no key and runs
+entirely in the browser.
+
+**Order.** It runs in a fixed order:
 
 1. It explains six key conditions: what you bid, the floors, the Peak Hours, the penalty, the plant
    and the money at stake.
@@ -103,68 +261,39 @@ order:
 6. It explains the financial model (the tariff, rounded up to the paisa, and the IRR), then points
    to the bid forms.
 
-While it runs, the guide shows the step it is asking about and highlights the input.
+**Speech.** It speaks with the browser's speech synthesis and listens with speech recognition
+(`en-IN`).
 
-**Speech.** The guide speaks with the browser's speech synthesis. It listens with speech
-recognition (`en-IN`).
+**Answers.** It understands:
 
-**Answers.** Answers can be:
-
-* numbers in words ("two hundred");
-* dates ("7 June 2026");
-* option names ("any", "penalty");
+* numbers in words;
+* dates;
+* option names;
 * yes or no.
 
-**Commands.** The guide accepts these commands:
+**Commands.** It accepts "next", "back", "repeat", "benchmark", "help" and "stop".
 
-* "next" or "skip" keeps the benchmark;
-* "back";
-* "repeat";
-* "benchmark";
-* "help";
-* "stop".
-
-**Typed answers.** Every answer can also be typed into the guide's box, and the guide can be muted.
-
-**HTTPS.** Microphones work only on HTTPS (or localhost). On a plain-HTTP deployment the guide
-says so and takes typed answers. Speech output works either way.
-
-Nothing is recorded or sent anywhere: recognition runs in the browser.
-
-## Bid forms
-
-`forms.js` defines the fields and checks them against the tender (`bidChecks`):
-
-* the capacity band;
-* the mandatory storage;
-* the substation commissioning date (by 30.06.2028);
-* the net worth against the sized plant;
-* the experience, where cl. 34.3 still applies;
-* the EMD and PBG amounts;
-* the PPA dates.
-
-`POST /api/seci/forms` writes a Word bid pack with `web/lib/docx.js`. The pack contains:
-
-* the particulars;
-* the offer;
-* the checks;
-* the EMD and PBG on the sized plant;
-* the sources quoted.
-
-The exact wording of the formats is in the RfS, which was not provided. **Check the pack against
-the RfS formats before submission.**
+**Typed answers.** Every answer can be typed into the guide's box, and the guide can be muted. On
+plain HTTP the microphone is unavailable, so answers are typed.
 
 ## Tests
 
 | Test | Command |
 | --- | --- |
-| The pack's quotes are on their pages | `make test` (`tests/test_seci_pack.py`) |
+| The pack's quotes are on their pages, the gaps answered, the formats cover Section 7 | `make test` (`tests/test_seci_pack.py`) |
 | Block floors in the LP: hard (fast), penalty (slow) | `make test`, `make test-slow` (`tests/engine/test_block_rules.py`) |
-| Terms, LP payload, dates, money at stake, forms, voice parsing and the guide's script | `make check-web` (`tools/check_seci.mjs`) |
+| Terms, LP payload, dates, money at stake, the quote against the target IRR, forms and formats, voice parsing and the guide's script | `make check-web` (`tools/check_seci.mjs`) |
+| The bid agent's tools against a stand-in tab, the guided order, the tender lookup, the GPT-Live event loop | `make check-web` (`tools/check_seci_agent.mjs`) |
 | The block penalty in the Live model, recalculated by LibreOffice | `make check-web` (`tools/check_live_model.mjs`) |
-| In the browser: documents, conditions, the guided voice run with typed answers through sizing, results and finance, the bid forms and the Word pack, the Excel workbook | `make e2e` (`tests/e2e/test_seci_tab.py`) |
+| In the browser: documents, the RfS, conditions with the RfS's wording, the guided voice run with typed answers through sizing, results and finance, a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the agent panel against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
 
-## Access
+## Access and settings
 
-An administrator grants the tab (`seciRtc`) per user. It uses the engine's `rtc` and `bid` route
-families. The tender PDFs are served behind the login.
+**Access.** An administrator grants the tab (`seciRtc`) per user. It uses the engine's `rtc` and
+`bid` route families. The tender PDFs are served behind the login.
+
+**The agent's settings.** They are environment variables of the web service, set in `.env`:
+
+* `OPENAI_API_KEY`;
+* `OPENAI_LIVE_BACKEND_MODEL`, optional;
+* `OPENAI_LIVE_VOICE`, optional, default `marin`.

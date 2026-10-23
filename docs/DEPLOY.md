@@ -125,6 +125,13 @@ not touched. `deploy/shared-vm/install.sh` puts TenderOS beside the old app:
   * If the old app's own `deploy/update.sh` runs later, it re-publishes on port 8082. The
     router still finds it by container name.
 * Measured memory use is about 0.5 GB for TenderOS while sizing NHPC; the build needs about 2 GB.
+* The SECI RTC tab's voice bid agent (GPT-Live) needs `OPENAI_API_KEY` in TenderOS's `.env`.
+  * Add the key there, then re-run the install to restart the web service.
+  * The key stays on the server.
+  * Without the key, the tab offers only the browser-voice guide.
+* Browsers allow the microphone only on HTTPS or localhost, and the 8081 address is plain HTTP.
+  To talk to the agent there, open an SSH tunnel and browse to `http://localhost:8081`:
+  `gcloud compute ssh <vm> -- -L 8081:localhost:8081`.
 
 ```
 curl -fsSL https://raw.githubusercontent.com/Ergplan/tenderos/main/deploy/shared-vm/install.sh -o install.sh

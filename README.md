@@ -13,7 +13,7 @@ model as Excel formulas (change an input and the returns follow).
 | Tab | |
 | --- | --- |
 | **Tender to Bid** | Start by uploading any tender (read on a scan screen where five agents work through its text) or with the prefilled simulation. Then the tender, its key dates, the bid capacity, the supply sources, the HiGHS sizing with the tender conditions and a 15-minute dispatch, then the financials and the Excel model (`docs/TENDER_TO_BID.md`) |
-| **SECI RTC tender** | SECI RTC-TM-V: the documents and what the amendments changed, the bid conditions with quotes, what to bid, the sources, sizing against every peak and off-peak block, the financial model with formulas, the bid forms as a Word pack, and a voice guide that explains the conditions, takes the inputs in sequence and explains the results (`docs/SECI_RTC.md`). The main RfS was not provided. |
+| **SECI RTC tender** | SECI RTC-TM-V: the RfS, the amendments and what they changed, the bid conditions with quotes and the points to raise with SECI, what to bid, the sources, sizing against every peak and off-peak block, the financial model with formulas, equity and project IRR at the tariff you quote, every RfS bid format filled and reviewed beside its page, the Word bid pack, and a voice bid agent (GPT-Live, with `OPENAI_API_KEY`) that changes inputs, re-runs the optimizer and explains the results, or a browser-voice guide (`docs/SECI_RTC.md`) |
 | Round the clock | RTC / FDRE sizing and finance from your own inputs, with the same Excel workbook and Live model tab |
 | BESS tender | Standalone battery tenders |
 | CfD bid | SECI CfD-I strike price (`docs/CFD.md`) |

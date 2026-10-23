@@ -1,12 +1,18 @@
 """Browser end to end: the SECI RTC tender tab.
 
-* test_documents_and_conditions: the four documents (and the missing RfS), the amendment trail,
-  SECI's clarifications and the 31 bid conditions with their quotes; a PDF link opens the page.
+* test_documents_and_conditions: the five documents (the RfS among them), how the bid goes, the
+  amendment trail, SECI's clarifications, the points to raise with SECI and the bid conditions with
+  their quotes and the RfS's original wording; a PDF link opens the page.
 * test_voice_guided_bid: the voice guide (muted, answers typed: a test browser has no microphone)
   explains the conditions, takes the bid, the planning choices and the sources' inputs, sizes the
   plant with HiGHS against every peak and off-peak block, and explains the result and the
-  financial model; then the bid forms are filled and checked, the bid pack (Word) and the
-  financial model (Excel, its Live model recalculated by LibreOffice when installed) download.
+  financial model; a tariff quoted below the target IRR is warned with the equity and project IRR
+  it earns; the particulars and the RfS formats are filled and reviewed one by one; the bid pack
+  (Word) and the financial model (Excel, its Live model recalculated by LibreOffice when
+  installed) download.
+* test_agent_panel: the GPT-Live bid agent is offered only when the server has a key; with one,
+  starting it sends the browser's WebRTC offer and shows the voice service's answer (a refusal,
+  against a stand-in for OpenAI).
 
 Needs the whole stack running; see tests/e2e/test_tender_to_bid.py for the environment.
 """
@@ -40,7 +46,10 @@ def test_documents_and_conditions():
         _open_tab(page)
         docs = page.locator("[data-testid=seci-docs] article")
         assert docs.count() == len(PACK["documents"]) == 5
-        assert "not provided" in page.locator("[data-testid=seci-doc-rfs]").inner_text().lower()
+        rfs = page.locator("[data-testid=seci-doc-rfs]")
+        assert "139 pages" in rfs.inner_text() and rfs.locator("a:has-text('Open the PDF')").get_attribute("href").endswith("RfS.pdf")
+        assert page.locator("[data-testid=seci-process] li").count() == len(PACK["bidProcess"]) >= 10
+        assert page.locator("[data-testid=seci-queries] li").count() == len(PACK["queries"]) >= 10
         assert page.locator("[data-testid=seci-changes] .seci-change").count() == len(PACK["changes"])
         page.click("button:has-text('Amendment-02')")
         assert page.locator("[data-testid=seci-changes] .seci-change").count() == sum(1 for c in PACK["changes"] if c["doc"] == "amd2")
@@ -56,11 +65,18 @@ def test_documents_and_conditions():
         r = page.request.get(URL + href.split("#")[0])  # the session's cookie: the tender PDFs are behind the login
         assert r.status == 200 and r.body()[:5] == b"%PDF-", r.status
         page.click("[data-testid=seci-step-conditions]")
-        assert page.locator(".seci-cond").count() == len(PACK["conditions"]) == 31
+        n = len(PACK["conditions"])
+        assert page.locator(".seci-cond").count() == n >= 50
         summary = page.locator("[data-testid=seci-cond-summary]").inner_text()
-        assert "31 conditions" in summary and "removed" in summary, summary
-        assert "70%" in page.locator("[data-testid=seci-cond-dfrOffpeak]").inner_text()
+        assert f"{n} conditions" in summary and "removed" in summary, summary
+        offpeak = page.locator("[data-testid=seci-cond-dfrOffpeak]")
+        assert "70%" in offpeak.inner_text()
+        offpeak.locator("summary:has-text('RfS as issued')").click()
+        assert "80%" in offpeak.inner_text(), "the RfS's original off-peak floor, before Amendment-01"
         assert "Unclear" in page.locator("[data-testid=seci-cond-technical]").inner_text()
+        assert "25 years from the Scheduled Commencement" in page.locator("[data-testid=seci-cond-term]").inner_text()
+        assert "None stated in the RfS" in page.locator("[data-testid=seci-cond-ceiling]").inner_text()
+        assert "INR 4,00,00,000/MW" in page.locator("[data-testid=seci-cond-liquidity]").inner_text()
 
 
 def _caption(page) -> str:
@@ -131,20 +147,59 @@ def test_voice_guided_bid(tmp_path):
         page.click("[data-testid=voice-mute]")  # unmute: nothing should break
         page.click("[aria-label='Close the guide']")
 
-        # bid forms: fill, check, download the bid pack
+        # the tariff quoted: below the target IRR it is warned with the equity and project IRR it earns
+        page.click("[data-testid=seci-step-finance]")
+        page.wait_for_selector("[data-testid=quote-check]")
+        finance_text = page.locator("[data-testid=bid-finance]").inner_text()
+        assert "PROJECT IRR" in finance_text.upper(), finance_text
+        low = f"{float(quoted) - 0.5:.2f}"
+        page.fill("[data-testid=quote-check-input]", low)
+        warning = page.locator("[data-testid=quote-check-warning]").inner_text()
+        assert "below the" in warning and "equity IRR is" in warning and "project IRR" in warning, warning
+        assert "%" in page.locator("[data-testid=quote-check]").inner_text()
+
+        # the particulars, asked once; the quote is the same tariff as on Financials
         page.click("[data-testid=seci-step-forms]")
+        assert page.locator("[data-testid=seci-form-tariff]").input_value() == low
+        assert "below the" in page.locator("[data-testid=seci-quote]").inner_text()
         for key, value in {"bidder": "Acme Renewables Ltd", "address": "New Delhi", "contact": "A. Kumar", "email": "bids@acme.example",
+                           "signatory": "A. Kumar, Director", "letterDate": "2026-05-20", "place": "New Delhi",
                            "substation": "Bhadla-III", "substationScd": "2027-12-31", "netWorthCr": "50000",
                            "experience": "Plant A, 180 MW, 2022-05-01"}.items():
             page.fill(f"[data-testid=seci-form-{key}]", value)
-        for key, value in {"bidderType": "company", "connectivity": "final", "bessWith": "solar"}.items():
+        for key, value in {"bidderType": "company", "connectivity": "final", "bessWith": "solar", "emdForm": "bg", "commonShareholding": "no"}.items():
             page.select_option(f"[data-testid=seci-form-{key}]", value)
         page.click("[data-testid=seci-form-use-tariff]")
         assert page.locator("[data-testid=seci-form-tariff]").input_value() == quoted
+        assert page.locator("[data-testid=seci-quote]").get_attribute("role") is None, "at the target tariff there is no warning"
         checks = page.locator("[data-testid=seci-checks]").inner_text()
-        for row in ("capacity", "storage", "substation", "networth", "experience", "emd", "pbg", "dates"):
+        for row in ("capacity", "storage", "substation", "networth", "experience", "emd", "pbg", "dates", "formats"):
             assert page.locator(f"[data-testid=seci-check-{row}]").count() == 1, row
         assert "Not met" not in checks, checks
+
+        # the RfS formats: the ones this bid needs, each blank filled from the bid, the particulars or typed, beside the RfS page
+        nav = page.locator("[data-testid=seci-forms-nav]").inner_text().upper()
+        assert "ENVELOPE I " in nav and "ENVELOPE II" in nav and "NOT NEEDED FOR THIS BID" in nav, nav
+        page.click("[data-testid=seci-formsnav-7\\.1]")
+        f71 = page.locator("[data-testid=seci-format-7\\.1]")
+        assert "needed for this bid" in f71.locator("[data-testid=seci-format-applies]").inner_text().lower()
+        assert page.locator("[data-testid=seci-rfs-frame]").get_attribute("src").endswith("RfS.pdf#page=68&view=FitH")
+        assert page.locator("[data-testid=seci-blank-7\\.1-contractedMw]").inner_text() == "200"
+        assert page.locator("[data-testid=seci-blank-7\\.1-solarMw]").inner_text().replace(",", "") == solar
+        assert page.locator("[data-testid=seci-blank-7\\.1-emdAmount]").inner_text().startswith("INR ")
+        page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/01")
+        page.locator("[data-testid=seci-format-7\\.1] .seci-blank-ctx").nth(5).click()
+        assert "#page=6" in page.locator("[data-testid=seci-rfs-frame]").get_attribute("src"), "a blank's words in the RfS open its page"
+        page.click("[data-testid=seci-format-review]")
+        assert "reviewed" in page.locator("[data-testid=seci-format-reviewed]").inner_text().lower()
+        assert "reviewed" in page.locator("[data-testid=seci-formsnav-7\\.1]").inner_text().lower()
+        page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/02")
+        assert "changed since review" in page.locator("[data-testid=seci-format-review]").inner_text().lower(), "an edit after the review shows"
+        page.click("[data-testid=seci-format-review]")
+        page.click("[data-testid=seci-formsnav-7\\.10]")
+        assert page.locator("[data-testid=seci-format-7\\.10]").count() == 1
+        assert page.locator("[data-testid=seci-formsnav-7\\.2]").count() == 1 and "not needed" in page.locator("[data-testid=seci-formsnav-7\\.2]").inner_text().lower()
+
         with page.expect_download(timeout=60_000) as dl:
             page.click("[data-testid=seci-forms-download]")
         pack = Path(tmp_path) / dl.value.suggested_filename
@@ -152,8 +207,10 @@ def test_voice_guided_bid(tmp_path):
         assert pack.name.endswith(".docx")
         with zipfile.ZipFile(pack) as z:
             xml = z.read("word/document.xml").decode()
-        for needle in ("Acme Renewables Ltd", "Bhadla-III", "EMD", "Performance Bank Guarantee", "Amendment-02, p. 3", f"{quoted}"):
+        for needle in ("Acme Renewables Ltd", "Bhadla-III", "EMD", "Performance Bank Guarantee", "Amendment-02, p. 3", f"{quoted}",
+                       "Format 7.1: Covering Letter", "ACME/SECI/2026/02", "Format 7.10", "RfS pp. 68"):
             assert needle in xml, needle
+        assert "Format 7.2:" not in xml, "a single company's pack has no consortium Power of Attorney"
 
         # the financial model: the Live model workbook matches the app
         page.click("[data-testid=seci-step-finance]")
@@ -167,3 +224,23 @@ def test_voice_guided_bid(tmp_path):
         book = Path(tmp_path) / dl.value.suggested_filename
         dl.value.save_as(str(book))
         _check_live_model(book, tariff=float(tariff.group(1)), irr=float(irr.group(1)) / 100, tmp=tmp_path)
+
+
+def test_agent_panel():
+    with _session(permissions=["microphone"]) as page:
+        _open_tab(page)
+        info = page.evaluate("fetch('/api/seci/live').then((r) => r.json())")
+        if not info["available"]:
+            assert page.locator("[data-testid=agent-open]").count() == 0, "no key on the server: the agent is not offered"
+            return
+        assert info["model"] == "gpt-live-1"
+        page.click("[data-testid=agent-open]")
+        assert "GPT-LIVE" in page.locator("[data-testid=agent-panel]").inner_text().upper()
+        page.click("[data-testid=agent-start]")
+        page.wait_for_selector("[data-testid=agent-error], [data-testid=agent-stop]", timeout=30_000)
+        if page.locator("[data-testid=agent-error]").count():
+            # a stand-in for OpenAI (or a wrong key) refuses: the panel says so and nothing is left running
+            assert "voice service" in page.locator("[data-testid=agent-error]").inner_text()
+            assert page.locator("[data-testid=agent-start]").count() == 1
+        else:
+            page.click("[data-testid=agent-stop]")

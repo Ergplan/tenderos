@@ -176,7 +176,7 @@ export function buildScript(state) {
   const amended = PACK.conditions.filter((c) => c.status === "amended").length;
   const items = [
     { id: "intro", step: "documents", kind: "say",
-      say: `Welcome. This is ${PACK.short}: ${PACK.issuer.replace(/ \(SECI\)/, "")} is buying ${say(PACK.tenderedMw)} megawatts of round-the-clock thermal mimic power from renewable projects. I have read Amendment 1, Amendment 2, the clarifications and the power sale agreement; the main RfS was not provided. ${amended} conditions were changed by the amendments. I will explain the key conditions, take your inputs one by one, size the plant and explain the results. Say next, back, repeat, skip or benchmark at any time.` },
+      say: `Welcome. This is ${PACK.short}: ${PACK.issuer.replace(/ \(SECI\)/, "")} is buying ${say(PACK.tenderedMw)} megawatts of round-the-clock thermal mimic power from renewable projects. I have read the RfS, Amendment 1, Amendment 2, the clarifications and the power sale agreement. ${amended} conditions were changed by the amendments. I will explain the key conditions, take your inputs one by one, size the plant and explain the results. Say next, back, repeat, skip or benchmark at any time.` },
     { id: "c.size", step: "conditions", kind: "say",
       say: `What you bid: between ${m.minBidMw} and ${m.maxBidMw} megawatts of contracted capacity, one tariff fixed for the whole term. Amendment 1 lowered the minimum from 100 to 50 megawatts. Bidders within two percent of the lowest tariff win.` },
     { id: "c.dfr", step: "conditions", kind: "say",

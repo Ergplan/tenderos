@@ -1,6 +1,7 @@
 """The SECI RTC-TM-V tender pack (web/src/seci/seci-rtc-tm-v.json): every quote behind a bid
-condition, an amendment or a clarification is printed on the page it cites, in the document it
-names; and the sizing terms agree with the conditions they come from."""
+condition, an amendment, a clarification, the RfS's original wording, a bid format and its blanks,
+and a step of the bid process is printed on the page it cites, in the document it names; and the
+sizing terms agree with the conditions they come from."""
 from __future__ import annotations
 
 import json
@@ -42,6 +43,17 @@ def _quotes():
     for c in PACK["conditions"]:
         for i, q in enumerate(c["sources"]):
             yield f"condition {c['id']} [{i}]", q
+        for i, q in enumerate(c.get("rfs", {}).get("quotes", [])):
+            yield f"condition {c['id']} RfS [{i}]", q
+    for f in PACK["formats"]:
+        yield f"format {f['id']} heading", f["heading"]
+        for x in f["fields"]:
+            yield f"format {f['id']} field {x['key']}", x["context"]
+        for i, a in enumerate(f.get("attachments", [])):
+            yield f"format {f['id']} attachment [{i}]", a["context"]
+    for i, step in enumerate(PACK["bidProcess"]):
+        for j, q in enumerate(step["sources"]):
+            yield f"bid process {i} [{j}]", q
 
 
 @pytest.mark.parametrize("name, quote", list(_quotes()), ids=[n for n, _ in _quotes()])
@@ -53,6 +65,7 @@ def test_every_quote_is_on_its_page(pages, name, quote):
 def test_conditions_have_sources_unless_missing():
     for c in PACK["conditions"]:
         assert c["status"] in {"unchanged", "amended", "removed", "ambiguous", "missing"}, c["id"]
+        assert c["group"] in {"The tender", "What you bid", "Supply", "Plant", "Dates", "Money at stake", "Eligibility", "Bid process"}, c["id"]
         assert bool(c["sources"]) == (c["status"] != "missing"), c["id"]
         if c["status"] in {"amended", "removed", "ambiguous"}:
             assert c.get("by") in {"amd1", "amd2"}, c["id"]
@@ -76,6 +89,28 @@ def test_documents_are_in_date_order_and_served():
     dated = [d for d in PACK["documents"] if d["date"]]
     assert [d["date"] for d in dated] == sorted(d["date"] for d in dated)
     for d in PACK["documents"]:
-        assert (d["file"] is None) == (d["id"] == "rfs"), "only the main RfS is not provided"
-        if d["file"]:
-            assert (FOLDER / d["file"]).exists()
+        assert d["file"] and (FOLDER / d["file"]).exists(), d["id"]
+
+
+def test_the_rfs_answers_the_gaps():
+    text = {c["id"]: c for c in PACK["conditions"]}
+    assert "25 years from the Scheduled Commencement of Supply Date" in text["term"]["value"]
+    assert any(q["doc"] == "rfs" and "25 years from the SCSD" in q["quote"] for q in text["term"]["sources"])
+    assert text["ceiling"]["value"].startswith("None stated in the RfS")
+    assert "NIT" in text["deadline"]["value"]
+    assert PACK["model"]["years"] == 25
+
+
+def test_formats_cover_section_7():
+    ids = [f["id"] for f in PACK["formats"]]
+    for want in ["7.1", "7.2", "7.3A", "7.3B", "7.3C", "7.3D", "7.3E", "7.3F", "7.4", "7.5", "7.6", "7.7", "7.8", "7.8A", "7.9", "7.10", "7.11"]:
+        assert want in ids, want
+    assert len(set(ids)) == len(ids)
+    for f in PACK["formats"]:
+        first, last = f["pages"]
+        assert 1 <= first <= last <= 139 and first <= f["heading"]["page"] <= last, f["id"]
+        keys = [x["key"] for x in f["fields"]]
+        assert len(set(keys)) == len(keys), f["id"]
+        for x in f["fields"]:
+            assert x["kind"] in {"text", "textarea", "number", "date", "choice", "table"}, (f["id"], x["key"])
+            assert x["kind"] != "choice" or x.get("options"), (f["id"], x["key"])

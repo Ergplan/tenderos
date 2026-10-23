@@ -10,6 +10,7 @@ import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience 
 import { buildScript, explainFinance, explainResults, financeOf, parseCommand, parseDate, parseNumber, parseYesNo, questionText } from "../web/src/seci/voice.js";
 import { defaultBidState } from "../web/src/bid/model.js";
 import { quotedReturns } from "../web/src/bid/quote.js";
+import { applies, blankValue, formatGroups, formatStatus, formatsForPack, formatsSummary } from "../web/src/seci/formats.js";
 
 // ---- the terms: two time-block floors with the 1.5x penalty, peak hours as planned
 const terms = seciTerms(DEFAULT_SETTINGS);
@@ -54,7 +55,8 @@ const sized = { ...filled, lp, seci: { ...DEFAULT_SETTINGS, ppaDate: "2026-06-07
 assert.ok(formIssues(sized).includes("Bidder's name"));
 assert.ok(formIssues({ ...sized, forms: { bidderType: "consortium" } }).includes("Lead member (consortium)"), "a consortium names its lead member");
 const forms = { bidder: "Acme Renewables Ltd", bidderType: "company", address: "New Delhi", contact: "A. Kumar", email: "bids@acme.example", tariff: 5.12,
-  substation: "Bhadla-III", substationScd: "2027-12-31", connectivity: "other", bessWith: "solar", netWorthCr: 2000, experience: "Plant A, 250 MW, 2023-04-01\nPlant B, 120 MW" };
+  substation: "Bhadla-III", substationScd: "2027-12-31", connectivity: "other", bessWith: "solar", netWorthCr: 2000, experience: "Plant A, 250 MW, 2023-04-01\nPlant B, 120 MW",
+  signatory: "A. Kumar, Director", letterDate: "2026-05-20", place: "New Delhi", commonShareholding: "no", emdForm: "bg" };
 const checks = Object.fromEntries(bidChecks({ ...sized, forms }).map((c) => [c.id, c]));
 assert.equal(formIssues({ ...sized, forms }).length, 0);
 assert.equal(checks.capacity.status, "ok");
@@ -142,6 +144,34 @@ assert.equal(quotedReturns(sized, terms, null), null);
 const lowChecks = Object.fromEntries(bidChecks({ ...sized, forms: { ...forms, tariff: low.tariff } }, terms).map((c) => [c.id, c]));
 assert.equal(lowChecks.tariff.status, "warn", "a quote below the target IRR tariff is flagged on the bid forms");
 assert.ok(/project IRR/.test(lowChecks.tariff.detail), lowChecks.tariff.detail);
+// ---- the RfS formats: which this bid needs, where each blank comes from, the bid pack
+const fmt = (id) => PACK.formats.find((f) => f.id === id);
+const company = { ...sized, forms: { ...forms, bidderType: "company", emdForm: "bg", commonShareholding: "no", connectivity: "final" } };
+assert.equal(applies(company, fmt("7.1")), "yes");
+assert.equal(applies(company, fmt("7.2")), "no", "Power of Attorney only for a consortium");
+assert.equal(applies({ ...company, forms: { ...company.forms, bidderType: "consortium" } }, fmt("7.2")), "yes");
+assert.deepEqual(["7.3A", "7.3B", "7.3C"].map((id) => applies(company, fmt(id))), ["yes", "no", "no"], "the EMD format follows the instrument chosen");
+assert.equal(applies({ ...company, forms: { ...company.forms, emdForm: null } }, fmt("7.3B")), "choose");
+assert.equal(applies(company, fmt("7.3D")), "later", "the PBG comes after the award");
+assert.deepEqual([applies(company, fmt("7.8")), applies(company, fmt("7.8A"))], ["yes", "no"]);
+assert.equal(applies({ ...company, forms: { ...company.forms, commonShareholding: "yes" } }, fmt("7.8A")), "yes");
+assert.equal(applies(company, fmt("Annexure-I")), "no");
+assert.equal(applies({ ...company, forms: { ...company.forms, connectivity: "other" } }, fmt("Annexure-I")), "yes", "another entity's connectivity needs its undertaking");
+const capBlank = fmt("7.1").fields.find((x) => x.maps === "contractedMw");
+assert.deepEqual(blankValue(company, fmt("7.1"), capBlank), { source: "model", key: "contractedMw", value: String(company.bid.baseMw) });
+const bidderBlank = fmt("7.10").fields.find((x) => x.maps === "bidder");
+assert.equal(blankValue(company, fmt("7.10"), bidderBlank).value, "Acme Renewables Ltd");
+assert.equal(blankValue(company, fmt("7.1"), { maps: "connectivity", key: "c" }).value, "Final grant", "choices read as their labels");
+assert.equal(blankValue(company, fmt("7.1"), { maps: "date", key: "d" }).value, "20.05.2026", "the letters' date");
+const st71 = formatStatus(company, fmt("7.1"));
+assert.ok(st71.total > 20 && st71.missing.length > 0 && st71.reviewed === null);
+const sum = formatsSummary(company);
+assert.ok(sum.needed >= 10 && sum.reviewed === 0 && sum.blanksLeft > 0, JSON.stringify(sum));
+assert.deepEqual(formatGroups(company).map((g) => g.id), ["envelope1", "envelope2", "later", "na"]);
+assert.ok(formatGroups(company).find((g) => g.id === "envelope2").list.some((f) => f.id === "7.10"), "the financial bid goes in Envelope II");
+const packFormats = formatsForPack(company);
+assert.ok(packFormats.some((f) => f.id === "7.1") && !packFormats.some((f) => f.id === "7.2"));
+assert.ok(packFormats.find((f) => f.id === "7.10").fields.some((x) => x.value === "Acme Renewables Ltd"));
 const words = explainFinance(sized, fin);
 assert.ok(/rupees per unit/.test(words) && /Penalties come to/.test(words), words);
 

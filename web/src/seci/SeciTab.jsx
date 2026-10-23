@@ -12,6 +12,7 @@ import ConditionsStep from "./ConditionsStep";
 import BidStep from "./BidStep";
 import BidForms from "./BidForms";
 import { formIssues } from "./forms";
+import { formatsSummary } from "./formats";
 import VoiceGuide from "./VoiceGuide";
 import LiveAgent from "./LiveAgent";
 import { TENDER, defaultSeciState } from "./state";
@@ -99,7 +100,7 @@ export default function SeciTab() {
     sources: missing.length === 0,
     size: Boolean(state.lp),
     finance: Boolean(state.lp),
-    forms: Boolean(state.lp) && formIssues(state).length === 0,
+    forms: Boolean(state.lp) && formIssues(state).length === 0 && formatsSummary(state).reviewed === formatsSummary(state).needed,
   };
   const summary = {
     documents: `${PACK.documents.filter((d) => d.file).length} documents, ${PACK.changes.length} changes`,
@@ -108,7 +109,7 @@ export default function SeciTab() {
     sources: missing.length ? `${missing.length} input${missing.length > 1 ? "s" : ""} needed` : "Ready to size",
     size: state.lp ? `₹${nf(state.lp.tariff, 3)}/kWh` : "Not sized",
     finance: state.lp ? "Tariff and returns" : "After sizing",
-    forms: formIssues(state).length ? `${formIssues(state).length} to fill` : "Ready",
+    forms: `${formatsSummary(state).reviewed} of ${formatsSummary(state).needed} formats reviewed`,
   };
   const index = SECI_STEPS.findIndex((s) => s.id === state.step);
   const step = SECI_STEPS[Math.max(0, index)];
@@ -122,7 +123,7 @@ export default function SeciTab() {
         <div>
           <div className="eyebrow"><Gavel size={13} /> {PACK.short} · RfS No. {PACK.rfsNo}</div>
           <h1>RTC tender · SECI</h1>
-          <p>{PACK.title}. The tender and its amendments, the conditions in force, what you bid, your supply sources sized against every peak and off-peak block, the financial model, and the bid forms. The voice guide can walk you through it.</p>
+          <p>{PACK.title}. The tender and its amendments, the conditions in force, what you bid, your supply sources sized against every peak and off-peak block, the financial model, and the RfS's bid formats to fill and review. Talk to the bid agent, or let the voice guide walk you through it.</p>
         </div>
         <div className="story-hero-tools">
           <button type="button" className="rtc-reset" onClick={resetAll}><RotateCcw size={13} /> Reset inputs</button>

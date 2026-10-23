@@ -112,11 +112,37 @@ assert.equal(viaForm.quote.status, "ok", JSON.stringify(viaForm));
 
 // ---- the bid forms
 const forms = await run("review_bid_forms");
-assert.ok(forms.requiredStillEmpty.includes("Bidder's name"));
+assert.ok(forms.particularsStillEmpty.includes("Bidder's name"));
 assert.ok(forms.checks.some((c) => c.check === "Net worth"));
 assert.equal(shownSteps.at(-1), "forms");
+assert.ok(forms.formats.needed >= 10 && forms.formats.reviewed === 0, JSON.stringify(forms.formats));
+assert.ok(forms.formats.list.some((f) => f.id === "7.1") && !forms.formats.list.some((f) => f.id === "7.2"), "a single company needs no consortium Power of Attorney");
 assert.equal((await run("set_input", { key: "forms.bidder", value: "Acme Renewables Ltd" })).value, "Acme Renewables Ltd");
 assert.equal(highlighted.at(-1), "form.bidder");
+
+// a format: its blanks with where each value comes from, filled by voice, reviewed on the bidder's word
+const f71 = await run("open_format", { id: "Format 7.1" });
+assert.equal(f71.id, "7.1");
+assert.equal(state.formsView, "7.1", "the format is shown");
+const blank = (label) => f71.blanks.find((b) => b.label === label);
+assert.equal(blank("Bidding Company / Lead Member name").value, "Acme Renewables Ltd", "the particulars fill every format");
+assert.equal(blank("Contracted capacity offered (MW, per project)").from, "the bid (not editable)");
+assert.equal(blank("Contracted capacity offered (MW, per project)").value, "200");
+assert.ok(blank("Solar PV component (MW)").value === "610" && blank("RfS number").value === "SECI/C&P/IPP/13/0020/25-26");
+assert.ok(/^INR /.test(blank("EMD amount (INR)").value), blank("EMD amount (INR)").value);
+const ref = blank("Reference number");
+assert.equal(ref.key, "forms.7.1.refNo");
+assert.ok(ref.rfs.page === 68 && ref.rfs.words.length > 10);
+assert.equal((await run("set_input", { key: ref.key, value: "ACME/SECI/2026/01" })).value, "ACME/SECI/2026/01");
+assert.equal(state.forms["7.1.refNo"], "ACME/SECI/2026/01");
+assert.equal((await run("open_format", { id: "7.1" })).blanks.find((b) => b.label === "Reference number").value, "ACME/SECI/2026/01");
+assert.ok(!(await run("open_format", { id: "9.9" })).ok);
+assert.equal((await run("mark_format_reviewed", { id: "7.1", reviewed: true })).ok, true);
+assert.ok(state.formsReview["7.1"].print);
+assert.equal((await run("review_bid_forms")).formats.list.find((f) => f.id === "7.1").reviewed, "current");
+await run("set_input", { key: "forms.7.1.refNo", value: "ACME/SECI/2026/02" });
+assert.equal((await run("review_bid_forms")).formats.list.find((f) => f.id === "7.1").reviewed, "changed", "an edit after the review shows");
+assert.ok((await run("open_format", { id: "particulars" })).particulars.some((x) => x.key === "forms.signatory"));
 
 // ---- status
 const st = await run("get_status");

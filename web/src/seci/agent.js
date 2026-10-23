@@ -12,6 +12,7 @@ import { BENCHMARKS, FINANCE_FIELDS, SOURCE_FIELDS, fillBenchmarks, missingInput
 import { quotedReturns } from "../bid/quote.js";
 import { PACK, PEAK_PLANS, SHORTFALL_MODES, keyDates, moneyAtStake } from "./terms.js";
 import { FORM_FIELDS, bidChecks, formIssues, visibleFields } from "./forms.js";
+import { applies, blankValue, formatPrint, formatStatus, formatsSummary } from "./formats.js";
 import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "./voice.js";
 
 export const LIVE_MODEL = "gpt-live-1";
@@ -73,6 +74,17 @@ export function agentInputs(state) {
     add({ key: `forms.${f.key}`, label: f.label, step: "forms", kind: f.type === "select" ? "choice" : f.type === "number" ? "number" : f.type === "date" ? "date" : "text",
       options: f.options || null, unit: f.key === "tariff" ? "₹/kWh" : f.key === "netWorthCr" ? "₹ cr" : undefined, min: f.type === "number" ? 0 : undefined,
       get: (s) => s.forms?.[f.key] ?? null, benchmark: null, set: (s, v) => ({ ...s, forms: { ...s.forms, [f.key]: v } }) });
+  }
+  // each format's own blanks (the shared ones are the particulars above)
+  for (const fmt of PACK.formats) {
+    if (applies(state, fmt) === "no") continue;
+    for (const x of fmt.fields) {
+      if (blankValue(state, fmt, x).source !== "own") continue;
+      add({ key: `forms.${fmt.id}.${x.key}`, label: `Format ${fmt.id}: ${x.label}`, step: "forms", format: fmt.id,
+        kind: x.kind === "choice" ? "choice" : x.kind === "number" ? "number" : x.kind === "date" ? "date" : "text",
+        options: x.kind === "choice" ? x.options.map((o) => [o, o]) : null, get: (s) => s.forms?.[`${fmt.id}.${x.key}`] ?? null, benchmark: null,
+        set: (s, v) => ({ ...s, forms: { ...s.forms, [`${fmt.id}.${x.key}`]: v }, formsView: fmt.id }) });
+    }
   }
   return out;
 }
@@ -219,7 +231,9 @@ export const AGENT_TOOLS = [
   { type: "function", name: "get_results", description: "The sized plant: sizes, sizing tariff, the share of hours each floor is met, the shortfall, EMD, PBG, the net worth needed and the dates.", parameters: obj() },
   { type: "function", name: "get_financials", description: "The 25-year financial model of the sized plant: the tariff for the target equity IRR, equity IRR, project IRR, DSCR, project cost, debt, penalties.", parameters: obj() },
   { type: "function", name: "check_tariff", description: "What a tariff the bidder may quote earns: equity IRR and project IRR at that tariff against the target, with a warning when it is below the tariff the target needs. Also records it as the tariff quoted in the bid forms when record is true.", parameters: obj({ tariff: { type: "number", description: "₹/kWh" }, record: { type: "boolean" } }, ["tariff", "record"]) },
-  { type: "function", name: "review_bid_forms", description: "The bid forms: required particulars still empty and every check against the tender (capacity, tariff, storage, substation, net worth, experience, EMD, PBG, dates).", parameters: obj() },
+  { type: "function", name: "review_bid_forms", description: "The bid forms: the particulars still empty, every RfS format this bid needs with its blanks left and whether the bidder reviewed it, and every check against the tender (capacity, tariff, storage, substation, net worth, experience, EMD, PBG, dates).", parameters: obj() },
+  { type: "function", name: "open_format", description: "Show one RfS bid format on screen (e.g. '7.1' Covering Letter, '7.6' Financial Requirement, '7.10' Financial Bid) or 'particulars', and list its blanks: the input key to set each with set_input, the value now, where it comes from, and the RfS words around the blank with the page.", parameters: obj({ id: { type: "string" } }, ["id"]) },
+  { type: "function", name: "mark_format_reviewed", description: "Record that the bidder has reviewed a format as filled. Only when the bidder says they have reviewed it.", parameters: obj({ id: { type: "string" }, reviewed: { type: "boolean" } }, ["id", "reviewed"]) },
 ];
 
 /**
@@ -336,11 +350,49 @@ export function createToolRunner(ctx) {
     review_bid_forms: () => {
       const s = ctx.getState();
       ctx.goto("forms");
+      const sum = formatsSummary(s);
       return {
-        requiredStillEmpty: formIssues(s),
+        particularsStillEmpty: formIssues(s),
+        particularKeys: FORM_FIELDS.map((f) => `forms.${f.key}`),
+        formats: { needed: sum.needed, reviewed: sum.reviewed, blanksLeft: sum.blanksLeft,
+          list: PACK.formats.map((f) => ({ f, st: formatStatus(s, f) })).filter(({ st }) => st.applies !== "no")
+            .map(({ f, st }) => ({ id: f.id, title: f.title, needed: st.applies, blanksLeft: st.missing.length, reviewed: st.reviewed || "no" })) },
         checks: bidChecks(s, ctx.getTerms()).map((c) => ({ check: c.label, status: { ok: "OK", bad: "NOT MET", warn: "CHECK", todo: "TO DO" }[c.status], detail: c.detail })),
-        fieldKeys: FORM_FIELDS.map((f) => `forms.${f.key}`),
       };
+    },
+    open_format: ({ id }) => {
+      const s = ctx.getState();
+      ctx.goto("forms");
+      if (id === "particulars") {
+        ctx.apply((st) => ({ ...st, formsView: "particulars" }));
+        return { particulars: visibleFields(s.forms || {}).map((x) => ({ key: `forms.${x.key}`, label: x.label, value: s.forms?.[x.key] ?? null, required: Boolean(x.required) })) };
+      }
+      const fmt = PACK.formats.find((f) => f.id.toLowerCase() === String(id).toLowerCase().replace(/^format\s*/, ""));
+      if (!fmt) return { ok: false, error: `No format ${id}. Formats: ${PACK.formats.map((f) => f.id).join(", ")}` };
+      ctx.apply((st) => ({ ...st, formsView: fmt.id }));
+      const st = formatStatus(s, fmt);
+      return {
+        id: fmt.id, title: fmt.title, purpose: fmt.purpose, signedBy: fmt.submittedBy, paper: fmt.paper, envelope: fmt.envelope, when: fmt.when, needed: st.applies,
+        rfsPages: fmt.pages, reviewed: st.reviewed || "no",
+        blanks: fmt.fields.map((x) => {
+          const b = blankValue(s, fmt, x);
+          return { label: x.label, value: b.value || null, from: b.source === "model" ? "the bid (not editable)" : b.source === "shared" ? "the particulars" : "this format",
+            key: b.source === "model" ? null : b.source === "shared" ? `forms.${b.key}` : `forms.${fmt.id}.${x.key}`, rfs: { page: x.context.page, words: x.context.quote } };
+        }),
+        enclose: (fmt.attachments || []).map((a) => a.label),
+      };
+    },
+    mark_format_reviewed: ({ id, reviewed }) => {
+      const fmt = PACK.formats.find((f) => f.id === id);
+      if (!fmt) return { ok: false, error: `No format ${id}.` };
+      ctx.apply((st) => {
+        const next = { ...(st.formsReview || {}) };
+        if (reviewed) next[fmt.id] = { at: new Date().toISOString(), print: formatPrint(st, fmt) };
+        else delete next[fmt.id];
+        return { ...st, formsReview: next, formsView: fmt.id };
+      });
+      ctx.goto("forms");
+      return { ok: true, id: fmt.id, reviewed: Boolean(reviewed) };
     },
   };
   return async function run(name, args = {}) {
@@ -379,7 +431,7 @@ The guided exercise:
 3. When next_question says everything is in, offer run_optimizer; when it returns, explain the plant, the tariff, how often each floor is met, the shortfall, EMD, PBG, net worth and the dates (get_results).
 4. get_financials: the tariff for the target equity IRR, rounded up to the paisa for quoting, the equity IRR and the project IRR, the minimum DSCR and the penalties.
 5. Ask what tariff they will quote; check_tariff with record true. If it is below the target tariff, warn clearly and give the equity IRR and the project IRR at that tariff.
-6. review_bid_forms and go through what is empty or not met, setting forms.* inputs as the user answers.
+6. review_bid_forms. Fill the particulars first (open_format "particulars"), then each RfS format the bid needs in order: open_format, read out its blanks still empty, set them as the user answers (the keys come from open_format), and ask the user to review it on screen; mark_format_reviewed only when they say it is reviewed.
 
 At any time: answer tender questions with tender_lookup; change any input the user names (list_inputs gives the keys; percent inputs are in percent, 24 means 24%); after a change that clears the sizing, offer to run the optimizer again; go_to_step to show what you talk about.
 

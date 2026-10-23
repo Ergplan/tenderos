@@ -17,6 +17,8 @@ const TOOL_WORDS = {
   get_financials: () => "Read the financial model",
   check_tariff: (a, r) => (r?.ok ? `Checked ₹${a.tariff}/kWh: equity IRR ${r.equityIrrPct}%, project IRR ${r.projectIrrPct}%` : `Tariff check: ${r?.error || ""}`),
   review_bid_forms: () => "Reviewed the bid forms",
+  open_format: (a) => `Opened ${a.id === "particulars" ? "the particulars" : `Format ${a.id}`}`,
+  mark_format_reviewed: (a) => `${a.reviewed ? "Marked" : "Unmarked"} Format ${a.id} reviewed`,
 };
 
 function highlightTarget(target) {
