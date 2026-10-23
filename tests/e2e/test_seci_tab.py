@@ -71,6 +71,12 @@ def _wait_caption(page, needle: str, timeout=60_000):
     page.wait_for_function("(n) => (document.querySelector('[data-testid=voice-caption]')?.innerText || '').includes(n)", arg=needle, timeout=timeout)
 
 
+def _wait_log(page, needle: str, timeout=60_000) -> str:
+    """The guide's transcript once it holds needle (muted, the guide moves on from a caption at once)."""
+    page.wait_for_function("(n) => (document.querySelector('[data-testid=voice-log]')?.innerText || '').includes(n)", arg=needle, timeout=timeout)
+    return re.sub(r"\s+", " ", page.locator("[data-testid=voice-log]").inner_text())
+
+
 def _answer(page, text: str):
     page.fill("[data-testid=voice-input]", text)
     page.click("[data-testid=voice-send]")
@@ -109,17 +115,19 @@ def test_voice_guided_bid(tmp_path):
             page.wait_for_function("(c) => (document.querySelector('[data-testid=voice-caption]')?.innerText || '') !== c", arg=before, timeout=30_000)
         assert "Shall I size the plant now" in _caption(page)
         _answer(page, "yes")
-        _wait_caption(page, "megawatts of solar", timeout=1_800_000)
-        result = _caption(page)
+        log = _wait_log(page, "megawatts of solar", timeout=1_800_000)
+        result = log[log.index("For 200 megawatts"):]
         assert "For 200 megawatts" in result and "peak floor in" in result and "EMD is" in result and "7 June 2028" in result, result
+        _wait_log(page, "the bid forms")  # muted, the guide runs on to the forms; look back at the Size step
+        page.click("[data-testid=seci-step-size]")
         sizes = page.locator("[data-testid=bid-sizes]").inner_text().upper()
         solar = re.search(r"(\d[\d,]*) megawatts of solar", result).group(1).replace(",", "")
         assert solar in sizes.replace(",", ""), (solar, sizes)
         table = page.locator("[data-testid=bid-compliance]").inner_text()
         assert "of hours" in table and "Peak Hours floor" in table, table
-        _wait_caption(page, "rupees per unit", timeout=120_000)
-        quoted = re.search(r"round it up: ([\d.]+) rupees", _caption(page)).group(1)
-        _wait_caption(page, "the bid forms", timeout=60_000)
+        log = _wait_log(page, "rupees per unit", timeout=120_000)
+        quoted = re.search(r"round it up: ([\d.]+) rupees", log).group(1)
+        _wait_log(page, "the bid forms")
         page.click("[data-testid=voice-mute]")  # unmute: nothing should break
         page.click("[aria-label='Close the guide']")
 
