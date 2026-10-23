@@ -74,3 +74,13 @@
   .seci-effect { grid-column: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .voice-mic.listening { animation: none; } }
+
+/* the bid agent (GPT-Live), above the voice guide's button */
+.agent-fab { bottom: 78px; border-color: var(--ink); color: var(--ink); }
+.agent-panel { z-index: 42; }
+.agent-phase { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.agent-log p.you { color: var(--ink); }
+.agent-log p.agent { color: var(--ink); }
+.agent-log p.agent::before { content: "Agent: "; color: var(--muted); }
+.agent-log p.tool { color: var(--signal); font-family: var(--font-mono); font-size: 11px; }
+.agent-log p.tool::before { content: "→ "; }

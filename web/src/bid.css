@@ -408,3 +408,9 @@
 .bid-scope p { color: var(--ink-2); line-height: 1.55; }
 .bid-scope-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .bid-split { margin-top: 12px; }
+
+/* the tariff the bidder will quote, against the target (QuoteCheck) */
+.quote-check .alert { margin-top: 12px; }
+.quote-line { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; line-height: 1.45; color: var(--good); }
+.quote-line svg { flex: none; margin-top: 2px; }
+.quote-line.below, .quote-line.loss { color: var(--bad); }

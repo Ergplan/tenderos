@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, Gavel, Layers, ListChecks, RotateCcw, Scale, Zap } from "lucide-react";
 import { nf } from "../rtc/ui";
-import { defaultBidState, loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
+import { loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
 import useSizing from "../bid/useSizing";
 import SourcesStep from "../bid/SourcesStep";
 import SizeStep from "../bid/SizeStep";
@@ -13,6 +13,10 @@ import BidStep from "./BidStep";
 import BidForms from "./BidForms";
 import { formIssues } from "./forms";
 import VoiceGuide from "./VoiceGuide";
+import LiveAgent from "./LiveAgent";
+import { TENDER, defaultSeciState } from "./state";
+
+export { defaultSeciState };
 
 const STORAGE_KEY = "tenderos.seci.v1";
 export const SECI_STEPS = [
@@ -24,33 +28,6 @@ export const SECI_STEPS = [
   { id: "finance", title: "Financials", icon: CircleDollarSign, color: "#7ddc9a" },
   { id: "forms", title: "Bid forms", icon: ClipboardCheck, color: "#a98bff" },
 ];
-
-/** The tender as the bid steps see it: its identity, for titles and the workbook. */
-const TENDER = {
-  name: PACK.short,
-  seedKey: PACK.id,
-  result: {
-    values: {
-      "core.identity.tender_number": PACK.rfsNo,
-      "core.identity.issuing_agency": PACK.issuer,
-      "core.identity.title": PACK.title,
-      "core.identity.tender_type_as_stated": "RTC-TM",
-    },
-  },
-};
-
-export function defaultSeciState() {
-  const base = defaultBidState();
-  return {
-    ...base,
-    step: "documents",
-    tender: TENDER,
-    bid: { baseMw: 300, greenshoe: false },
-    sources: { ...Object.fromEntries(Object.keys(base.sources).map((k) => [k, false])), solar: true, wind: true, bess: true },
-    seci: { ...DEFAULT_SETTINGS },
-    forms: {},
-  };
-}
 
 function loadState() {
   try {
@@ -87,7 +64,11 @@ export default function SeciTab() {
   const missing = useMemo(() => missingInputs(state, terms), [state, terms]);
   const sizing = useSizing({ state, setState, terms, prices, session: sizingSession, module: "seci" });
 
+  const [agent, setAgent] = useState(null); // { available, model, backendModel } from /api/seci/live
   useEffect(() => { loadMarketPrices().then(setPrices).catch(() => setPrices(null)); }, []);
+  useEffect(() => {
+    fetch("/api/seci/live", { credentials: "same-origin" }).then((r) => (r.ok ? r.json() : null)).then(setAgent).catch(() => setAgent(null));
+  }, []);
   useEffect(() => {
     sessionState = state;
     const id = setTimeout(() => {
@@ -171,7 +152,7 @@ export default function SeciTab() {
         {step.id === "bid" && <BidStep {...props} />}
         {step.id === "sources" && <SourcesStep {...props} startSizing={sizing.startSizing} />}
         {step.id === "size" && <SizeStep {...props} run={sizing.run} startSizing={sizing.startSizing} stopSizing={sizing.stopSizing} hourly={sizing.hourly} startDispatch15={sizing.startDispatch15} />}
-        {step.id === "finance" && <FinanceStep {...props} />}
+        {step.id === "finance" && <FinanceStep {...props} quoteTariff={state.forms?.tariff ?? null} onQuoteTariff={(v) => setState((s) => ({ ...s, forms: { ...s.forms, tariff: v } }))} />}
         {step.id === "forms" && <BidForms {...props} />}
       </div>
 
@@ -180,6 +161,7 @@ export default function SeciTab() {
         {next && <button type="button" className="primary chapter-next" onClick={() => goto(next.id)} style={{ "--next": next.color }}>Next: {next.title} <ArrowRight size={14} /></button>}
       </footer>
 
+      <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} />
       <VoiceGuide state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} />
     </div>
   );

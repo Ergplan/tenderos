@@ -148,6 +148,7 @@ export function defaultBidState() {
     // only; HiGHS decides how much battery goes on each site
     sites: { split: false },
     tariffLocked: false,
+    quoteTariff: null, // the tariff the bidder will quote, checked against the target IRR on Financials
     locks: {},
     lp: null, // last sizing (without the hourly dispatch)
     prebid: { bidder: "", edits: {}, off: {} }, // pre-bid queries: the bidder's edits and the ones left out

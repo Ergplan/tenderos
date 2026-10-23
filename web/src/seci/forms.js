@@ -1,7 +1,8 @@
 // SECI RTC-TM-V bid forms: what the bidder fills in, the checks against the tender's conditions,
 // and the request for the bid pack (POST /api/seci/forms, a Word file). Plain JavaScript, checked
 // in Node by tools/check_seci.mjs.
-import { PACK, condition, keyDates, moneyAtStake } from "./terms.js";
+import { PACK, condition, keyDates, moneyAtStake, seciTerms } from "./terms.js";
+import { quotedReturns } from "../bid/quote.js";
 
 /** The fields of the bid forms, in the order they are filled (the voice guide follows it too). */
 export const FORM_FIELDS = [
@@ -65,7 +66,7 @@ export function experienceTest(projects, bidMw) {
  * Each check of the bid against the tender: { id, label, status: ok | bad | warn | todo, detail,
  * condition (pack condition id) }.
  */
-export function bidChecks(state) {
+export function bidChecks(state, terms = seciTerms(state.seci || {})) {
   const f = state.forms || {};
   const m = PACK.model;
   const mw = state.bid.baseMw;
@@ -75,8 +76,10 @@ export function bidChecks(state) {
   const add = (row) => out.push(row);
   add({ id: "capacity", label: "Contracted capacity", condition: "bidSize",
     status: mw >= m.minBidMw && mw <= m.maxBidMw ? "ok" : "bad", detail: `${mw ?? "–"} MW (50 to 500 MW)` });
+  const quote = isNum(f.tariff) && f.tariff > 0 ? quotedReturns(state, terms, f.tariff) : null;
   add({ id: "tariff", label: "Tariff quoted", condition: "tariff",
-    status: isNum(f.tariff) && f.tariff > 0 ? "ok" : "todo", detail: isNum(f.tariff) ? `₹${f.tariff.toFixed(2)}/kWh, fixed for the term` : "Enter the tariff (Financials gives the tariff for your target IRR)" });
+    status: !(isNum(f.tariff) && f.tariff > 0) ? "todo" : quote && quote.status !== "ok" ? "warn" : "ok",
+    detail: !isNum(f.tariff) ? "Enter the tariff (Financials gives the tariff for your target IRR)" : quote ? quote.message : `₹${f.tariff.toFixed(2)}/kWh, fixed for the term` });
   add({ id: "storage", label: "Storage in the project", condition: "ess",
     status: !sizes ? "todo" : (sizes.bessMw || 0) > 0.5 ? "ok" : "bad", detail: sizes ? `${Math.round(sizes.bessMw || 0)} MW / ${Math.round(sizes.bessMwh || 0)} MWh` : "Size the plant" });
   add({ id: "colocation", label: "Battery co-located with RE", condition: "colocation",
@@ -108,12 +111,12 @@ export function bidChecks(state) {
 }
 
 /** The bid pack request: the answers, the plant, the checks and the conditions they rest on. */
-export function bidPackRequest(state, finance = null) {
+export function bidPackRequest(state, finance = null, terms = seciTerms(state.seci || {})) {
   const f = state.forms || {};
   const sizes = state.lp?.sizes || {};
   const money = state.lp ? moneyAtStake(sizes) : null;
   const dates = keyDates(state.seci?.ppaDate);
-  const checks = bidChecks(state).map((c) => {
+  const checks = bidChecks(state, terms).map((c) => {
     const cond = condition(c.condition);
     const q = cond?.sources?.[0];
     const doc = q ? PACK.documents.find((d) => d.id === q.doc) : null;

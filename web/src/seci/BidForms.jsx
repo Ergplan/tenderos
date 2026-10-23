@@ -5,6 +5,7 @@ import { financeOf } from "./voice";
 import { FORM_FIELDS, bidChecks, bidPackRequest, formIssues, visibleFields } from "./forms";
 import { PACK, prov } from "./terms";
 import { SourceChip } from "../bid/RequirementsStep";
+import QuoteCheck from "../bid/QuoteCheck";
 
 export { formIssues };
 
@@ -35,7 +36,7 @@ export default function BidForms({ state, setState, terms, goto }) {
   const f = state.forms || {};
   const setField = (key, value) => setState((s) => ({ ...s, forms: { ...s.forms, [key]: value } }));
   const finance = useMemo(() => financeOf(state, terms), [state, terms]);
-  const checks = bidChecks(state);
+  const checks = bidChecks(state, terms);
   const issues = formIssues(state);
   const groups = [...new Set(FORM_FIELDS.map((x) => x.group))];
 
@@ -46,7 +47,7 @@ export default function BidForms({ state, setState, terms, goto }) {
           <button type="button" className="primary" disabled={saving} data-testid="seci-forms-download"
             onClick={async () => {
               setSaving(true); setError("");
-              try { await downloadPack(bidPackRequest(state, finance)); } catch (err) { setError(err.message); } finally { setSaving(false); }
+              try { await downloadPack(bidPackRequest(state, finance, terms)); } catch (err) { setError(err.message); } finally { setSaving(false); }
             }}>
             {saving ? <Loader2 className="spin" size={14} /> : <Download size={14} />} Download bid pack (Word)
           </button>
@@ -76,6 +77,7 @@ export default function BidForms({ state, setState, terms, goto }) {
                       Use ₹{nf(Math.ceil(finance.tariff * 100) / 100, 2)}/kWh (target IRR, rounded up)
                     </button>
                   )}
+                  {x.key === "tariff" && <QuoteCheck state={state} terms={terms} tariff={f.tariff ?? null} compact testid="seci-quote" />}
                   {x.hint && <small>{x.hint}</small>}
                 </label>
               ))}

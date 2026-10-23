@@ -8,6 +8,7 @@ import { Section, Stat, nf, pf } from "../rtc/ui";
 import { SOURCES, capexBySource, modelInputs, opsFromLp, plantMw } from "./model";
 import { SourceChip } from "./RequirementsStep";
 import Checklist from "./Checklist";
+import QuoteCheck from "./QuoteCheck";
 import { downloadModel, modelExport } from "./exportModel";
 
 /** Cost lines of the sources switched on, added after "Other fixed" in the cash-flow table. */
@@ -43,7 +44,11 @@ function RevenueStack({ finance, saleLabel }) {
 }
 
 /** Step 4: the 25-year financial model of the sized plant, priced as the bid. */
-export default function FinanceStep({ state, patch, set, lockProps, goto, terms, prices }) {
+/**
+ * quoteTariff / onQuoteTariff: the tariff the bidder will quote (the SECI tab keeps it in its bid
+ * forms); by default state.quoteTariff.
+ */
+export default function FinanceStep({ state, patch, set, lockProps, goto, terms, prices, quoteTariff, onQuoteTariff }) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const { lp } = state;
@@ -96,13 +101,18 @@ export default function FinanceStep({ state, patch, set, lockProps, goto, terms,
             <Stat label="Ceiling tariff" value={ceiling ? `₹${nf(ceiling, 2)}/kWh` : "Not stated"} detail={headroom === null ? "" : headroom >= 0 ? `₹${nf(headroom, 3)} below the ceiling` : `₹${nf(-headroom, 3)} above the ceiling`} tone={headroom !== null && headroom < 0 ? "bad" : undefined} />
             <SourceChip source={prov.ceiling} />
           </div>
-          <Stat label="Equity IRR" value={pf(finance.equityIrr, 2)} detail={`project IRR ${pf(finance.projectIrr, 2)}`} />
+          <Stat label="Equity IRR" value={pf(finance.equityIrr, 2)} detail={finance.tariffLocked ? `target ${pf(fin.targetEquityIrr, 2)}` : "the target, by construction"} />
+          <Stat label="Project IRR" value={pf(finance.projectIrr, 2)} detail="post-tax, unlevered" />
           <Stat label="Minimum DSCR" value={nf(finance.minDscr, 2)} detail={`average ${nf(finance.avgDscr, 2)}`} tone={finance.minDscr !== null && finance.minDscr < 1.1 ? "bad" : undefined} />
-          <Stat label="Project cost" value={`₹${nf(finance.capex.total, 0)} cr`} detail={`₹${nf(finance.capex.total / (total || 1), 2)} cr per contracted MW`} />
-          <Stat label="Levelised cost" value={`₹${nf(finance.lcoe, 3)}/kWh`} detail={`at ${pf(fin.discountRate, 1)}`} />
+          <Stat label="Project cost" value={`₹${nf(finance.capex.total, 0)} cr`} detail={`₹${nf(finance.capex.total / (total || 1), 2)} cr per contracted MW · LCOE ₹${nf(finance.lcoe, 3)}/kWh at ${pf(fin.discountRate, 1)}`} />
           <Stat label="Year-1 supply" value={`${nf(y1.deliveredMu, 0)} MU`} detail={`${pf(y1.dfr, 1)} of contracted`} />
           <Stat label="Year-1 operating cost" value={`₹${nf(y1.opex, 0)} cr`} detail={[state.sources.biomass ? `biomass fuel ₹${nf(y1.fuel, 0)} cr` : null, state.sources.hydro ? `hydro ₹${nf(y1.hydroCost || 0, 0)} cr` : null, state.sources.thermal ? `thermal ₹${nf(y1.thermalCost || 0, 0)} cr` : null].filter(Boolean).join(" · ") || "O&M and insurance"} />
         </div>
+      </Section>
+
+      <Section index="5.0" title="Your quote" note="The tariff you will quote, against the tariff your target equity IRR needs">
+        <QuoteCheck state={state} terms={terms} tariff={quoteTariff !== undefined ? quoteTariff : state.quoteTariff ?? null}
+          onChange={onQuoteTariff || ((v) => set("quoteTariff", v))} />
       </Section>
 
       <Checklist state={state} terms={terms} lp={lp} bidTariff={finance.tariff} index="5.1" />

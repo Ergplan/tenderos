@@ -1,0 +1,203 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Bot, Loader2, Mic, MicOff, PhoneOff, Sparkles, X } from "lucide-react";
+import { LiveEvents, createToolRunner } from "./agent";
+
+const TOOL_WORDS = {
+  get_status: () => "Read the bid on screen",
+  tender_brief: () => "Read the key conditions",
+  tender_lookup: (a) => `Looked up “${a.query}” in the tender`,
+  next_question: () => "Next input",
+  list_inputs: (a) => `Listed the ${a.part} inputs`,
+  set_input: (a, r) => (r?.ok ? `Set ${a.key} → ${r.value}` : `Could not set ${a.key}: ${r?.error || ""}`),
+  use_benchmarks: () => "Filled the benchmarks",
+  go_to_step: (a) => `Showed ${a.step}`,
+  run_optimizer: (a, r) => (r?.ok ? "Sized the plant with HiGHS" : `Sizing: ${r?.error || "did not run"}`),
+  stop_optimizer: () => "Stopped the sizing",
+  get_results: () => "Read the results",
+  get_financials: () => "Read the financial model",
+  check_tariff: (a, r) => (r?.ok ? `Checked ₹${a.tariff}/kWh: equity IRR ${r.equityIrrPct}%, project IRR ${r.projectIrrPct}%` : `Tariff check: ${r?.error || ""}`),
+  review_bid_forms: () => "Reviewed the bid forms",
+};
+
+function highlightTarget(target) {
+  document.querySelectorAll(".voice-target").forEach((el) => el.classList.remove("voice-target"));
+  if (!target) return;
+  setTimeout(() => {
+    const el = document.querySelector(`[data-voice="${target}"]`) || document.querySelector(`[data-testid="seci-form-${String(target).replace(/^form\./, "")}"]`);
+    if (el) { el.classList.add("voice-target"); el.scrollIntoView?.({ block: "center", behavior: "smooth" }); }
+  }, 350);
+}
+
+/** Wait for the browser to gather its ICE candidates before sending the offer (as the GPT-Live guide does). */
+function iceGathered(pc) {
+  if (pc.iceGatheringState === "complete") return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => { pc.removeEventListener("icegatheringstatechange", check); reject(new Error("Timed out while preparing the connection.")); }, 10_000);
+    function check() {
+      if (pc.iceGatheringState !== "complete") return;
+      clearTimeout(timeout);
+      pc.removeEventListener("icegatheringstatechange", check);
+      resolve();
+    }
+    pc.addEventListener("icegatheringstatechange", check);
+  });
+}
+
+/**
+ * The bid agent: a GPT-Live voice conversation whose backend works this tab through the tools in
+ * agent.js (setting inputs, running HiGHS, reading results, checking a tariff, the bid forms).
+ * The server creates the session (/api/seci/live); audio flows over WebRTC; nothing is recorded.
+ */
+export default function LiveAgent({ state, setState, terms, goto, sizing, info }) {
+  const [open, setOpen] = useState(false);
+  const [phase, setPhase] = useState("idle"); // idle | connecting | connected | working | closing
+  const [turns, setTurns] = useState([]);
+  const [error, setError] = useState("");
+  const [micOn, setMicOn] = useState(true);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const termsRef = useRef(terms);
+  termsRef.current = terms;
+  const sizingRef = useRef(sizing);
+  sizingRef.current = sizing;
+  const conn = useRef(null); // { pc, dc, mic, audio, events, closeTimer }
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
+  const secure = typeof window === "undefined" || window.isSecureContext;
+
+  const addTurn = useCallback((who, text, join = true) => {
+    if (!text) return;
+    setTurns((t) => {
+      const last = t[t.length - 1];
+      if (join && last && last.who === who && Date.now() - last.at < 2500) return [...t.slice(0, -1), { ...last, text: last.text + text, at: Date.now() }];
+      return [...t.slice(-80), { who, text, at: Date.now() }];
+    });
+  }, []);
+
+  const cleanup = useCallback(() => {
+    const c = conn.current;
+    conn.current = null;
+    if (!c) return;
+    clearTimeout(c.closeTimer);
+    c.mic?.getTracks().forEach((tr) => tr.stop());
+    try { c.dc?.close(); } catch { /* closed */ }
+    try { c.pc?.close(); } catch { /* closed */ }
+    if (c.audio) c.audio.srcObject = null;
+    highlightTarget(null);
+    setPhase("idle");
+  }, []);
+
+  useEffect(() => () => cleanup(), [cleanup]);
+
+  const start = useCallback(async () => {
+    setError("");
+    setTurns([]);
+    setPhase("connecting");
+    const runTool = createToolRunner({
+      getState: () => stateRef.current,
+      apply: (fn) => { stateRef.current = fn(stateRef.current); setState(stateRef.current); },
+      getTerms: () => termsRef.current,
+      goto,
+      highlight: highlightTarget,
+      // the sizing reads the state of the last render: let the tab render the agent's changes first
+      runSizing: async () => { await new Promise((r) => setTimeout(r, 80)); return sizingRef.current.startSizing(); },
+      stopSizing: () => sizingRef.current.stopSizing(),
+      getRun: () => sizingRef.current.run,
+    });
+    const c = { audio: new Audio() };
+    c.audio.autoplay = true;
+    conn.current = c;
+    try {
+      const pc = new RTCPeerConnection();
+      c.pc = pc;
+      pc.addEventListener("track", (e) => { c.audio.srcObject = new MediaStream([e.track]); c.audio.play().catch(() => setError("Press play in the browser to hear the agent.")); });
+      c.mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+      for (const track of c.mic.getAudioTracks()) pc.addTrack(track, c.mic);
+      const dc = pc.createDataChannel("oai-events");
+      c.dc = dc;
+      let greeting = "";
+      c.events = new LiveEvents({
+        send: (o) => { if (dc.readyState === "open") dc.send(JSON.stringify(o)); },
+        runTool,
+        on: {
+          status: (s) => {
+            if (s === "connected" && greeting && !c.greeted) {
+              c.greeted = true;
+              dc.send(JSON.stringify({ type: "session.commentary.append", event_id: `greet_${Date.now()}`, delegation_id: null, content: greeting }));
+            }
+            setPhase((p) => (p === "closing" ? p : s));
+          },
+          heard: (t) => addTurn("you", t),
+          said: (t) => addTurn("agent", t),
+          tool: (name, args, result) => addTurn("tool", (TOOL_WORDS[name] || (() => name))(args, result), false),
+          error: (m) => setError(m),
+          closed: () => cleanup(),
+        },
+      });
+      dc.addEventListener("message", ({ data }) => { c.events.handle(data).catch((err) => setError(err.message)); });
+      dc.addEventListener("close", () => { if (conn.current === c) { if (phaseRef.current !== "closing") setError("The voice connection closed."); cleanup(); } });
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await iceGathered(pc);
+      const res = await fetch("/api/seci/live", { method: "POST", headers: { "content-type": "application/json" }, credentials: "same-origin", body: JSON.stringify({ sdp: pc.localDescription.sdp }) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `The voice agent could not start (${res.status}).`);
+      greeting = body.greeting || "";
+      await pc.setRemoteDescription({ type: "answer", sdp: body.transport.sdp });
+    } catch (err) {
+      setError(err.name === "NotAllowedError" ? "The microphone is blocked: allow it for this site and try again." : err.message);
+      cleanup();
+    }
+  }, [addTurn, cleanup, goto, setState]);
+
+  const stop = useCallback(() => {
+    const c = conn.current;
+    if (!c?.dc || c.dc.readyState !== "open") { cleanup(); return; }
+    setPhase("closing");
+    c.dc.send(JSON.stringify({ type: "session.close" }));
+    c.closeTimer = setTimeout(cleanup, 15_000);
+  }, [cleanup]);
+
+  const toggleMic = () => {
+    const on = !micOn;
+    conn.current?.mic?.getAudioTracks().forEach((t) => { t.enabled = on; });
+    setMicOn(on);
+  };
+
+  if (!info?.available) return null;
+  if (!open) {
+    return (
+      <button type="button" className="voice-fab agent-fab" onClick={() => setOpen(true)} data-testid="agent-open">
+        <Sparkles size={16} /> Talk to the bid agent
+      </button>
+    );
+  }
+  const live = phase !== "idle";
+  return (
+    <aside className="voice-panel agent-panel" aria-label="Bid agent" data-testid="agent-panel">
+      <header>
+        <strong><Bot size={14} /> Bid agent · GPT-Live</strong>
+        <button type="button" className="rtc-icon-btn" onClick={() => { stop(); setOpen(false); }} aria-label="Close the agent"><X size={14} /></button>
+      </header>
+      <p className="rtc-note">Talk naturally: it explains the bid conditions, takes your inputs in order, changes anything on screen, runs the optimizer again and explains the results and the IRR at the tariff you quote. Every number comes from this screen; every tender fact from the documents, with the page.</p>
+      {!secure && <p className="voice-note" data-testid="agent-insecure">The microphone needs an HTTPS address (or localhost). Open the app over HTTPS, or use the voice guide with typed answers.</p>}
+      <div className="voice-controls">
+        {!live
+          ? <button type="button" className="primary" onClick={start} disabled={!secure} data-testid="agent-start"><Mic size={14} /> Start talking</button>
+          : <button type="button" className="secondary" onClick={stop} data-testid="agent-stop"><PhoneOff size={14} /> End</button>}
+        {live && <button type="button" className={`secondary voice-mic ${micOn ? "listening" : ""}`} onClick={toggleMic} data-testid="agent-mic">{micOn ? <Mic size={14} /> : <MicOff size={14} />} {micOn ? "Mic on" : "Mic off"}</button>}
+        <span className="rtc-note agent-phase" data-testid="agent-phase">
+          {phase === "connecting" && <><Loader2 className="spin" size={12} /> Connecting…</>}
+          {phase === "connected" && "Listening"}
+          {phase === "working" && <><Loader2 className="spin" size={12} /> Working on the bid…</>}
+          {phase === "closing" && "Ending…"}
+        </span>
+      </div>
+      {error && <p className="voice-note" role="alert" data-testid="agent-error">{error}</p>}
+      <div className="voice-log agent-log" data-testid="agent-log" aria-live="polite">
+        {turns.length === 0 && <p>{info.backendModel ? `Voice ${info.model}; the bid work by ${info.backendModel}.` : ""}</p>}
+        {turns.map((t, i) => <p key={i} className={t.who}>{t.text}</p>)}
+      </div>
+    </aside>
+  );
+}

@@ -9,6 +9,7 @@ import { DEFAULT_SETTINGS, PACK, keyDates, moneyAtStake, prov, seciTerms } from 
 import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience } from "../web/src/seci/forms.js";
 import { buildScript, explainFinance, explainResults, financeOf, parseCommand, parseDate, parseNumber, parseYesNo, questionText } from "../web/src/seci/voice.js";
 import { defaultBidState } from "../web/src/bid/model.js";
+import { quotedReturns } from "../web/src/bid/quote.js";
 
 // ---- the terms: two time-block floors with the 1.5x penalty, peak hours as planned
 const terms = seciTerms(DEFAULT_SETTINGS);
@@ -124,6 +125,23 @@ assert.ok(/600 megawatts of solar/.test(res) && /400 megawatts of wind/.test(res
 const fin = financeOf(sized, terms);
 assert.ok(fin && fin.rows[0].blockPenalty > 0, "the financial model charges the block shortfall");
 assert.ok(Math.abs(fin.equityIrr - filled.fin.targetEquityIrr) < 1e-6);
+// a quoted tariff against the target: the equity and project IRR the quote really earns
+const atTarget = quotedReturns(sized, terms, Math.ceil(fin.tariff * 100) / 100);
+assert.equal(atTarget.status, "ok", atTarget.message);
+assert.ok(atTarget.equityIrr >= filled.fin.targetEquityIrr - 1e-6, "rounding the target tariff up keeps the target IRR");
+assert.ok(Math.abs(atTarget.targetTariff - fin.tariff) < 1e-9);
+const low = quotedReturns(sized, terms, Number((fin.tariff * 0.85).toFixed(2)));
+assert.equal(low.status, "below", low.message);
+assert.ok(low.equityIrr < filled.fin.targetEquityIrr && low.projectIrr < atTarget.projectIrr, "a lower tariff earns less on equity and on the project");
+assert.ok(low.equityIrr > 0 && Number.isFinite(low.projectIrr));
+assert.ok(/below the/.test(low.message) && /equity IRR is \d/.test(low.message) && /project IRR \d/.test(low.message), low.message);
+const loss = quotedReturns(sized, terms, 1);
+assert.equal(loss.status, "loss", loss.message);
+assert.equal(quotedReturns({ ...sized, lp: null }, terms, 5), null, "no quote check before sizing");
+assert.equal(quotedReturns(sized, terms, null), null);
+const lowChecks = Object.fromEntries(bidChecks({ ...sized, forms: { ...forms, tariff: low.tariff } }, terms).map((c) => [c.id, c]));
+assert.equal(lowChecks.tariff.status, "warn", "a quote below the target IRR tariff is flagged on the bid forms");
+assert.ok(/project IRR/.test(lowChecks.tariff.detail), lowChecks.tariff.detail);
 const words = explainFinance(sized, fin);
 assert.ok(/rupees per unit/.test(words) && /Penalties come to/.test(words), words);
 
