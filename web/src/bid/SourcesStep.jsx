@@ -207,7 +207,7 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
               hint={state.filled?.[`${f.section}.${f.key}`] ? BENCHMARK_NOTE : f.hint} />
           ))}
         </div>
-        <p className="rtc-note">PPA term {terms.years ? `${terms.years} years (from the tender)` : "not stated"}. Repayment, depreciation, salvage and receivable days are on the Financials step.</p>
+        <p className="rtc-note">PPA term {terms.years ? `${terms.years} years (${terms.yearsAssumed ? "assumed: not in the documents provided" : "from the tender"})` : "not stated"}. Repayment, depreciation, salvage and receivable days are on the Financials step.</p>
       </Section>
 
       <section className="optimize-bar">

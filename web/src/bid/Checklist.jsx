@@ -50,6 +50,16 @@ export function buildChecklist(state, terms, lp, bidTariff = null) {
   }
   for (const rule of terms.rules) {
     const outcomes = years.map((y) => (y.rules || []).find((o) => o.id === rule.id)).filter(Boolean);
+    if (rule.basis === "block") {
+      // a floor in every time-block (SECI RTC-TM): the share of blocks met and the energy short
+      const worstShare = outcomes.length ? Math.min(...outcomes.map((o) => o.hoursMet ?? (o.met ? 1 : 0))) : null;
+      const shortMu = outcomes.length ? Math.max(...outcomes.map((o) => o.shortfallMu || 0)) : null;
+      const pen = rule.penaltyMultiple != null ? `; shortfall costs ${nf(rule.penaltyMultiple, 1)} × tariff` : "; no shortfall allowed";
+      add({ id: `rule.${rule.id}`, condition: rule.label, source: prov[`rule.${rule.id}`], tender: `At least ${pf(rule.target, 0)} of contracted capacity in every ${rule.hours === "peak" ? "peak" : rule.hours === "offpeak" ? "off-peak" : ""} time-block${pen}`,
+        result: worstShare === null ? pending : `${pf(worstShare, 1)} of the hours at the floor; ${nf(shortMu, 2)} MU short in the worst modelled year`,
+        status: worstShare === null ? "info" : outcomes.every((o) => o.met) ? "met" : rule.penaltyMultiple != null ? "info" : "failed" });
+      continue;
+    }
     const worst = outcomes.length ? Math.min(...outcomes.map((o) => o.achieved)) : null;
     const where = `${rule.basis === "monthly" ? "every month" : "each year"}${rule.hours === "all" ? "" : rule.hours === "any" ? `, in each of the ${anyHours(terms.peak).length} hours the procurer may pick` : ", peak hours"}`;
     add({ id: `rule.${rule.id}`, condition: rule.label, source: prov[`rule.${rule.id}`], tender: `At least ${pf(rule.target, 0)} CUF, ${where}`,

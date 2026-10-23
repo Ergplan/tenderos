@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { query } from "./db";
 import { SESSION_COOKIE, verifySession } from "./session";
 import { getSetting } from "./settings";
-import { resolveTabs } from "./tabs";
-import { APP_SWITCH_URL, DEMO_MODE } from "./demo";
+import { ALL_TAB_IDS, resolveTabs } from "./tabs";
+import { APP_SWITCH_URL, DEMO_EMAIL, DEMO_MODE } from "./demo";
 
 const scrypt = promisify(crypto.scrypt);
 
@@ -49,7 +49,8 @@ export async function currentUserWithAccess() {
   const { tab_access, sid, session_epoch, ...rest } = user;
   return {
     ...rest,
-    allowedTabs: resolveTabs(user, defaults),
+    // the shared demo user opens every tab, including tabs added after it was created
+    allowedTabs: DEMO_MODE && user.email === DEMO_EMAIL ? [...ALL_TAB_IDS] : resolveTabs(user, defaults),
     adminContacts: admins.rows.map((a) => ({ name: a.name, email: a.email })),
     demo: DEMO_MODE,
     switchUrl: APP_SWITCH_URL,

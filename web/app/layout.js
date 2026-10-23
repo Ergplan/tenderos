@@ -3,6 +3,7 @@ import "@/src/app.css";
 import "@/src/bid.css";
 import "@/src/cfd.css";
 import "@/src/meter.css";
+import "@/src/seci.css";
 
 export const metadata = {
   title: { default: "TenderOS", template: "%s · TenderOS" },

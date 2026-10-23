@@ -12,7 +12,7 @@ import { ALL_TAB_IDS } from "@/lib/tabs";
 export async function GET(req) {
   if (!DEMO_MODE) return new Response("Not found", { status: 404 });
   await query(
-    "INSERT INTO users (email, name, password_hash, role, tab_access) VALUES ($1, 'Demo', $2, 'user', $3) ON CONFLICT (email) DO NOTHING",
+    "INSERT INTO users (email, name, password_hash, role, tab_access) VALUES ($1, 'Demo', $2, 'user', $3) ON CONFLICT (email) DO UPDATE SET tab_access = EXCLUDED.tab_access",
     [DEMO_EMAIL, await hashPassword(crypto.randomBytes(32).toString("base64")), JSON.stringify(ALL_TAB_IDS)],
   );
   const { rows } = await query("SELECT id, email, name, role, session_epoch FROM users WHERE email = $1", [DEMO_EMAIL]);

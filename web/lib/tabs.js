@@ -3,6 +3,7 @@
 export const TAB_CATALOG = [
   { id: "tenderBid", label: "Tender to Bid", engine: ["bid", "rtc"] },
   { id: "rtc", label: "Round the Clock", engine: ["rtc"] },
+  { id: "seciRtc", label: "SECI RTC tender", engine: ["rtc", "bid"] },
   { id: "bessTender", label: "BESS Tender", engine: ["bess"] },
   { id: "cfd", label: "CfD Bid", engine: [] },
 ];

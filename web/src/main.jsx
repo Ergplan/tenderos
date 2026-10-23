@@ -4,13 +4,14 @@
 // signs out. The legacy FDRE tabs (yield assessment, EYA report, custom dispatch and the
 // rest) are not part of this application.
 import React, { useEffect, useMemo, useState } from "react";
-import { Activity, ArrowLeftRight, BatteryCharging, Clock3, FolderOpen, Gavel, Lock, LogOut, Scale, UserRound, Users } from "lucide-react";
+import { Activity, ArrowLeftRight, BatteryCharging, Clock3, FileStack, FolderOpen, Gavel, Lock, LogOut, Scale, UserRound, Users } from "lucide-react";
 import { flushActivity, startActivityTracker, trackEvent } from "./activity";
 import "./styles.css";
 import "./chartTheme";
 import RtcTab from "./rtc/RtcTab";
 import BessTab from "./bess/BessTab";
 import BidTab from "./bid/BidTab";
+import SeciTab from "./seci/SeciTab";
 import CfdTab from "./cfd/CfdTab.jsx";
 import Brand from "./Brand";
 import { ALL_TAB_IDS } from "../lib/tabs";
@@ -19,6 +20,7 @@ import { authApi } from "./scenarios/client";
 const TABS = [
   ["tenderBid", Gavel, "Tender to Bid"],
   ["rtc", Clock3, "Round the Clock"],
+  ["seciRtc", FileStack, "SECI RTC tender"],
   ["bessTender", BatteryCharging, "BESS Tender"],
   ["cfd", Scale, "CfD Bid"],
 ];
@@ -100,6 +102,7 @@ export default function App({ user = null, initialScenario = null }) {
         {!canView && <Restricted label={TABS.find((t) => t[0] === activeTab)?.[2] || "This tab"} contacts={user?.adminContacts} />}
         {canView && activeTab === "tenderBid" && <BidTab user={user} openTab={(id) => { if (allowed.has(id)) setActiveTab(id); }} />}
         {canView && activeTab === "rtc" && <RtcTab user={user} initialScenario={opened("rtc")} />}
+        {canView && activeTab === "seciRtc" && <SeciTab />}
         {canView && activeTab === "bessTender" && <BessTab initialScenario={opened("bess")} />}
         {canView && activeTab === "cfd" && <CfdTab />}
       </main>

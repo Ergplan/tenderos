@@ -78,6 +78,12 @@ export async function seedTenderReads() {
   return n;
 }
 
+/** Users of a bid tab (Tender to Bid or the SECI RTC tender) and administrators: the bid workbook. */
+export function requireBidAccess(user) {
+  if (!user) throw new HttpError(401, "Sign in required.");
+  if (user.role !== "admin" && !["tenderBid", "seciRtc"].some((t) => user.allowedTabs?.includes(t))) throw new HttpError(403, "No access to a bid tab.");
+}
+
 /** Tender to Bid users (and administrators) only. */
 export function requireTenderAccess(user) {
   if (!user) throw new HttpError(401, "Sign in required.");

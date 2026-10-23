@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ArrowRight, CalendarDays, ChevronLeft, CircleDollarSign, FilePlus2, FileSearch, Gavel, Layers, RotateCcw, Scale, X, Zap } from "lucide-react";
 import { trackEvent } from "../activity";
 import { nf } from "../rtc/ui";
-import { defaultBidMw, defaultBidState, dispatch15Request, loadMarketPrices, lpPayload, mergeBidState, missingInputs, capacityIssues, plantMw, resourceProfiles, runSizing } from "./model";
+import { defaultBidMw, defaultBidState, loadMarketPrices, mergeBidState, missingInputs, capacityIssues, plantMw } from "./model";
+import useSizing from "./useSizing";
 import { mergeReadings, sizingScope, tenderDates, tenderTerms } from "./tenderMap";
 import ScopeNotice from "./ScopeNotice";
 import { handOff } from "../handoff";
@@ -37,8 +38,7 @@ function loadState() {
 
 // survive switching dashboard tabs; the hour-by-hour dispatch is kept only for the session
 let sessionState = null;
-let sessionHourly = null;
-let sessionRun = null;
+const sizingSession = { hourly: null, run: null };
 // where the journey is (start screen, scan, workflow): the start screen first on each visit
 let sessionView = null;
 // the last uploaded file, in memory only (handed to the BESS tender tab on request)
@@ -66,19 +66,17 @@ async function loadPrefilled() {
  */
 export default function BidTab({ user = null, openTab = null }) {
   const [state, setState] = useState(() => sessionState || loadState());
-  const [hourly, setHourly] = useState(() => sessionHourly);
-  const [run, setRun] = useState(() => sessionRun);
   const [message, setMessage] = useState("");
   const [prices, setPrices] = useState(null);
   const [view, setViewState] = useState(() => sessionView || "start");
   const [scan, setScan] = useState(null); // { id, file, opts, job, outcome, error }
   const [startError, setStartError] = useState("");
-  const abortRef = useRef(null);
   const scanId = useRef(0);
   const setView = useCallback((v) => { sessionView = v; setViewState(v); window.scrollTo?.({ top: 0 }); }, []);
 
   const terms = useMemo(() => tenderTerms(state.tender?.result, state.accepted || {}), [state.tender, state.accepted]);
   const missing = useMemo(() => missingInputs(state, terms), [state, terms]);
+  const { hourly, setHourly, run, startSizing, stopSizing, startDispatch15, clear: clearSizing } = useSizing({ state, setState, terms, prices, session: sizingSession, module: "bid" });
 
   // IEX price year for market sales (public market data, loaded once)
   useEffect(() => {
@@ -108,8 +106,6 @@ export default function BidTab({ user = null, openTab = null }) {
     window.addEventListener("pagehide", flush);
     return () => window.removeEventListener("pagehide", flush);
   }, []);
-  useEffect(() => { sessionHourly = hourly; }, [hourly]);
-  useEffect(() => { sessionRun = run; }, [run]);
 
   // edits on Financials re-price the same plant; Supply sources clears the sizing itself
   const patch = useCallback((section, values) => setState((s) => ({ ...s, [section]: { ...s[section], ...values } })), []);
@@ -173,70 +169,10 @@ export default function BidTab({ user = null, openTab = null }) {
     setView("work");
   }
 
-  /** The IEX price year when the bid sells at an IEX market (null for a flat price or no sale). */
-  async function marketPrices() {
-    if (!(state.market.sell && state.market.source !== "flat")) return null;
-    return prices || loadMarketPrices();
-  }
-
-  async function startSizing() {
-    if (run?.active) return;
-    if (missingInputs(state, terms).length) return;
-    let market = null;
-    try {
-      market = await marketPrices();
-    } catch (err) {
-      setRun({ active: false, started: Date.now(), finished: Date.now(), log: [], error: `IEX prices could not be loaded (${err.message}); choose a flat price or try again.` });
-      return;
-    }
-    const payload = lpPayload(state, terms, resourceProfiles(state), market);
-    const abort = new AbortController();
-    abortRef.current = abort;
-    const started = Date.now();
-    setRun({ active: true, started, log: [], iteration: 0 });
-    trackEvent("optimize", { module: "bid", plantMw: plantMw(state, terms) });
-    try {
-      const result = await runSizing(payload, {
-        signal: abort.signal,
-        onLog: (line) => setRun((r) => (r ? { ...r, log: [...r.log.slice(-400), line] } : r)),
-        onProgress: (p) => setRun((r) => (r ? { ...r, iteration: p.iteration, tariff: p.tariff ?? r.tariff } : r)),
-      });
-      const { hourly: h, log, ...summary } = result;
-      setHourly(h || null);
-      const used = payload.ctx.surplusPrice ? state.market.source : null;
-      setState((s) => ({ ...s, lp: { ...summary, market: used, flatPrice: used ? null : (payload.ctx.sellSurplus ? payload.fin.surplusPrice : null) } }));
-      setRun((r) => ({ ...r, active: false, finished: Date.now() }));
-    } catch (err) {
-      const msg = abort.signal.aborted ? "Stopped." : err.message;
-      setRun((r) => ({ ...(r || { log: [], started }), active: false, finished: Date.now(), error: msg }));
-    } finally {
-      abortRef.current = null;
-    }
-  }
-
-  /** The sized plant, dispatched in 15-minute blocks for every PPA year (an engine job). */
-  async function startDispatch15() {
-    if (!state.lp) throw new Error("Size the plant first.");
-    const payload = lpPayload(state, terms, resourceProfiles(state), await marketPrices());
-    const { job_id: jobId } = await getJson("/api/bid/dispatch15", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(dispatch15Request(payload, state.lp)),
-    });
-    trackEvent("run", { module: "bid", action: "dispatch15" });
-    setState((s) => (s.lp ? { ...s, lp: { ...s.lp, d15: { jobId, started: Date.now() } } } : s));
-  }
-
-  function stopSizing() {
-    abortRef.current?.abort();
-  }
-
   function resetAll() {
     if (!window.confirm("Clear your bid capacity, sources, costs and the sizing in Tender to Bid? The tender and your pre-bid queries stay.")) return;
-    stopSizing();
+    clearSizing();
     setState((s) => ({ ...defaultBidState(), tender: s.tender, prebid: s.prebid }));
-    setHourly(null);
-    setRun(null);
     setMessage("");
   }
 

@@ -149,6 +149,7 @@
 .bid-compliance-row.head { border-top: 0; color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; }
 .bid-compliance-row .ok { color: var(--good); display: inline-flex; gap: 4px; align-items: center; }
 .bid-compliance-row .bad { color: var(--bad); display: inline-flex; gap: 4px; align-items: center; }
+.bid-compliance-row .warn { color: var(--warn); display: inline-flex; gap: 4px; align-items: center; }
 .bid-sizes .rtc-stat strong { font-size: 22px; }
 .bid-notes { display: grid; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; color: var(--ink-2); font-size: 12.5px; }
 .bid-notes li { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }

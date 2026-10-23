@@ -22,6 +22,11 @@ function ComplianceTable({ lp }) {
           <span>{pf(r.target, 1)}</span>
           {years.map((y) => {
             const o = y.rules[i];
+            // a time-block floor: the share of its hours at the floor (and the energy short)
+            if (o.basis === "block") {
+              return <span key={y.year} className={o.met ? "ok" : o.penaltyMultiple != null ? "warn" : "bad"} title={`${nf(o.shortfallMu, 2)} MU short; lowest hour ${pf(o.achieved, 1)}`}>
+                {o.met ? <CheckCircle2 size={12} /> : <XCircle size={12} />} {pf(o.hoursMet, 1)} of hours</span>;
+            }
             return <span key={y.year} className={o.met ? "ok" : "bad"}>{o.met ? <CheckCircle2 size={12} /> : <XCircle size={12} />} {pf(o.achieved, 1)}</span>;
           })}
         </div>
@@ -144,6 +149,7 @@ function SplitSites({ lp }) {
 
 export default function SizeStep({ state, terms, run, startSizing, stopSizing, startDispatch15, hourly, goto, prices, missing }) {
   const lp = state.lp;
+  const blockFloors = (terms.rules || []).some((r) => r.basis === "block");
   const mix = useMemo(() => energyMix(hourly), [hourly]);
   const running = Boolean(run?.active);
   const atMax = lp ? sizesAtMax(lp, state, terms) : [];
@@ -223,7 +229,8 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
           </Section>
         </>
       )}
-      {lp && !lp.sites?.split && <Dispatch15 lp={lp} start={startDispatch15} />}
+      {lp && !lp.sites?.split && !blockFloors && <Dispatch15 lp={lp} start={startDispatch15} />}
+      {lp && blockFloors && <p className="rtc-note bid-hint" data-testid="bid-d15-blocks">The 15-minute dispatch checks annual and monthly floors only; this tender's time-block floors are checked hour by hour in the sizing above.</p>}
       {lp?.sites?.split && <p className="rtc-note bid-hint" data-testid="bid-d15-split">The 15-minute dispatch models one battery site; it is not available yet for separate solar and wind sites. The hourly sizing above models both sites.</p>}
       {!lp && !running && <p className="rtc-note bid-hint">Size the plant to see the least-tariff design, the tender conditions it meets and the dispatch.</p>}
     </>
