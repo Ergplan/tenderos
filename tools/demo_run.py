@@ -489,7 +489,8 @@ def seci_letters(page, run: Run, forms: dict) -> dict:
         out["letters"].append(letter)
         if fid == "7.1":
             with run.step(S, "Change a paragraph's wording in place (Format 7.1)", "seci-letter-edit", "[data-testid=seci-letter]") as e:
-                para = page.locator("[data-testid=seci-letter] .letter-para:not(.struck) .letter-text").nth(2)
+                # the opening paragraph of the letter, not an address block
+                para = page.locator("[data-testid=seci-letter] .letter-para:not(.struck)", has_text="having read, examined").locator(".letter-text").first
                 block = para.get_attribute("data-testid").rsplit("-", 1)[1]
                 sentence = " We also confirm that the Project shall be developed by Arkaja Renewables Private Limited itself."
                 para.click()

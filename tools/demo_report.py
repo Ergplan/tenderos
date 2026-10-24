@@ -330,7 +330,8 @@ def build(run_dir: Path) -> Path:
   <p class="small">In Format {esc(edit.get('format'))}, paragraph {esc(edit.get('block'))} was extended with: <i>{esc(edit.get('added'))}</i>
   The paragraph was marked as the bidder's wording and the format's review asked to be redone ({esc(edit.get('review'))}); it was then
   reverted to the RfS wording, so the files above carry the RfS text. Saved to the scenario library: {esc(letters.get('saved'))}.</p>
-  <div class="half">{img(run_dir, shot_of(steps, 'seci-letter-edit'))}{img(run_dir, shot_of(steps, 'seci-letter-revert'))}</div>
+  <p class="small">The paragraph as changed (left) and reverted (right):</p>
+  <div class="half">{img(run_dir, shot_of(steps, 'seci-letter-edit-block'))}{img(run_dir, shot_of(steps, 'seci-letter-revert'))}</div>
 </section>""")
         for x in letters["letters"]:
             parts.append(f'<section class="page"><div class="eyebrow">The letters · as shown in TenderOS</div><h2>Format {esc(x["id"])}: {esc(x["title"])}</h2>'

@@ -209,7 +209,7 @@ def test_bid_on_screen(tmp_path):
         struck = " ".join(letter.locator("s").all_inner_texts())
         assert "26%" in struck or "shareholder" in struck.lower(), "the alternative not chosen is struck out"
         _review(page)
-        para = letter.locator(".letter-para:not(.struck) .letter-text").nth(2)
+        para = letter.locator(".letter-para:not(.struck)", has_text="having read, examined").locator(".letter-text").first
         block = para.get_attribute("data-testid").rsplit("-", 1)[1]
         para.click()
         page.keyboard.press("End")
