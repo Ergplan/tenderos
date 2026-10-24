@@ -1,7 +1,7 @@
 # TenderOS. Local runs need Postgres, Python 3.12 and Node 22; see README.
 PY ?= .venv/bin/python
 
-.PHONY: install build test test-slow check-web e2e lint dev stop up down
+.PHONY: install build test test-slow check-web e2e demo lint dev stop up down
 
 install:
 	python3.12 -m venv .venv && $(PY) -m pip install -r engine/requirements-dev.txt
@@ -24,8 +24,12 @@ check-web:
 e2e:
 	$(PY) -m pytest -q -m slow tests/e2e/test_tender_to_bid.py tests/e2e/test_round_the_clock.py tests/e2e/test_seci_tab.py
 
+# the whole demo, clicked through once, with the PDF report (needs a running stack; see demo/README.md)
+demo:
+	$(PY) tools/demo_run.py && $(PY) tools/demo_report.py
+
 lint:
-	$(PY) -m ruff check engine tests
+	$(PY) -m ruff check engine tests tools/demo_run.py tools/demo_report.py
 
 dev:
 	bash tools/dev.sh
