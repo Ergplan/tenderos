@@ -27,11 +27,11 @@ const pct = true;
  */
 export const SOURCE_FIELDS = {
   solar: [
-    { key: "cuf", label: "CUF (AC)", unit: "%", pct, min: 5, max: 45, step: 0.1, group: "Operation", hint: "Annual energy ÷ (AC MW × 8,760 h)" },
-    { key: "dcAc", label: "DC:AC ratio", unit: "×", min: 1, max: 2.5, step: 0.05, group: "Operation", hint: "Shapes the hourly profile (clipping)", profileOnly: true },
+    { key: "cuf", label: "CUF (AC)", unit: "%", pct, min: 5, max: 45, step: 0.1, group: "Operation", hint: "Annual energy ÷ (MWac × 8,760 h)" },
+    { key: "dcAc", label: "DC:AC ratio", unit: "MWp/MWac", min: 1, max: 2.5, step: 0.05, group: "Operation", hint: "MWp = MWac × DC:AC; also shapes the typical profile (clipping)" },
     { key: "degradation", label: "Annual degradation", unit: "%/yr", pct, min: 0, max: 3, step: 0.05, group: "Operation" },
-    { key: "capex", label: "Capex", unit: "₹ cr/MW", min: 0, step: 0.05, group: "Cost" },
-    { key: "om", label: "O&M", unit: "₹ lakh/MW/yr", min: 0, step: 0.1, group: "Cost" },
+    { key: "capex", label: "Capex per MWac", unit: "₹ cr/MWac", min: 0, step: 0.05, group: "Cost", hint: "The whole plant per MW of AC capacity; per MWp it is this ÷ DC:AC" },
+    { key: "om", label: "O&M per MWac", unit: "₹ lakh/MWac/yr", min: 0, step: 0.1, group: "Cost" },
   ],
   wind: [
     { key: "cuf", label: "CUF", unit: "%", pct, min: 10, max: 60, step: 0.1, group: "Operation" },
@@ -93,6 +93,46 @@ export const FINANCE_FIELDS = [
   { section: "costs", key: "evacuationCr", label: "Transmission / evacuation", unit: "₹ cr", min: 0, step: 5, hint: "Lump sum" },
 ];
 
+/**
+ * The losses on the way to the 220 kV billing meter, as on the Round the clock tab
+ * (rtc/engine.js LOSS_STAGES and rtc/LossChain.jsx): each technology's stages to the 33 kV main bus
+ * bar with the point where its CUF (the battery: its round-trip efficiency) is measured, then the
+ * 33/220 kV power transformer and the 220 kV line, shared. The stages before the measuring point
+ * are already in the CUF; the ones after it are applied. The SECI tab starts with solar measured
+ * at the inverter output, wind at the turbine terminals and the battery's round trip at the PCS, so
+ * each technology's own transformer (inverter-duty, WTG step-up, MV) and the 33 kV cables count.
+ * Tender to Bid has none (state.losses null).
+ */
+export function defaultLosses() {
+  const d = E.DEFAULT_RTC_INPUTS;
+  return {
+    solarLoss: { ...d.solarLoss }, solarFileAt: 2,
+    windLoss: { ...d.windLoss }, windFileAt: 0,
+    bessLoss: { ...d.bessLoss }, bessRteAt: 1,
+    trafoLossPct: d.trafoLossPct, lineLossPct: d.lineLossPct,
+  };
+}
+
+/** The bid's losses as factors: solar and wind to the bus, the battery's round trip at the bus, bus to meter. */
+export function lossFactorsOf(state, rte = state.src?.bess?.rte ?? E.DEFAULT_BESS.rte) {
+  const l = state.losses;
+  if (!l) return { solar: 1, wind: 1, rteBus: rte, meter: 1, trafo: 0, line: 0 };
+  return { ...E.lossFactors(l, rte), trafo: l.trafoLossPct || 0, line: l.lineLossPct || 0 };
+}
+
+/**
+ * The sizing's hourly year 1 with what reaches the meter at the meter: the LP dispatches at the
+ * 33 kV bus (the contract referred back to it); the contract, direct supply, battery discharge and
+ * sales are shown at the meter, generation and charging at the bus, and the transformer and line
+ * losses between them as their own series.
+ */
+export function hourlyAtMeter(hourly, poi) {
+  if (!hourly || hourly.atMeter || !(poi > 0 && poi < 1)) return hourly;
+  const m = (a) => (Array.isArray(a) ? a.map((v) => v * poi) : a);
+  const loss = hourly.direct.map((d, t) => (d + (hourly.discharge?.[t] || 0) + (hourly.export?.[t] || 0)) * (1 - poi));
+  return { ...hourly, demand: m(hourly.demand), direct: m(hourly.direct), discharge: m(hourly.discharge), export: m(hourly.export), evacLoss: loss, atMeter: poi };
+}
+
 /** Upper limit the optimizer uses when "up to" is left empty, as a multiple of the contracted capacity. */
 export const AUTO_MAX = { solar: 12, wind: 6, hydro: 1, biomass: 1, thermal: 0.49, bess: 4 };
 
@@ -134,6 +174,7 @@ export function defaultBidState() {
     bid: { baseMw: DEFAULT_BID_MW, greenshoe: false }, // the bidder's answers on the Bid capacity step
     sources: Object.fromEntries(SOURCE_IDS.map((id) => [id, DEFAULT_ON.includes(id)])),
     filled: {}, // "<source>.<field>" (or "fin.<key>") -> true while the value is a benchmark
+    losses: null, // the losses on the way to the billing meter (defaultLosses); none in Tender to Bid
     src: Object.fromEntries(SOURCE_IDS.map((id) => [id, blankSource(id)])),
     solarUpload: null,
     windUpload: null,
@@ -420,7 +461,8 @@ export function modelInputs(state, terms) {
   const duration = s.bess.duration === "free" ? null : Number(s.bess.duration) || null;
   const bess = {
     ...E.DEFAULT_BESS,
-    rte: s.bess.rte ?? E.DEFAULT_BESS.rte,
+    // the round trip seen from the 33 kV bus, after the battery's own losses beyond its quoted point
+    rte: lossFactorsOf(state, s.bess.rte ?? E.DEFAULT_BESS.rte).rteBus,
     minSoc: s.bess.minSoc ?? 0,
     maxSoc: s.bess.maxSoc ?? 1,
     initSoc: Math.min(s.bess.maxSoc ?? 1, Math.max(s.bess.minSoc ?? 0, 0.5)),
@@ -477,13 +519,17 @@ export function lpPayload(state, terms, { solarCf, windCf }, prices = null) {
   const m = modelInputs(state, terms);
   const rules = terms.rules || [];
   const selling = Boolean(state.market.sell) && Boolean(terms.sale) && terms.sale !== "not_allowed";
+  // the profiles at the 33 kV bus: the CUF less the stages after its measuring point
+  const lf = lossFactorsOf(state);
   const payload = {
     ctx: {
-      demand: new Array(E.HOURS).fill(m.plantMw), // round-the-clock supply at the contracted capacity
-      solarCf: round(solarCf, 6),
-      windCf: round(windCf, 6),
+      demand: new Array(E.HOURS).fill(m.plantMw), // round-the-clock supply at the contracted capacity (at the meter)
+      solarCf: round(Array.from(solarCf, (v) => v * lf.solar), 6),
+      windCf: round(Array.from(windCf, (v) => v * lf.wind), 6),
       plantMw: m.plantMw,
       lossPct: 0,
+      trafoLossPct: lf.trafo, // 33/220 kV power transformer
+      lineLossPct: lf.line, // 220 kV line to the GSS billing meter
       sellSurplus: selling,
       extraExportMw: 0,
     },

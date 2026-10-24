@@ -92,6 +92,12 @@ def _inputs(payload: dict) -> dict:
     fin = payload.get("fin") or {}
     bess = payload.get("bess") or {}
     sell = bool(ctx.get("sellSurplus"))
+    # evacuation from the 33 kV main bus (where the profiles are) to the 220 kV GSS billing meter, as
+    # in rtc_lp: the dispatch runs at the bus with demand and capacity referred back to it (÷ poi);
+    # delivery, sales and the contract are billed and reported at the meter (× poi). 1 when unset.
+    poi = (1 - float(ctx.get("trafoLossPct") or 0)) * (1 - float(ctx.get("lineLossPct") or 0))
+    if not 0.5 < poi <= 1:
+        raise DispatchError("transformer and line losses must leave between 50% and 100% of the energy")
     rules = []
     for item in payload.get("compliance") or []:
         target = float(item.get("target") or 0)
@@ -127,6 +133,7 @@ def _inputs(payload: dict) -> dict:
         "solar_cf": RLP._series(ctx.get("solarCf"), "solarCf"),
         "wind_cf": RLP._series(ctx.get("windCf"), "windCf"),
         "loss": 1 - float(ctx.get("lossPct") or 0),
+        "poi": poi,
         "extra": max(0.0, float(ctx.get("extraExportMw") or 0)),
         "price": RLP._series(ctx["surplusPrice"], "surplusPrice") if sell and ctx.get("surplusPrice") is not None else None,
         "flat_price": float(fin.get("surplusPrice") or 0) if sell else 0.0,
@@ -167,8 +174,9 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
     bf = f["bessFactor"]
     span = max(0.0, (max_soc - min_soc) * E * bf)
 
-    dem = np.repeat(inp["demand"] * f["demandFactor"], BLOCKS_PER_HOUR)
-    target = np.minimum(dem, plant)
+    poi = inp["poi"]
+    dem = np.repeat(inp["demand"] * f["demandFactor"], BLOCKS_PER_HOUR) / poi  # at the bus
+    target = np.minimum(dem, plant / poi)
     sgen = S * split_hourly(inp["solar_cf"], 1.0 if inp["solar_cf"].max(initial=0) <= 1 else None) * f["solarFactor"] * inp["loss"]
     wgen = W * split_hourly(inp["wind_cf"], 1.0 if inp["wind_cf"].max(initial=0) <= 1 else None) * f["windFactor"] * inp["loss"]
     ren = sgen + wgen
@@ -253,13 +261,13 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
     # delivery to the PPA within the contract, and the connection shared with sales
     add_rows([(col["dir"], 1.0), (col["dis"], 1.0)], -np.inf, target, BLOCKS)
     if inp["sell"]:
-        add_rows([(col["dir"], 1.0), (col["dis"], 1.0), (col["ex"], 1.0)], -np.inf, plant + inp["extra"], BLOCKS)
+        add_rows([(col["dir"], 1.0), (col["dis"], 1.0), (col["ex"], 1.0)], -np.inf, (plant + inp["extra"]) / poi, BLOCKS)
         if inp["solar_only"]:
             hi[col["ex"]] = sgen
         elif any(not pl["green"] for pl in pl_live):
             add_rows([(col["ex"], 1.0)] + green_terms, -np.inf, ren, BLOCKS)
         if inp["sale_cap"] is not None:
-            hi[col["ex"]] = np.minimum(hi[col["ex"]], np.repeat(np.maximum(0.0, inp["sale_cap"]), BLOCKS_PER_HOUR))
+            hi[col["ex"]] = np.minimum(hi[col["ex"]], np.repeat(np.maximum(0.0, inp["sale_cap"]), BLOCKS_PER_HOUR) / poi)
     # state of charge: u_b - u_(b-1) - eta*dt*ch + dt/eta*dis = 0, u_(-1) = (initSoc - minSoc) x E
     u0 = min(max(init_soc - min_soc, 0.0), max_soc - min_soc) * E * bf
     rhs = np.zeros(BLOCKS)
@@ -303,9 +311,9 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
     add_rows([(col["dir"][1:], 1.0), (col["dis"][1:], 1.0), (col["dir"][:-1], -1.0), (col["dis"][:-1], -1.0),
               (up0 + np.arange(k), -1.0), (up0 + k + np.arange(k), 1.0)], 0.0, 0.0, k)
 
-    # objective (minimise, Rs thousand = MWh x Rs/kWh): costs - revenue
-    cost[col["dir"]] -= lam * DT
-    cost[col["dis"]] -= lam * DT
+    # objective (minimise, Rs thousand = MWh x Rs/kWh): costs - revenue, billed at the meter
+    cost[col["dir"]] -= lam * DT * poi
+    cost[col["dis"]] -= lam * DT * poi
     cost[col["ch"]] += THROUGHPUT_COST * DT
     cost[col["dis"]] += THROUGHPUT_COST * DT
     price_b = None
@@ -313,7 +321,7 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
         esc = (1 + float(fin.get("surplusEscalation") or 0)) ** (year - 1)
         price_b = (np.repeat(inp["price"], BLOCKS_PER_HOUR) if inp["price"] is not None else np.full(BLOCKS, inp["flat_price"])) * esc
         worth = np.minimum(price_b, 0.995 * lam) if inp["ppa_first"] else price_b
-        cost[col["ex"]] -= worth * DT
+        cost[col["ex"]] -= worth * DT * poi
 
     A = sp.csc_matrix((np.concatenate(rows_v), (np.concatenate(rows_i), np.concatenate(rows_j))), shape=(n_row, n_col))
     A.sum_duplicates()
@@ -336,6 +344,7 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
     gen = ren + biomass + sum(pgen.values(), np.zeros(BLOCKS))
     curtail = np.maximum(0.0, gen - direct - ch - ex)
     delivered = direct + dis
+    poi = inp["poi"]
     soc = (x[col["u"]] + min_soc * E * bf) / E if E > 1e-9 else np.zeros(BLOCKS)
 
     def share(mask: np.ndarray) -> float:
@@ -346,7 +355,7 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
     for rule in inp["rules"]:
         groups = [(m, mask) for m, mask in _rule_groups(rule, peak_blocks) if mask.any()]
         achieved = min(share(mask) for _, mask in groups) if groups else 1.0
-        short = sum(float(x[short0 + k]) for k, fr in enumerate(floor_rows) if fr["rule"] == rule["id"])
+        short = poi * sum(float(x[short0 + k]) for k, fr in enumerate(floor_rows) if fr["rule"] == rule["id"])
         rules_out.append({"id": rule["id"], "label": rule["label"], "target": rule["target"], "achieved": achieved,
                           "met": achieved >= rule["target"] - 1e-6, "shortfallMu": short / 1000})
 
@@ -368,15 +377,19 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
         "year": year,
         "seconds": round(seconds, 1),
         "status": status,
-        "demandMu": float(dem.sum() * DT / 1000),
-        "deliveredMu": float(delivered.sum() * DT / 1000),
+        # at the meter: the contract, delivery, sales and discharge; generation, charging and
+        # curtailment at the 33 kV bus
+        "demandMu": float(dem.sum() * DT * poi / 1000),
+        "deliveredMu": float(delivered.sum() * DT * poi / 1000),
         "annualShare": float(delivered.sum() / dem.sum()) if dem.sum() > 0 else 1.0,
         "solarMu": float(sgen.sum() * DT / 1000),
         "windMu": float(wgen.sum() * DT / 1000),
-        "soldMu": float(ex.sum() * DT / 1000),
+        "soldMu": float(ex.sum() * DT * poi / 1000),
         "curtailedMu": float(curtail.sum() * DT / 1000),
         "chargedMu": float(ch.sum() * DT / 1000),
-        "dischargedMu": float(dis.sum() * DT / 1000),
+        "dischargedMu": float(dis.sum() * DT * poi / 1000),
+        "evacuationEfficiency": poi,
+        "evacuationLossMu": float((delivered + ex).sum() * DT * (1 - poi) / 1000),
         "greenShare": float(1 - non_re.sum() / delivered.sum()) if delivered.sum() > 0 else 1.0,
         "rules": rules_out,
         "shortfallMu": float(sum(r["shortfallMu"] for r in rules_out)),
@@ -384,8 +397,10 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
         "plants": checks,
         "simultaneousBlocks": int(((ch > 1e-6) & (dis > 1e-6)).sum()),
     }
-    series = {"demand": dem, "solar": sgen, "wind": wgen, "biomass": biomass, **pgen, "charge": ch, "discharge": dis,
-              "soc": soc, "direct": direct, "delivered": delivered, "sold": ex, "curtailed": curtail}
+    series = {"demand": dem * poi, "solar": sgen, "wind": wgen, "biomass": biomass, **pgen, "charge": ch, "discharge": dis * poi,
+              "soc": soc, "direct": direct * poi, "delivered": delivered * poi, "sold": ex * poi, "curtailed": curtail}
+    if poi < 1:
+        series["evacLoss"] = (delivered + ex) * (1 - poi)
     if price_b is not None:
         series["price"] = price_b
     return {"summary": summary, "series": series}
@@ -463,20 +478,24 @@ def year_csv(series: dict, year: int) -> str:
     cols = [("demand", "Contracted supply MW"), ("solar", "Solar output MW"), ("wind", "Wind output MW"),
             ("biomass", "Biomass output MW")]
     cols += [(k, f"{k.capitalize()} output MW") for k in series if k not in
-             ("demand", "solar", "wind", "biomass", "charge", "discharge", "soc", "direct", "delivered", "sold", "curtailed", "price")]
+             ("demand", "solar", "wind", "biomass", "charge", "discharge", "soc", "direct", "delivered", "sold", "curtailed", "price", "evacLoss")]
     cols += [("charge", "Battery charging MW"), ("discharge", "Battery discharging MW"), ("soc", "Battery state of charge %"),
              ("direct", "Direct to PPA MW"), ("delivered", "Delivered to PPA MW"), ("sold", "Sold in market MW"),
              ("curtailed", "Curtailed MW")]
+    if "evacLoss" in series:
+        cols.append(("evacLoss", "Power transformer and line losses MW"))
     if "price" in series:
         cols.append(("price", "Market price Rs/kWh"))
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(["PPA year", "Day", "Month", "Date", "Block", "Time"] + [label for _, label in cols])
-    data = [np.round(series[k] * (100 if k == "soc" else 1), 3 if k == "price" else 2) for k, _ in cols]
+    # three decimals for the price and for the losses: a near-flat loss would round with a bias
+    digits = {k: 3 if k in ("price", "evacLoss") else 2 for k, _ in cols}
+    data = [np.round(series[k] * (100 if k == "soc" else 1), digits[k]) for k, _ in cols]
     month_idx = MONTH_OF_BLOCK
     for i in range(BLOCKS):
         w.writerow([year, int(day[i]), MONTHS[month_idx[i]], f"{int(mday[i]):02d}-{MONTHS[month_idx[i]]}", int(block[i]), times[block[i] - 1]]
-                   + [f"{float(d[i]):.{3 if k == 'price' else 2}f}" for (k, _), d in zip(cols, data)])
+                   + [f"{float(d[i]):.{digits[k]}f}" for (k, _), d in zip(cols, data)])
     return buf.getvalue()
 
 
@@ -521,6 +540,10 @@ How it is computed
   and discharge in the same block.
 * The tender's supply floors are applied as in the sizing (peak hours: every hour of the day, each
   month, when the procurer picks the hours). A floor that cannot be met is reported with its shortfall.
+* Solar, wind and the battery are dispatched at the 33 kV main bus bar, where the profiles are.
+  When the power transformer and line losses are set, what is injected at the bus loses them on the
+  way to the 220 kV billing meter: the contract, delivery, sales and battery discharge are given at
+  the meter; generation, charging and curtailment at the bus.
 * Solar and wind profiles are hourly: each hour is split into four 15-minute values along the hour's
   trend, keeping the hour's energy. Demand and market prices take the hour's value in each block.
 * Days are numbered from 1 January of the profile year; PPA year N uses year N's degradation.

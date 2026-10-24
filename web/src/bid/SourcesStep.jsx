@@ -7,6 +7,8 @@ import { Field, Section, SelectBox, nf } from "../rtc/ui";
 import * as E from "../rtc/engine";
 import { AUTO_MAX, BENCHMARK_NOTE, BIOMASS_COLOR, FINANCE_FIELDS, HYDRO_COLOR, MARKETS, SOURCES, SOURCE_FIELDS, THERMAL_COLOR, capacityLimit, fillBenchmarks, missingInputs, plantMw, solarMinMw, sourceIssues, splitSitesOn } from "./model";
 import { SourceChip } from "./RequirementsStep";
+import BidLosses from "./BidLosses";
+import { POINTS } from "../rtc/LossChain";
 
 export const SOURCE_COLORS = { solar: DATA_COLORS.solar, wind: DATA_COLORS.wind, hydro: HYDRO_COLOR, biomass: BIOMASS_COLOR, thermal: THERMAL_COLOR, bess: DATA_COLORS.bess };
 const ICONS = { solar: Sun, wind: Wind, hydro: Droplets, biomass: Flame, thermal: Factory, bess: BatteryCharging };
@@ -38,8 +40,8 @@ function MarketProfile({ prices, market }) {
   );
 }
 
-function InputField({ f, value, onChange, benchmark }) {
-  const hint = benchmark ? BENCHMARK_NOTE : f.hint;
+function InputField({ f, value, onChange, benchmark, note = null }) {
+  const hint = [benchmark ? BENCHMARK_NOTE : f.hint, note].filter(Boolean).join(" · ");
   const el = f.options
     ? <SelectBox label={f.label} value={value ?? ""} onChange={(v) => onChange(v || null)} options={[["", "Choose…"], ...f.options]} hint={hint} />
     : <Field label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={value} onChange={onChange} step={f.step} min={f.min} max={f.max} hint={hint} />;
@@ -57,6 +59,22 @@ function permittedNote(id, terms) {
   if (allowed) return { text: id === "thermal" ? `Allowed for the balance, with RECs; at least ${Math.round((terms.greenMin || 0) * 100)}% of supply stays green` : "Allowed by the tender", source: id === "thermal" ? prov.nonRe : prov.sources };
   return { text: "The tender does not list sources" };
 }
+
+/** What a solar or wind field means in this bid: capex per MWp, the CUF's measuring point. */
+function fieldNote(state, id, key) {
+  const s = state.src[id];
+  const dcAc = s.dcAc;
+  if (id === "solar" && key === "capex" && isNum(s.capex) && isNum(dcAc) && dcAc > 0) return `= ₹${nf(s.capex / dcAc, 3)} cr/MWp at DC:AC ${nf(dcAc, 2)}`;
+  if (id === "solar" && key === "om" && isNum(s.om) && isNum(dcAc) && dcAc > 0) return `= ₹${nf(s.om / dcAc, 2)} lakh/MWp/yr`;
+  if (id === "solar" && key === "dcAc" && isNum(dcAc) && isNum(s.capacity.mw) && s.capacity.mw > 0) return `${nf(s.capacity.mw, 0)} MWac = ${nf(s.capacity.mw * dcAc, 0)} MWp`;
+  if ((id === "solar" || id === "wind") && key === "cuf" && state.losses) {
+    const at = state.losses[`${id}FileAt`] ?? POINTS[id].length - 1;
+    return `measured at: ${POINTS[id][at]} (Losses to the billing meter)`;
+  }
+  if (id === "bess" && key === "rte" && state.losses) return `quoted at: ${POINTS.bess[state.losses.bessRteAt ?? 3]}`;
+  return null;
+}
+const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
 function SourceCard({ id, state, setState, terms, set, lockProps, isLocked, user }) {
   const meta = SOURCES.find((s) => s.id === id);
@@ -105,7 +123,7 @@ function SourceCard({ id, state, setState, terms, set, lockProps, isLocked, user
               <div className="rtc-grid rtc-grid-2">
                 {SOURCE_FIELDS[id].filter((f) => f.group === g).map((f) => (
                   (f.profileOnly && (id === "solar" ? state.solarUpload : state.windUpload)) ? null
-                    : <InputField key={f.key} f={f} value={s[f.key]} onChange={(v) => setSrc({ [f.key]: v })} benchmark={Boolean(state.filled?.[`${id}.${f.key}`])} />
+                    : <InputField key={f.key} f={f} value={s[f.key]} onChange={(v) => setSrc({ [f.key]: v })} benchmark={Boolean(state.filled?.[`${id}.${f.key}`])} note={fieldNote(state, id, f.key)} />
                 ))}
               </div>
             </div>
@@ -137,7 +155,7 @@ function SourceCard({ id, state, setState, terms, set, lockProps, isLocked, user
 }
 
 /** Step 3: the sources the bidder has, each with its capacity, parameters and costs, and the financing. */
-export default function SourcesStep({ state, setState, terms, set, lockProps, isLocked, user, prices, goto, startSizing }) {
+export default function SourcesStep({ state, setState, terms, set, lockProps, isLocked, user, prices, goto, startSizing, hourly = null }) {
   const missing = missingInputs(state, terms);
   const fill = () => setState((s) => fillBenchmarks(s, terms));
   const fillButton = (
@@ -159,7 +177,9 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
         </div>
       </Section>
 
-      <Section index="3.1" title="Solar and wind sites" note="On one site, or on separate sites with a battery at each">
+      {state.losses && <BidLosses state={state} setState={setState} hourly={hourly} index="3.1" />}
+
+      <Section index={state.losses ? "3.2" : "3.1"} title="Solar and wind sites" note="On one site, or on separate sites with a battery at each">
         <div className="rtc-grid rtc-grid-3">
           <div className="rtc-field" data-testid="bid-sites">
             <div className="rtc-field-top"><span>Where are solar and wind?</span></div>
@@ -176,7 +196,7 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
       </Section>
 
       {saleAllowed && (
-        <Section index="3.2" title="Sale in the market" note={terms.sale === "mandated_solar" ? "The tender lets the mandated solar be scheduled in the market" : "The tender allows sales outside the PPA"}>
+        <Section index={state.losses ? "3.3" : "3.2"} title="Sale in the market" note={terms.sale === "mandated_solar" ? "The tender lets the mandated solar be scheduled in the market" : "The tender allows sales outside the PPA"}>
           <p className="rtc-note">{terms.provenance["market.sale"]?.display} <SourceChip source={terms.provenance["market.sale"]} compact /> The PPA is supplied first in every hour; only what it cannot take is sold.</p>
           <div className="rtc-grid rtc-grid-3">
             <div className="rtc-field" data-testid="bid-sell">
@@ -199,7 +219,7 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
         </Section>
       )}
 
-      <Section index="3.3" title="Financing and project costs" note="Your terms; they set the tariff the optimizer minimises">
+      <Section index={state.losses ? "3.4" : "3.3"} title="Financing and project costs" note="Your terms; they set the tariff the optimizer minimises">
         <div className="rtc-grid rtc-grid-4" data-testid="bid-financing">
           {FINANCE_FIELDS.map((f) => (
             <Field key={`${f.section}.${f.key}`} label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={state[f.section][f.key]}
@@ -212,7 +232,7 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
 
       <section className="optimize-bar">
         <div>
-          <span className="rtc-index">3.3</span>
+          <span className="rtc-index">{state.losses ? "3.5" : "3.4"}</span>
           <h2>{missing.length ? `${missing.length} input${missing.length > 1 ? "s" : ""} still needed` : "Ready to size"}</h2>
           {missing.length
             ? <ul className="bid-warnings" data-testid="bid-missing">{missing.slice(0, 12).map((m) => <li key={m}><TriangleAlert size={12} /> {m}</li>)}{missing.length > 12 && <li>… and {missing.length - 12} more</li>}</ul>

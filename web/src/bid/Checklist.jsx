@@ -83,7 +83,7 @@ export function buildChecklist(state, terms, lp, bidTariff = null) {
   if (terms.solarMultiple) {
     const min = solarMinMw(state, terms);
     add({ id: "solar.min", condition: "Mandatory solar capacity", source: prov["solar.min"], tender: `${terms.solarMultiple} × contracted capacity = ${nf(min, 0)} MW`,
-      result: sized ? `${nf(sizes.solarMw || 0, 0)} MW of solar` : pending, status: !sized ? "info" : (sizes.solarMw || 0) >= min - 0.5 ? "met" : "failed" });
+      result: sized ? `${nf(sizes.solarMw || 0, 0)} MWac of solar${state.src?.solar?.dcAc ? ` (${nf((sizes.solarMw || 0) * state.src.solar.dcAc, 0)} MWp)` : ""}` : pending, status: !sized ? "info" : (sizes.solarMw || 0) >= min - 0.5 ? "met" : "failed" });
   }
   if (terms.mandatory.bess) {
     add({ id: "storage", condition: "Energy storage", source: prov.storage, tender: "Mandatory",

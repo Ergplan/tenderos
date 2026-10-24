@@ -3,7 +3,7 @@
 // and the hourly dispatch survive switching dashboard tabs through the caller's `session` object.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trackEvent } from "../activity";
-import { dispatch15Request, loadMarketPrices, lpPayload, missingInputs, plantMw, resourceProfiles, runSizing } from "./model";
+import { dispatch15Request, hourlyAtMeter, loadMarketPrices, lpPayload, missingInputs, plantMw, resourceProfiles, runSizing } from "./model";
 import { getJson } from "./readTender";
 
 /**
@@ -47,7 +47,7 @@ export default function useSizing({ state, setState, terms, prices, session, mod
         onProgress: (p) => setRun((r) => (r ? { ...r, iteration: p.iteration, tariff: p.tariff ?? r.tariff } : r)),
       });
       const { hourly: h, log, ...summary } = result;
-      setHourly(h || null);
+      setHourly(h ? hourlyAtMeter(h, summary.evacuationEfficiency) : null);
       const used = payload.ctx.surplusPrice ? state.market.source : null;
       const lp = { ...summary, market: used, flatPrice: used ? null : (payload.ctx.sellSurplus ? payload.fin.surplusPrice : null) };
       setState((s) => ({ ...s, lp }));

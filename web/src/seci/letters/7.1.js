@@ -38,7 +38,7 @@ We also confirm that we including our Ultimate Parent Company/ Parent Company/ A
 We are submitting RfS for the development of following Project(s): -
 
 | Project No. | Contracted Capacity offered (MW) | Installed Capacity to be committed under the PPA (Rated capacities of respective components) | Location(s) of Project (Village, Tehsil, Dist., State) | Inter-connection Point(s) Details | Project preference* |
-| 1. | {{contractedMw}} | Solar PV component: {{solarMw}} MW\\nWind power component: {{windMw}} MW\\nOther RE power generating component: {{otherReMw}} MW\\nESS component: {{bessMw}} MW/{{bessMwh}} MWh | {{location}} | {{substation}} | {{preference}} |
+| 1. | {{contractedMw}} | Solar PV component: {{solarMw}}\\nWind power component: {{windMw}} MW\\nOther RE power generating component: {{otherReMw}} MW\\nESS component: {{bessMw}} MW/{{bessMwh}} MWh | {{location}} | {{substation}} | {{preference}} |
 
 > *(The preferences of the Projects shall be considered only for the last successful bidder whose total quoted capacity is more than the balance capacity. In this case, allocation will be done as described in Clause 40.4 of the RfS.)
 

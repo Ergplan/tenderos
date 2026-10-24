@@ -101,6 +101,40 @@ rows as Excel formulas.
 
 Excess power above the contracted capacity may be sold (PSA 2.11.5).
 
+## Losses to the billing meter
+
+The SECI tab sizes against the 220 kV GSS billing meter, where the tender counts the supply. Supply
+sources → *Losses to the billing meter* is the Round the clock tab's loss chain
+(`rtc/LossChain.jsx`, through `bid/BidLosses.jsx`), one technology at a time:
+
+| Technology | Stages to the 33 kV main bus bar | Where the CUF is measured (default) | Applied by default |
+| --- | --- | --- | --- |
+| Solar | DC losses, inverters, inverter-duty transformers (LV/33 kV), 33 kV collection cables | inverter output (LV AC) | IDT 1%, cables 0.5% |
+| Wind | WTG step-up transformers (0.69/33 kV), 33 kV collection cables | WTG terminals | WTG transformer 1%, cables 0.5% |
+| Battery | PCS, MV transformers (LV/33 kV), 33 kV feeders, each way | round trip quoted at the PCS output | MV transformer 0.8%, feeders 0.3%, both ways |
+| All | 33/220 kV power transformer, 220 kV line to the GSS | | 0.4%, 0.5% |
+
+* The stages above the measuring point are already in the CUF; the ones below are applied. Pick
+  another point in the chain to change that.
+* `lpPayload` (`bid/model.js`) sends HiGHS the profiles at the 33 kV bus (the CUF times the
+  stages after its point), the battery's round trip at the bus (`rteAtBus`), and the transformer
+  and line losses. `rtc_lp.py` dispatches at the bus and bills, checks the floors and sells at
+  the meter, as the Round the clock tab does.
+* The 15-minute dispatch (`engine/sizing/dispatch15.py`) does the same. In its files, the contract,
+  delivery, sales and battery discharge are at the meter; generation, charging and curtailment are
+  at the bus; and the transformer and line losses get their own column.
+* The hourly dispatch on the Size step shows delivery at the meter (`hourlyAtMeter`), with the
+  hour's transformer and line losses in its tooltip.
+* Tender to Bid has no losses (`state.losses` is null) until the chain is added there.
+* A bid saved before the losses existed opens with the defaults; size it again.
+
+**Solar in MWac and MWp.** The RfS contracts AC capacity (cl. 42.11) and allows larger DC arrays.
+
+* Solar capex and O&M are entered per MWac. The card shows them per MWp (÷ DC:AC).
+* The DC:AC ratio is always asked, even with an uploaded profile, because it turns MWac into MWp.
+* The sized plant, the checklist, the agent and Format 7.1 give solar as MWac with its MWp, for
+  example "511 MWac (715 MWp DC)".
+
 ## Your quote against the target IRR
 
 `quotedReturns(state, terms, tariff)` (`web/src/bid/quote.js`) runs the financial model of the

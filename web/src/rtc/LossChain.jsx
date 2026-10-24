@@ -26,7 +26,7 @@ const WIRE_AFTER = {
   bess: { pcs: "lv", mvTrafo: "mv", cable: "mv" },
 };
 // the measuring points: before the first stage, then after each stage (the last is the 33 kV bus)
-const POINTS = {
+export const POINTS = {
   solar: ["Module output (DC)", "DC at the inverters", "Inverter output (LV AC)", "Inverter station output (33 kV)", "33 kV main bus bar"],
   wind: ["WTG terminals (0.69 kV)", "WTG transformer output (33 kV)", "33 kV main bus bar"],
   bess: ["Battery DC terminals", "PCS output (LV AC)", "MV transformer output (33 kV)", "33 kV main bus bar"],
@@ -56,14 +56,14 @@ function Row({ icon: Icon, wire, wireIn, title, detail, children, side, dim = fa
   );
 }
 
-function Point({ label, wire, checked, onPick, note, kind }) {
+function Point({ label, wire, checked, onPick, note, kind, measured = "hourly file" }) {
   return (
     <div className={`loss-point ${checked ? "is-on" : ""}`} style={{ "--wire-in": `var(--wire-${wire})`, "--wire-out": `var(--wire-${wire})` }}>
       <div className="loss-point-dot"><i /></div>
       <label className="loss-point-label">
         <input type="radio" checked={checked} onChange={onPick} name={`${kind}-point`} />
         <span>{label}</span>
-        {checked && <b><MapPin size={12} /> {kind === "bess" ? "your round-trip efficiency is quoted here" : "your hourly file is measured here"}</b>}
+        {checked && <b><MapPin size={12} /> {kind === "bess" ? "your round-trip efficiency is quoted here" : `your ${measured} is measured here`}</b>}
       </label>
       <div className="loss-point-note">{note}</div>
     </div>
@@ -73,7 +73,8 @@ function Point({ label, wire, checked, onPick, note, kind }) {
 const MU = (mwh) => `${nf(mwh / 1000, 2)} MU/yr`;
 
 /** The loss chain of one technology, with its sliders, wired to the Round the clock inputs. */
-export default function LossChain({ kind, state, patch, sizes, sim, cf }) {
+/** measured: what the bidder measured (Round the clock: "hourly file"; the bid tabs: "CUF"); foot: the closing note, when not the dispatch's. */
+export default function LossChain({ kind, state, patch, sizes, sim, cf, measured = "hourly file", foot = null }) {
   const inputs = state.inputs;
   const stages = E.LOSS_STAGES[kind];
   const n = stages.length;
@@ -127,15 +128,15 @@ export default function LossChain({ kind, state, patch, sizes, sim, cf }) {
         const lost = !inFile && prev !== null ? (isBess ? null : prev * (losses[st.key] || 0)) : null;
         return (
           <React.Fragment key={st.key}>
-            <Point kind={kind} label={titleOf(i)} wire={i === 0 ? src.wire : WIRE_AFTER[kind][stages[i - 1].key]} checked={at === i} onPick={() => setAt(i)} note={pointNote(i)} />
+            <Point kind={kind} measured={measured} label={titleOf(i)} wire={i === 0 ? src.wire : WIRE_AFTER[kind][stages[i - 1].key]} checked={at === i} onPick={() => setAt(i)} note={pointNote(i)} />
             <Row icon={Icon} wire={WIRE_AFTER[kind][st.key]} wireIn={i === 0 ? src.wire : WIRE_AFTER[kind][stages[i - 1].key]} title={st.label} detail={st.detail} dim={inFile} testid={`loss-${kind}-${st.key}`}
-              side={inFile ? <span className="loss-muted">already in your {isBess ? "round-trip efficiency" : "hourly file"}</span> : lost !== null ? <span className="loss-mu">−{MU(lost)}</span> : <span className="loss-mu">−{pf(1 - (1 - (losses[st.key] || 0)) ** 2, 2)} of the round trip</span>}>
+              side={inFile ? <span className="loss-muted">already in your {isBess ? "round-trip efficiency" : measured}</span> : lost !== null ? <span className="loss-mu">−{MU(lost)}</span> : <span className="loss-mu">−{pf(1 - (1 - (losses[st.key] || 0)) ** 2, 2)} of the round trip</span>}>
               <LossSlider value={losses[st.key] || 0} max={st.max} onChange={(x) => setLoss(st.key, x)} disabled={inFile} testid={`slider-${kind}-${st.key}`} />
             </Row>
           </React.Fragment>
         );
       })}
-      <Point kind={kind} label={POINTS[kind][n]} wire="mv" checked={at === n} onPick={() => setAt(n)} note={pointNote(n)} />
+      <Point kind={kind} measured={measured} label={POINTS[kind][n]} wire="mv" checked={at === n} onPick={() => setAt(n)} note={pointNote(n)} />
       <Row icon={BusIcon} wire="mv" title="33 kV main bus bar" kind="bus"
         detail={isBess
           ? `The battery charges from and discharges to the bus: round trip ${pf(atBus, 2)} seen from here (used in the dispatch)`
@@ -155,8 +156,8 @@ export default function LossChain({ kind, state, patch, sizes, sim, cf }) {
       <p className="rtc-note loss-foot">
         {isBess
           ? "The battery's round trip as seen from the 33 kV bus drives the dispatch; what it discharges then loses the power transformer and line losses on the way to the meter."
-          : `Year-1 ${kind} output at each point, before curtailment and the battery; the dispatch then decides what is sent to the meter (From the plant to the billing meter, below the answer).`}
-        {" "}Pick the point where your {isBess ? "round-trip efficiency is quoted" : "hourly file is measured"}: the stages above it are already in it and are not applied again.
+          : foot || `Year-1 ${kind} output at each point, before curtailment and the battery; the dispatch then decides what is sent to the meter (From the plant to the billing meter, below the answer).`}
+        {" "}Pick the point where your {isBess ? "round-trip efficiency is quoted" : `${measured} is measured`}: the stages above it are already in it and are not applied again.
       </p>
     </div>
   );

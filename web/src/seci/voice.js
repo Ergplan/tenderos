@@ -231,7 +231,7 @@ export function explainResults(state) {
   const money = moneyAtStake(z);
   const hours = (r) => (r ? `${say(r.hoursMet * 100, 1)} percent of the hours` : "every hour");
   const parts = [
-    `For ${say(mw)} megawatts, the least-tariff plant has ${say(z.solarMw)} megawatts of solar, ${say(z.windMw)} megawatts of wind, and a battery of ${say(z.bessMw)} megawatts and ${say(z.bessMwh)} megawatt hours.`,
+    `For ${say(mw)} megawatts, the least-tariff plant has ${say(z.solarMw)} megawatts AC of solar, that is ${say(z.solarMw * (state.src.solar.dcAc || 1))} megawatts peak of panels, ${say(z.windMw)} megawatts of wind, and a battery of ${say(z.bessMw)} megawatts and ${say(z.bessMwh)} megawatt hours.`,
     `That is ${say(z.solarMw / mw, 1)} times the contracted capacity in solar and ${say(z.windMw / mw, 1)} times in wind.`,
     `The sizing tariff is ${say(lp.tariff, 2)} rupees per unit.`,
     `In year 1 the plant meets the peak floor in ${hours(rules.peak)} and the off-peak floor in ${hours(rules.offpeak)}.`,

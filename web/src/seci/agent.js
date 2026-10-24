@@ -205,7 +205,7 @@ export function status(state, terms, run = null) {
     sources: SECI_SOURCES.filter((id) => state.sources[id]).map((id) => NAMES[id]),
     inputsMissing: missing.length ? missing.slice(0, 12) : "none",
     optimizer: run?.active ? "running" : lp ? "sized" : run?.error ? `failed: ${run.error}` : "not run",
-    plant: lp ? { solarMw: r(lp.sizes.solarMw, 0), windMw: r(lp.sizes.windMw, 0), bessMw: r(lp.sizes.bessMw, 0), bessMwh: r(lp.sizes.bessMwh, 0), sizingTariff: r(lp.tariff, 3) } : null,
+    plant: lp ? { solarMw: r(lp.sizes.solarMw, 0), solarMwp: r(lp.sizes.solarMw * (state.src.solar.dcAc || 1), 0), windMw: r(lp.sizes.windMw, 0), bessMw: r(lp.sizes.bessMw, 0), bessMwh: r(lp.sizes.bessMwh, 0), sizingTariff: r(lp.tariff, 3) } : null,
     financials: fin ? { bidTariff: r(fin.tariff, 3), equityIrrPct: r(fin.equityIrr * 100), projectIrrPct: r(fin.projectIrr * 100), minDscr: r(fin.minDscr) } : null,
     quote: quote ? { tariff: quote.tariff, status: quote.status, equityIrrPct: r(quote.equityIrr * 100), projectIrrPct: r(quote.projectIrr * 100), message: quote.message } : state.forms?.tariff ? null : "no tariff quoted yet",
     formsToFill: formIssues(state).length,
@@ -321,7 +321,7 @@ export function createToolRunner(ctx) {
       const y1 = s.lp.perYear?.[0] || {};
       return {
         summary: explainResults(s),
-        plant: { solarMw: r(z.solarMw, 0), windMw: r(z.windMw, 0), bessMw: r(z.bessMw, 0), bessMwh: r(z.bessMwh, 0) },
+        plant: { solarMw: r(z.solarMw, 0), solarMwp: r(z.solarMw * (s.src.solar.dcAc || 1), 0), windMw: r(z.windMw, 0), bessMw: r(z.bessMw, 0), bessMwh: r(z.bessMwh, 0) },
         sizingTariff: r(s.lp.tariff, 3),
         year1Floors: (y1.rules || []).map((x) => ({ floor: x.id, hoursMetPct: r((x.hoursMet ?? 1) * 100, 1), shortfallMu: r(x.shortfallMu ?? 0, 2) })),
         emdCr: r(money.emdRs / 1e7), pbgCr: r(money.pbgRs / 1e7), netWorthNeededCr: r(money.netWorthRs / 1e7),

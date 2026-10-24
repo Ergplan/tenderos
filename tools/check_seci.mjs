@@ -4,7 +4,8 @@
 //   node tools/check_seci.mjs
 import assert from "node:assert/strict";
 import * as E from "../web/src/rtc/engine.js";
-import { BENCHMARKS, SOURCE_FIELDS, fillBenchmarks, lpPayload, missingInputs, modelInputs, resourceProfiles } from "../web/src/bid/model.js";
+import { BENCHMARKS, SOURCE_FIELDS, defaultLosses, fillBenchmarks, hourlyAtMeter, lossFactorsOf, lpPayload, missingInputs, modelInputs, resourceProfiles } from "../web/src/bid/model.js";
+import { defaultSeciState } from "../web/src/seci/state.js";
 import { DEFAULT_SETTINGS, PACK, keyDates, moneyAtStake, prov, seciTerms } from "../web/src/seci/terms.js";
 import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience } from "../web/src/seci/forms.js";
 import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "../web/src/seci/voice.js";
@@ -35,6 +36,32 @@ assert.deepEqual(peakHoursOf(evening.peakMask), [18, 19, 20, 21, 22, 23], "eveni
 assert.equal(payload.ctx.demand[0], 300, "round the clock at the contracted capacity");
 assert.equal(modelInputs(filled, terms).fin.blockPenaltyMultiple, 1.5, "the financial model charges 1.5x tariff on the shortfall");
 assert.equal(modelInputs(filled, seciTerms({ ...DEFAULT_SETTINGS, shortfall: "hard" })).fin.blockPenaltyMultiple, 0);
+
+// ---- losses to the billing meter: each technology's own transformer and cables after where its CUF is
+// measured, the 33/220 kV transformer and the 220 kV line; none in Tender to Bid
+assert.equal(payload.ctx.trafoLossPct, 0, "no losses without state.losses (Tender to Bid)");
+assert.ok(defaultSeciState().losses, "the SECI tab starts with the losses");
+const lossy = { ...filled, losses: defaultLosses() };
+const lp0 = lpPayload(lossy, terms, resourceProfiles(lossy));
+assert.equal(lp0.ctx.trafoLossPct, 0.004);
+assert.equal(lp0.ctx.lineLossPct, 0.005);
+const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+const solarBus = (1 - 0.01) * (1 - 0.005); // inverter-duty transformer and 33 kV cables, after the inverter output
+const windBus = (1 - 0.01) * (1 - 0.005); // WTG step-up transformer and 33 kV cables, after the turbine terminals
+assert.ok(Math.abs(mean(lp0.ctx.solarCf) / mean(payload.ctx.solarCf) - solarBus) < 1e-4, "solar: the IDT and cable losses applied");
+assert.ok(Math.abs(mean(lp0.ctx.windCf) / mean(payload.ctx.windCf) - windBus) < 1e-4, "wind: the WTG transformer and cable losses applied");
+const rteBus = filled.src.bess.rte * ((1 - 0.008) * (1 - 0.003)) ** 2; // MV transformer and cables, both ways, after the PCS
+assert.ok(Math.abs(lp0.bess.rte - rteBus) < 1e-9, "battery: the MV transformer and cables applied both ways");
+assert.ok(Math.abs(lossFactorsOf(lossy).meter - 0.996 * 0.995) < 1e-12);
+const atBus = lpPayload({ ...lossy, losses: { ...lossy.losses, solarFileAt: 4, windFileAt: 2, bessRteAt: 3 } }, terms, resourceProfiles(lossy));
+assert.ok(Math.abs(mean(atBus.ctx.solarCf) - mean(payload.ctx.solarCf)) < 1e-6, "a CUF measured at the 33 kV bus loses nothing more before it");
+// the sizing's hourly year 1: what reaches the meter at the meter, the losses between
+const h = hourlyAtMeter({ demand: [302], direct: [200], discharge: [100], export: [10], charge: [5], solar: [400], curtail: [0] }, 0.99);
+assert.deepEqual([h.demand[0], h.direct[0], h.discharge[0], h.export[0], h.charge[0], h.solar[0]].map((v) => Math.round(v * 100) / 100), [298.98, 198, 99, 9.9, 5, 400]);
+assert.ok(Math.abs(h.evacLoss[0] - 3.1) < 1e-9 && hourlyAtMeter(h, 0.99) === h, "converted once");
+// solar capex per MWac; per MWp follows from the DC:AC
+assert.equal(SOURCE_FIELDS.solar.find((f) => f.key === "capex").unit, "₹ cr/MWac");
+assert.ok(!SOURCE_FIELDS.solar.find((f) => f.key === "dcAc").profileOnly, "the DC:AC is asked even with an uploaded profile (MWp)");
 
 // ---- dates and money at stake (Amendment-02's own example: PPA 07.06.2026 -> SCSD 07.06.2028)
 assert.deepEqual(keyDates("2026-06-07"), { ppa: "2026-06-07", financialClosure: "2027-12-07", scsd: "2028-06-07", latestStart: "2028-12-07" });
@@ -120,7 +147,7 @@ assert.ok(SOURCE_FIELDS.bess.some((f) => f.key === "duration"));
 
 // results and finance, in words
 const res = explainResults({ ...sized, bid: { baseMw: 300 } });
-assert.ok(/600 megawatts of solar/.test(res) && /400 megawatts of wind/.test(res) && /97 percent of the hours/.test(res) && /3 million units short/.test(res) && /EMD is 151 crore/.test(res) && /7 June 2028/.test(res), res);
+assert.ok(/600 megawatts AC of solar, that is 840 megawatts peak/.test(res) && /400 megawatts of wind/.test(res) && /97 percent of the hours/.test(res) && /3 million units short/.test(res) && /EMD is 151 crore/.test(res) && /7 June 2028/.test(res), res);
 const fin = financeOf(sized, terms);
 assert.ok(fin && fin.rows[0].blockPenalty > 0, "the financial model charges the block shortfall");
 assert.ok(Math.abs(fin.equityIrr - filled.fin.targetEquityIrr) < 1e-6);

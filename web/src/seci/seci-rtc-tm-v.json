@@ -2431,7 +2431,7 @@
     },
     {
      "key": "solarMw",
-     "label": "Solar PV component (MW)",
+     "label": "Solar PV component (MWac, with its MWp)",
      "kind": "number",
      "maps": "solarMw",
      "context": {

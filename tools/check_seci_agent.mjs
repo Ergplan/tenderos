@@ -146,7 +146,7 @@ const blank = (label) => f71.blanks.find((b) => b.label === label);
 assert.equal(blank("Bidding Company / Lead Member name").value, "Acme Renewables Ltd", "the particulars fill every format");
 assert.equal(blank("Contracted capacity offered (MW, per project)").from, "the bid (not editable)");
 assert.equal(blank("Contracted capacity offered (MW, per project)").value, "200");
-assert.ok(blank("Solar PV component (MW)").value === "610" && blank("RfS number").value === "SECI/C&P/IPP/13/0020/25-26");
+assert.ok(/^610 MWac( \(\d+ MWp DC\))?$/.test(blank("Solar PV component (MWac, with its MWp)").value) && blank("RfS number").value === "SECI/C&P/IPP/13/0020/25-26");
 assert.ok(/^INR /.test(blank("EMD amount (INR)").value), blank("EMD amount (INR)").value);
 const ref = blank("Reference number");
 assert.equal(ref.key, "forms.7.1.refNo");

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, FolderOpen, Gavel, Layers, ListChecks, RotateCcw, Save, Scale, Zap } from "lucide-react";
 import SaveDialog from "../scenarios/SaveDialog";
 import { nf } from "../rtc/ui";
-import { loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
+import { defaultLosses, loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
 import useSizing from "../bid/useSizing";
 import SourcesStep from "../bid/SourcesStep";
 import SizeStep from "../bid/SizeStep";
@@ -38,6 +38,8 @@ function fromSaved(saved) {
     tender: TENDER,
     step: SECI_STEPS.some((s) => s.id === saved.step) ? saved.step : "documents",
     seci: { ...DEFAULT_SETTINGS, ...(saved.seci || {}) },
+    // a bid saved before the losses were asked starts with the defaults
+    losses: saved.losses ? { ...defaultLosses(), ...saved.losses } : defaultLosses(),
     forms: saved.forms || {},
     formsReview: saved.formsReview || {},
     letters: saved.letters || {},
@@ -186,7 +188,7 @@ export default function SeciTab({ initialScenario = null }) {
         {step.id === "documents" && <DocumentsStep />}
         {step.id === "conditions" && <ConditionsStep />}
         {step.id === "bid" && <BidStep {...props} />}
-        {step.id === "sources" && <SourcesStep {...props} startSizing={sizing.startSizing} />}
+        {step.id === "sources" && <SourcesStep {...props} startSizing={sizing.startSizing} hourly={sizing.hourly} />}
         {step.id === "size" && <SizeStep {...props} run={sizing.run} startSizing={sizing.startSizing} stopSizing={sizing.stopSizing} hourly={sizing.hourly} startDispatch15={sizing.startDispatch15} />}
         {step.id === "finance" && <FinanceStep {...props} quoteTariff={state.forms?.tariff ?? null} onQuoteTariff={(v) => setState((s) => ({ ...s, forms: { ...s.forms, tariff: v } }))} />}
         {step.id === "forms" && <BidForms {...props} />}

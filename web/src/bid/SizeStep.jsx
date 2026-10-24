@@ -86,6 +86,7 @@ function DispatchWeek({ hourly, peak, market, peakAny, sizes }) {
       parts.push(head("Supply to the PPA"));
       parts.push(row("Battery discharging", hourly.discharge[t], hourly.soc ? `state of charge ${pf(hourly.soc[t], 0)}` : ""));
       parts.push(row("Delivered", hourly.direct[t] + hourly.discharge[t], `contracted ${nf(hourly.demand[t], 0)} MW`));
+      if (hourly.evacLoss) parts.push(row("Transformer and line losses", hourly.evacLoss[t], "33 kV bus to the meter"));
       return parts.join("");
     };
     return {
@@ -202,7 +203,8 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
                 const mw = Math.max(0, lp.sizes[SIZE_KEY[s.id]] || 0);
                 const mu = lp.perYear?.[0]?.[`${s.id}Mu`];
                 const ramp = hourly?.[s.id] && mw > 0.5 && ["biomass", "thermal"].includes(s.id) ? rampStats(hourly[s.id], mw) : null;
-                return <Stat key={s.id} label={s.title} value={`${nf(mw, 0)} MW`} detail={[`${nf(mw / (total || 1), 2)} × contracted`, mu !== undefined ? `${nf(mu, 0)} MU in year 1` : null,
+                const dcAc = s.id === "solar" ? state.src.solar.dcAc : null;
+                return <Stat key={s.id} label={s.title} value={`${nf(mw, 0)} ${s.id === "solar" ? "MWac" : "MW"}`} detail={[dcAc ? `${nf(mw * dcAc, 0)} MWp (DC:AC ${nf(dcAc, 2)})` : null, `${nf(mw / (total || 1), 2)} × contracted`, mu !== undefined ? `${nf(mu, 0)} MU in year 1` : null,
                   ramp ? `largest hourly change ${nf(ramp.maxStep * 100, 0)}% · daily swing ${nf(ramp.swing * 100, 0)}%` : null].filter(Boolean).join(" · ")} />;
               })}
               {state.sources.bess && <Stat label="Battery" value={`${nf(lp.sizes.bessMw, 0)} MW / ${nf(lp.sizes.bessMwh, 0)} MWh`} detail={lp.sizes.bessMw > 0 ? `${nf(lp.sizes.bessMwh / lp.sizes.bessMw, 1)} h` : "none"} />}

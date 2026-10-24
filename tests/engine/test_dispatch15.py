@@ -136,3 +136,29 @@ def test_battery_charges_from_renewables_only_when_thermal_supplies():
     h = res["hourly"]
     renewable = np.array(h["solar"]) + np.array(h["wind"]) + np.array(h["biomass"])
     assert np.all(np.array(h["charge"]) <= renewable + 0.02)
+
+
+def test_transformer_and_line_losses_are_reported_at_the_meter(tmp_path):
+    """With the 33/220 kV transformer and line losses set, sizing and the 15-minute dispatch both
+    bill at the meter: the contract stays the contract, and what is injected at the bus loses them."""
+    payload = _sized_payload()
+    payload["ctx"] = {**payload["ctx"], "trafoLossPct": 0.004, "lineLossPct": 0.005}
+    res = M.solve(payload)
+    assert res["ok"] and res["evacuationEfficiency"] == pytest.approx(0.996 * 0.995)
+    out = D.run(payload, res["sizes"], res["tariff"], years=[1], zip_path=tmp_path / "d15.zip")
+    y = out["years"][0]
+    poi = 0.996 * 0.995
+    assert y["evacuationEfficiency"] == pytest.approx(poi)
+    assert y["demandMu"] == pytest.approx(float(np.sum(payload["ctx"]["demand"])) / 1000, rel=1e-6), "the contract at the meter"
+    assert y["deliveredMu"] == pytest.approx(res["perYear"][0]["deliveredMu"], rel=0.02)
+    assert y["evacuationLossMu"] == pytest.approx((y["deliveredMu"] + y["soldMu"]) * (1 - poi) / poi, rel=1e-6)
+    for rule in y["rules"]:
+        assert rule["achieved"] >= rule["target"] - 0.005, rule
+    zf = zipfile.ZipFile(tmp_path / "d15.zip")
+    rows = list(csv.reader(io.StringIO(zf.read("dispatch_15min_year_01.csv").decode())))
+    head, body = rows[0], rows[1:]
+    col = {name: head.index(name) for name in head}
+    loss = np.array([float(r[col["Power transformer and line losses MW"]]) for r in body])
+    delivered = np.array([float(r[col["Delivered to PPA MW"]]) for r in body])
+    assert loss.mean() * M.HOURS / 1000 == pytest.approx(y["evacuationLossMu"], rel=1e-3)
+    assert delivered.mean() * M.HOURS / 1000 == pytest.approx(y["deliveredMu"], rel=1e-4)

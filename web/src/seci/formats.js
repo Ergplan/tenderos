@@ -15,13 +15,16 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const rs = (v) => (isNum(v) ? `INR ${Math.round(v).toLocaleString("en-IN")}` : "");
 const mw = (v) => (isNum(v) ? String(Math.round(v)) : "");
 
+// the RfS contracts AC capacity (cl. 42.11) and allows higher DC arrays: MWac, with the MWp beside it
+const solarText = (mwac, dcAc) => (isNum(mwac) ? `${mw(mwac)} MWac${isNum(dcAc) && dcAc > 0 ? ` (${mw(mwac * dcAc)} MWp DC)` : ""}` : "");
+
 /** Values the bid already holds, by the `maps` names the formats use. */
 export function modelValues(state) {
   const z = state.lp?.sizes || null;
   const money = z ? moneyAtStake(z) : null;
   return {
     contractedMw: mw(state.bid?.baseMw),
-    solarMw: z ? mw(z.solarMw) : "",
+    solarMw: z ? solarText(z.solarMw, state.src?.solar?.dcAc) : "",
     windMw: z ? mw(z.windMw) : "",
     bessMw: z ? mw(z.bessMw) : "",
     bessMwh: z ? mw(z.bessMwh) : "",

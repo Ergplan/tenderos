@@ -110,6 +110,15 @@ def test_bid_on_screen(tmp_path):
         page.click("[data-testid=seci-step-sources]")
         page.click("[data-testid=bid-fill]")
         assert page.locator("[data-testid=bid-missing]").count() == 0
+        # the losses to the billing meter: each technology's transformer applied after where its CUF is measured
+        losses = page.locator("[data-testid=bid-losses]")
+        assert "Inverter-duty transformers" in losses.inner_text() and "Power transformer 33/220 kV" in losses.inner_text()
+        assert "measured at: Inverter output (LV AC)" in page.locator("[data-testid=source-solar]").inner_text()
+        assert "cr/MWp" in page.locator("[data-testid=source-solar]").inner_text(), "capex per MWac, and per MWp from the DC:AC"
+        page.click("[data-testid=bid-loss-kind-wind]")
+        assert "WTG step-up transformers" in losses.inner_text()
+        page.click("[data-testid=bid-loss-kind-bess]")
+        assert "MV transformers" in losses.inner_text()
         page.click("[data-testid=bid-size]")
         sizes = page.wait_for_selector("[data-testid=bid-sizes]", timeout=1_800_000)
         page.wait_for_timeout(1500)
@@ -179,7 +188,8 @@ def test_bid_on_screen(tmp_path):
         assert "needed for this bid" in f71.locator("[data-testid=seci-format-applies]").inner_text().lower()
         assert page.locator("[data-testid=seci-rfs-frame]").get_attribute("src").endswith("RfS.pdf#page=68&view=FitH")
         assert page.locator("[data-testid=seci-blank-7\\.1-contractedMw]").inner_text() == "200"
-        assert page.locator("[data-testid=seci-blank-7\\.1-solarMw]").inner_text() in size_text.replace(",", ""), "the installed solar from the sizing"
+        solar = re.match(r"(\d+) MWac \((\d+) MWp DC\)", page.locator("[data-testid=seci-blank-7\\.1-solarMw]").inner_text())
+        assert solar and f"{solar.group(1)} MWAC" in size_text.replace(",", "") and f"{solar.group(2)} MWP" in size_text.replace(",", ""), "the installed solar from the sizing, in MWac and MWp"
         assert page.locator("[data-testid=seci-blank-7\\.1-emdAmount]").inner_text().startswith("INR ")
         page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/01")
         page.locator("[data-testid=seci-format-7\\.1] .seci-blank-ctx").nth(5).click()
