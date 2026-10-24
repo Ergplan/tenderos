@@ -83,8 +83,8 @@
   }
  },
  "url": "http://127.0.0.1:3000",
- "started": "2026-10-24T19:10:29+00:00",
- "commit": "20e2b1d",
+ "started": "2026-10-24T19:53:47+00:00",
+ "commit": "eea87a4",
  "tender": "Supply of 1000 MW Round-the-Clock Thermal Mimic (RTC-TM) power from ISTS-connected RE projects",
  "rfs_no": "SECI/C&P/IPP/13/0020/25-26",
  "engine": {
@@ -176,7 +176,7 @@
    }
   },
   "sizing": {
-   "seconds": 149.6,
+   "seconds": 150.7,
    "sizes_text": "SOLAR 1,484 MWac 2,078 MWp (DC:AC 1.40) · 2.97 × contracted BIOMASS 170 MW 0.34 × contracted · 1,192 MU in year 1 · largest hourly change 35% · daily swing 27% BATTERY 1,206 MW / 4,823 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.523/kWh no design below ₹7.523",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak-hour supply floor 90.0% 90.0% 90.0%",
    "finance": {
@@ -223,7 +223,7 @@
       "lowerBound": 7.409126644043465,
       "simplexIterations": 0,
       "ipmIterations": 32,
-      "seconds": 34.53,
+      "seconds": 34.37,
       "sizes": {
        "solarMw": 762.0884333237328,
        "windMw": 301.6364624688006,
@@ -238,7 +238,7 @@
       "lowerBound": 8.087254565067086,
       "simplexIterations": 0,
       "ipmIterations": 0,
-      "seconds": 0.03,
+      "seconds": 0.04,
       "sizes": {
        "solarMw": 762.0884333237328,
        "windMw": 301.6364624688006,
@@ -253,7 +253,7 @@
       "lowerBound": 8.101071859399024,
       "simplexIterations": 0,
       "ipmIterations": 0,
-      "seconds": 0.05,
+      "seconds": 0.03,
       "sizes": {
        "solarMw": 762.0884333237328,
        "windMw": 301.6364624688006,
@@ -347,7 +347,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 34.7,
+    "seconds": 34.51,
     "lifetime": [
      {
       "year": 1,
@@ -620,7 +620,7 @@
       "lowerBound": 5.828366390246602,
       "simplexIterations": 0,
       "ipmIterations": 48,
-      "seconds": 36.87,
+      "seconds": 36.42,
       "sizes": {
        "solarMw": 354.1547290179143,
        "windMw": 336.28934219498956,
@@ -635,7 +635,7 @@
       "lowerBound": 6.367480830199722,
       "simplexIterations": 1542,
       "ipmIterations": 0,
-      "seconds": 3.31,
+      "seconds": 3.23,
       "sizes": {
        "solarMw": 360.64457153049295,
        "windMw": 333.01357814548766,
@@ -650,7 +650,7 @@
       "lowerBound": 6.492332761856768,
       "simplexIterations": 5300,
       "ipmIterations": 0,
-      "seconds": 10.94,
+      "seconds": 11.37,
       "sizes": {
        "solarMw": 427.0863113598393,
        "windMw": 314.8435183749991,
@@ -665,7 +665,7 @@
       "lowerBound": 6.521231584598055,
       "simplexIterations": 576,
       "ipmIterations": 0,
-      "seconds": 1.25,
+      "seconds": 1.27,
       "sizes": {
        "solarMw": 421.3500236414232,
        "windMw": 316.3644764271128,
@@ -680,7 +680,7 @@
       "lowerBound": 6.524876863097482,
       "simplexIterations": 157,
       "ipmIterations": 0,
-      "seconds": 0.36,
+      "seconds": 0.39,
       "sizes": {
        "solarMw": 424.2244085840473,
        "windMw": 315.69620893894404,
@@ -774,7 +774,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 52.82,
+    "seconds": 52.78,
     "lifetime": [
      {
       "year": 1,
@@ -1024,7 +1024,7 @@
    "wind": false,
    "why": "The same bid without wind: how much more solar and storage the floors need.",
    "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
-   "seconds": 21.0,
+   "seconds": 21.5,
    "sizes_text": "SOLAR 940 MWac 1,316 MWp (DC:AC 1.40) · 4.70 × contracted BATTERY 759 MW / 3,034 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹8.216/kWh no design below ₹8.216",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 94.1% of hours 91.3% of hours Off-peak floor (every block) 70.0% 98.7% of hours 98.0% of hours",
    "lp": {
@@ -1047,7 +1047,7 @@
       "lowerBound": 7.186571645365642,
       "simplexIterations": 0,
       "ipmIterations": 25,
-      "seconds": 12.59,
+      "seconds": 12.74,
       "sizes": {
        "solarMw": 879.4044027944865,
        "windMw": 0,
@@ -1062,7 +1062,7 @@
       "lowerBound": 8.122942162467822,
       "simplexIterations": 2516,
       "ipmIterations": 0,
-      "seconds": 4.33,
+      "seconds": 4.63,
       "sizes": {
        "solarMw": 921.3025184407203,
        "windMw": 0,
@@ -1077,7 +1077,7 @@
       "lowerBound": 8.21166893188965,
       "simplexIterations": 1090,
       "ipmIterations": 0,
-      "seconds": 1.99,
+      "seconds": 2.14,
       "sizes": {
        "solarMw": 940.2672447538904,
        "windMw": 0,
@@ -1186,7 +1186,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 19.17,
+    "seconds": 19.78,
     "lifetime": [
      {
       "year": 1,
@@ -1436,7 +1436,7 @@
    "wind": true,
    "why": "The most one bidder may offer (RfS 5.1).",
    "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 6,000 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
-   "seconds": 49.6,
+   "seconds": 50.7,
    "sizes_text": "SOLAR 1,308 MWac 1,831 MWp (DC:AC 1.40) · 2.62 × contracted WIND 732 MW 1.46 × contracted BATTERY 1,057 MW / 4,229 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.9% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 98.9% of hours",
    "lp": {
@@ -1459,7 +1459,7 @@
       "lowerBound": 6.192847202278705,
       "simplexIterations": 0,
       "ipmIterations": 36,
-      "seconds": 28.31,
+      "seconds": 29.26,
       "sizes": {
        "solarMw": 991.903633315382,
        "windMw": 857.7520472206888,
@@ -1489,7 +1489,7 @@
       "lowerBound": 7.0169158933900615,
       "simplexIterations": 2665,
       "ipmIterations": 0,
-      "seconds": 5.41,
+      "seconds": 5.21,
       "sizes": {
        "solarMw": 1313.6878139396817,
        "windMw": 728.9191068096674,
@@ -1519,7 +1519,7 @@
       "lowerBound": 7.037574020905165,
       "simplexIterations": 149,
       "ipmIterations": 0,
-      "seconds": 0.36,
+      "seconds": 0.37,
       "sizes": {
        "solarMw": 1307.7878579954233,
        "windMw": 732.3155483158617,
@@ -1613,7 +1613,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 47.8,
+    "seconds": 48.56,
     "lifetime": [
      {
       "year": 1,
@@ -1863,7 +1863,7 @@
    "wind": true,
    "why": "The least one bidder may offer after Amendment-01 (was 100 MW).",
    "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 600 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX P",
-   "seconds": 50.1,
+   "seconds": 50.7,
    "sizes_text": "SOLAR 131 MWac 183 MWp (DC:AC 1.40) · 2.62 × contracted WIND 73 MW 1.46 × contracted BATTERY 106 MW / 423 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.8% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 99.1% of hours",
    "lp": {
@@ -1886,7 +1886,7 @@
       "lowerBound": 6.192847202278708,
       "simplexIterations": 0,
       "ipmIterations": 36,
-      "seconds": 28.55,
+      "seconds": 29.36,
       "sizes": {
        "solarMw": 99.1903633315382,
        "windMw": 85.77520472206889,
@@ -1901,7 +1901,7 @@
       "lowerBound": 6.920674223524661,
       "simplexIterations": 6124,
       "ipmIterations": 0,
-      "seconds": 13.06,
+      "seconds": 12.8,
       "sizes": {
        "solarMw": 117.7994766845371,
        "windMw": 78.85330136700873,
@@ -1916,7 +1916,7 @@
       "lowerBound": 7.016915893390046,
       "simplexIterations": 2750,
       "ipmIterations": 0,
-      "seconds": 5.67,
+      "seconds": 5.73,
       "sizes": {
        "solarMw": 131.36878139396782,
        "windMw": 72.89191068096709,
@@ -1931,7 +1931,7 @@
       "lowerBound": 7.034653652450673,
       "simplexIterations": 199,
       "ipmIterations": 0,
-      "seconds": 0.52,
+      "seconds": 0.53,
       "sizes": {
        "solarMw": 130.16052299531938,
        "windMw": 73.68117784752668,
@@ -1946,7 +1946,7 @@
       "lowerBound": 7.037574020905167,
       "simplexIterations": 105,
       "ipmIterations": 0,
-      "seconds": 0.31,
+      "seconds": 0.32,
       "sizes": {
        "solarMw": 130.77878579954532,
        "windMw": 73.23155483158249,
@@ -2040,7 +2040,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 48.19,
+    "seconds": 48.83,
     "lifetime": [
      {
       "year": 1,
@@ -2291,7 +2291,7 @@
    "why": "The bid filed in the forms: solar, wind and battery sized for whichever 6 Peak Hours are picked, a shortfall priced at 1.5 x tariff.",
    "bid": true,
    "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
-   "seconds": 50.7,
+   "seconds": 52.2,
    "sizes_text": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.8% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 99.1% of hours",
    "lp": {
@@ -2314,7 +2314,7 @@
       "lowerBound": 6.192847202278708,
       "simplexIterations": 0,
       "ipmIterations": 35,
-      "seconds": 29.79,
+      "seconds": 30.63,
       "sizes": {
        "solarMw": 396.7614533261528,
        "windMw": 343.1008188882755,
@@ -2329,7 +2329,7 @@
       "lowerBound": 6.92067422352466,
       "simplexIterations": 5916,
       "ipmIterations": 0,
-      "seconds": 12.3,
+      "seconds": 13.05,
       "sizes": {
        "solarMw": 471.1979067381497,
        "windMw": 315.4132054680343,
@@ -2344,7 +2344,7 @@
       "lowerBound": 7.016915893390046,
       "simplexIterations": 2749,
       "ipmIterations": 0,
-      "seconds": 5.88,
+      "seconds": 5.66,
       "sizes": {
        "solarMw": 525.4751255758711,
        "windMw": 291.5676427238681,
@@ -2359,7 +2359,7 @@
       "lowerBound": 7.034653652450676,
       "simplexIterations": 246,
       "ipmIterations": 0,
-      "seconds": 0.56,
+      "seconds": 0.62,
       "sizes": {
        "solarMw": 520.6420919812734,
        "windMw": 294.72471139010844,
@@ -2374,7 +2374,7 @@
       "lowerBound": 7.037574020905137,
       "simplexIterations": 120,
       "ipmIterations": 0,
-      "seconds": 0.32,
+      "seconds": 0.37,
       "sizes": {
        "solarMw": 523.1151431981444,
        "windMw": 292.92621932636683,
@@ -2468,7 +2468,7 @@
     "sites": {
      "split": false
     },
-    "seconds": 48.94,
+    "seconds": 50.44,
     "lifetime": [
      {
       "year": 1,
@@ -3814,15 +3814,15 @@
  "extras": {
   "meter_cuf": "Billed here: CUF 24.41%",
   "sizes": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
-  "sankey": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Transformer & line losses · 2 MW Peak floor 90%: met · 180 MW Above the floor · 0 MW",
-  "d15_verdict": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose.",
+  "sankey": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Losses to the meter · 2 MW Peak floor 90%: met · 180 MW",
+  "d15_verdict": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose. Year 1: 97.3 MU short here, 96.3 MU in the hourly sizing. The penalty is on the energy short, so it is the same whether that energy falls in a few blocks or is spread over many; the 15-minute dispatch spreads it (the sizing had 86% of peak hours at the floor), which is why fewer blocks are at the floor here.",
   "d15_xlsx": "models/SECI_bid_dispatch_25_years.xlsx"
  },
  "team": {
   "steps": [],
   "condition": "condition.dfrPeak",
   "accepted_cost": "Accepted “Solar: Capex per MWac” from Procurement desk: saved as version 2.",
-  "history": "History (5)24 Oct 2026, 7:25 pm Tender manager created: Who chooses the Peak Hours and when? Does the 90% floor apply to all 16 candidate hours?24 Oct 2026, 7:25 pm Legal desk submitted: SECI declares the Peak Hours; we must be able to supply 90% in any of them.24 Oct 2026, 7:25 pm Tender manager returned: Please cite the amendment clause that says so24 Oct 2026, 7:25 pm Legal desk submitted: Amen",
+  "history": "History (5)24 Oct 2026, 8:08 pm Tender manager created: Who chooses the Peak Hours and when? Does the 90% floor apply to all 16 candidate hours?24 Oct 2026, 8:08 pm Legal desk submitted: SECI declares the Peak Hours; we must be able to supply 90% in any of them.24 Oct 2026, 8:08 pm Tender manager returned: Please cite the amendment clause that says so24 Oct 2026, 8:08 pm Legal desk submitted: Amen",
   "signed": "Signed copy: SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf · Finance desk",
   "reading": "Our reading (Legal desk): Amendment-01 cl. 8.1 as amended by Amendment-02: SECI declares the Peak Hours a day ahead within 18:00-10:00; the 90% floor applies to each declared hour.",
   "resized": "SOLAR 534 MWac 748 MWp (DC:AC 1.40) · 2.67 × contracted WIND 281 MW 1.41 × contracted BATTERY 433 MW / 1,733 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.957/kWh no design below ₹6.957"
@@ -3832,7 +3832,7 @@
   "workbook": "models/Round_the_clock_285MW_financial_model.xlsx"
  },
  "page_errors": [],
- "finished": "2026-10-24T19:26:35+00:00",
+ "finished": "2026-10-24T20:09:58+00:00",
  "steps": [
   {
    "section": "Start",
@@ -3846,7 +3846,7 @@
    "section": "Tender to Bid",
    "name": "Open the tab: the start screen",
    "status": "pass",
-   "seconds": 0.08,
+   "seconds": 0.11,
    "screenshot": "screens/t2b-00-start.jpg",
    "note": ""
   },
@@ -3862,15 +3862,15 @@
    "section": "Tender to Bid",
    "name": "Read the tender set (scan screen, Docling tables, amendments applied)",
    "status": "pass",
-   "seconds": 105.1,
+   "seconds": 103.75,
    "screenshot": "screens/t2b-02-read.jpg",
-   "note": "read in 105 s"
+   "note": "read in 104 s"
   },
   {
    "section": "Tender to Bid",
    "name": "Tender set panel: Amended terms",
    "status": "pass",
-   "seconds": 0.7,
+   "seconds": 0.6,
    "screenshot": "screens/t2b-set-amended.jpg",
    "note": "11 rows"
   },
@@ -3894,7 +3894,7 @@
    "section": "Tender to Bid",
    "name": "Tender set panel: Clarifications",
    "status": "pass",
-   "seconds": 0.64,
+   "seconds": 0.62,
    "screenshot": "screens/t2b-set-clarifications.jpg",
    "note": "19 rows"
   },
@@ -3910,7 +3910,7 @@
    "section": "Tender to Bid",
    "name": "Tender set panel: Bid process",
    "status": "pass",
-   "seconds": 0.6,
+   "seconds": 0.61,
    "screenshot": "screens/t2b-set-process.jpg",
    "note": "11 rows"
   },
@@ -3918,7 +3918,7 @@
    "section": "Tender to Bid",
    "name": "Search every page: 'e-reverse auction'",
    "status": "pass",
-   "seconds": 0.38,
+   "seconds": 1.02,
    "screenshot": "screens/t2b-set-search.jpg",
    "note": "12 passages"
   },
@@ -3934,7 +3934,7 @@
    "section": "Tender to Bid",
    "name": "Key dates",
    "status": "pass",
-   "seconds": 0.1,
+   "seconds": 0.11,
    "screenshot": "screens/t2b-dates.jpg",
    "note": ""
   },
@@ -3942,7 +3942,7 @@
    "section": "Tender to Bid",
    "name": "Capacity",
    "status": "pass",
-   "seconds": 0.1,
+   "seconds": 0.09,
    "screenshot": "screens/t2b-capacity.jpg",
    "note": "500 MW; CAPACITY YOU BID MW Between 50 and 500 MW for one bidder"
   },
@@ -3950,7 +3950,7 @@
    "section": "Tender to Bid",
    "name": "Supply sources: fill the benchmarks",
    "status": "pass",
-   "seconds": 0.55,
+   "seconds": 0.57,
    "screenshot": "screens/t2b-sources.jpg",
    "note": ""
   },
@@ -3958,15 +3958,15 @@
    "section": "Tender to Bid",
    "name": "Size the plant with HiGHS (the tender as read)",
    "status": "pass",
-   "seconds": 149.75,
+   "seconds": 150.79,
    "screenshot": "screens/t2b-size.jpg",
-   "note": "149.6 s"
+   "note": "150.7 s"
   },
   {
    "section": "Tender to Bid",
    "name": "Compliance with the tender's floors",
    "status": "pass",
-   "seconds": 0.1,
+   "seconds": 0.11,
    "screenshot": "screens/t2b-compliance.jpg",
    "note": ""
   },
@@ -3974,7 +3974,7 @@
    "section": "Tender to Bid",
    "name": "15-minute dispatch for every PPA year",
    "status": "pass",
-   "seconds": 216.81,
+   "seconds": 216.29,
    "screenshot": "screens/t2b-d15.jpg",
    "note": ""
   },
@@ -3990,7 +3990,7 @@
    "section": "Tender to Bid",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.17,
+   "seconds": 0.38,
    "screenshot": null,
    "note": "models/TenderToBid_SECI-set_financial_model.xlsx"
   },
@@ -3998,7 +3998,7 @@
    "section": "SECI RTC tender",
    "name": "Open the tab",
    "status": "pass",
-   "seconds": 0.19,
+   "seconds": 0.21,
    "screenshot": "screens/seci-00-tab.jpg",
    "note": ""
   },
@@ -4006,7 +4006,7 @@
    "section": "SECI RTC tender",
    "name": "Tender & amendments: documents, bid process, changes, clarifications",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.48,
    "screenshot": "screens/seci-01-documents.jpg",
    "note": "5 documents, 23 changes"
   },
@@ -4014,7 +4014,7 @@
    "section": "SECI RTC tender",
    "name": "Bid conditions (in force after the amendments)",
    "status": "pass",
-   "seconds": 0.16,
+   "seconds": 0.13,
    "screenshot": "screens/seci-02-conditions.jpg",
    "note": "61 conditions: 20 amended, 1 removed, 1 unclear. Under each amended rule, “RfS as issued” shows the original wording."
   },
@@ -4022,7 +4022,7 @@
    "section": "SECI scenario S2",
    "name": "What you bid: 200 MW, Peak Hours 'any', shortfall 'hard'",
    "status": "pass",
-   "seconds": 0.58,
+   "seconds": 0.55,
    "screenshot": "screens/seci-S2-bid.jpg",
    "note": ""
   },
@@ -4030,7 +4030,7 @@
    "section": "SECI scenario S2",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.58,
+   "seconds": 0.6,
    "screenshot": "screens/seci-S2-sources.jpg",
    "note": ""
   },
@@ -4038,7 +4038,7 @@
    "section": "SECI scenario S2",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 36.69,
+   "seconds": 36.71,
    "screenshot": "screens/seci-S2-sizes.jpg",
    "note": "36.6 s"
   },
@@ -4046,7 +4046,7 @@
    "section": "SECI scenario S2",
    "name": "Compliance, block by block",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.11,
    "screenshot": "screens/seci-S2-compliance.jpg",
    "note": ""
   },
@@ -4054,7 +4054,7 @@
    "section": "SECI scenario S2",
    "name": "Money at stake: EMD, PBG, net worth",
    "status": "pass",
-   "seconds": 0.51,
+   "seconds": 0.52,
    "screenshot": "screens/seci-S2-money.jpg",
    "note": ""
   },
@@ -4070,7 +4070,7 @@
    "section": "SECI scenario S2",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.18,
+   "seconds": 0.21,
    "screenshot": null,
    "note": "models/SECI_S2_financial_model.xlsx"
   },
@@ -4078,7 +4078,7 @@
    "section": "SECI scenario S3",
    "name": "What you bid: 200 MW, Peak Hours 'evening', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.51,
+   "seconds": 0.54,
    "screenshot": "screens/seci-S3-bid.jpg",
    "note": ""
   },
@@ -4086,7 +4086,7 @@
    "section": "SECI scenario S3",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.57,
+   "seconds": 0.55,
    "screenshot": "screens/seci-S3-sources.jpg",
    "note": ""
   },
@@ -4094,7 +4094,7 @@
    "section": "SECI scenario S3",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 54.79,
+   "seconds": 54.8,
    "screenshot": "screens/seci-S3-sizes.jpg",
    "note": "54.7 s"
   },
@@ -4118,7 +4118,7 @@
    "section": "SECI scenario S3",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.79,
+   "seconds": 1.77,
    "screenshot": "screens/seci-S3-finance.jpg",
    "note": "tariff ₹6.53/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
@@ -4126,7 +4126,7 @@
    "section": "SECI scenario S3",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.16,
+   "seconds": 0.17,
    "screenshot": null,
    "note": "models/SECI_S3_financial_model.xlsx"
   },
@@ -4134,7 +4134,7 @@
    "section": "SECI scenario S4",
    "name": "What you bid: 200 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.56,
+   "seconds": 0.53,
    "screenshot": "screens/seci-S4-bid.jpg",
    "note": ""
   },
@@ -4142,7 +4142,7 @@
    "section": "SECI scenario S4",
    "name": "Supply sources: solar, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.61,
+   "seconds": 0.64,
    "screenshot": "screens/seci-S4-sources.jpg",
    "note": ""
   },
@@ -4150,9 +4150,9 @@
    "section": "SECI scenario S4",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 21.08,
+   "seconds": 21.59,
    "screenshot": "screens/seci-S4-sizes.jpg",
-   "note": "21.0 s"
+   "note": "21.5 s"
   },
   {
    "section": "SECI scenario S4",
@@ -4174,7 +4174,7 @@
    "section": "SECI scenario S4",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.79,
+   "seconds": 1.78,
    "screenshot": "screens/seci-S4-finance.jpg",
    "note": "tariff ₹8.222/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
@@ -4182,7 +4182,7 @@
    "section": "SECI scenario S4",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.17,
+   "seconds": 0.14,
    "screenshot": null,
    "note": "models/SECI_S4_financial_model.xlsx"
   },
@@ -4190,7 +4190,7 @@
    "section": "SECI scenario S5",
    "name": "What you bid: 500 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.55,
+   "seconds": 0.56,
    "screenshot": "screens/seci-S5-bid.jpg",
    "note": ""
   },
@@ -4198,7 +4198,7 @@
    "section": "SECI scenario S5",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.62,
+   "seconds": 0.59,
    "screenshot": "screens/seci-S5-sources.jpg",
    "note": ""
   },
@@ -4206,15 +4206,15 @@
    "section": "SECI scenario S5",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 49.75,
+   "seconds": 50.75,
    "screenshot": "screens/seci-S5-sizes.jpg",
-   "note": "49.6 s"
+   "note": "50.7 s"
   },
   {
    "section": "SECI scenario S5",
    "name": "Compliance, block by block",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.11,
    "screenshot": "screens/seci-S5-compliance.jpg",
    "note": ""
   },
@@ -4230,7 +4230,7 @@
    "section": "SECI scenario S5",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.76,
+   "seconds": 1.77,
    "screenshot": "screens/seci-S5-finance.jpg",
    "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
@@ -4246,7 +4246,7 @@
    "section": "SECI scenario S6",
    "name": "What you bid: 50 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.51,
+   "seconds": 0.55,
    "screenshot": "screens/seci-S6-bid.jpg",
    "note": ""
   },
@@ -4254,7 +4254,7 @@
    "section": "SECI scenario S6",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.53,
+   "seconds": 0.54,
    "screenshot": "screens/seci-S6-sources.jpg",
    "note": ""
   },
@@ -4262,9 +4262,9 @@
    "section": "SECI scenario S6",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 50.22,
+   "seconds": 50.77,
    "screenshot": "screens/seci-S6-sizes.jpg",
-   "note": "50.1 s"
+   "note": "50.7 s"
   },
   {
    "section": "SECI scenario S6",
@@ -4286,7 +4286,7 @@
    "section": "SECI scenario S6",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.79,
+   "seconds": 1.77,
    "screenshot": "screens/seci-S6-finance.jpg",
    "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
@@ -4294,7 +4294,7 @@
    "section": "SECI scenario S6",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.15,
+   "seconds": 0.17,
    "screenshot": null,
    "note": "models/SECI_S6_financial_model.xlsx"
   },
@@ -4302,7 +4302,7 @@
    "section": "SECI scenario S1",
    "name": "What you bid: 200 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.57,
+   "seconds": 0.58,
    "screenshot": "screens/seci-S1-bid.jpg",
    "note": ""
   },
@@ -4310,7 +4310,7 @@
    "section": "SECI scenario S1",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.53,
+   "seconds": 0.62,
    "screenshot": "screens/seci-S1-sources.jpg",
    "note": ""
   },
@@ -4318,15 +4318,15 @@
    "section": "SECI scenario S1",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 50.75,
+   "seconds": 52.33,
    "screenshot": "screens/seci-S1-sizes.jpg",
-   "note": "50.7 s"
+   "note": "52.2 s"
   },
   {
    "section": "SECI scenario S1",
    "name": "Compliance, block by block",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.1,
    "screenshot": "screens/seci-S1-compliance.jpg",
    "note": ""
   },
@@ -4334,7 +4334,7 @@
    "section": "SECI scenario S1",
    "name": "Money at stake: EMD, PBG, net worth",
    "status": "pass",
-   "seconds": 0.5,
+   "seconds": 0.51,
    "screenshot": "screens/seci-S1-money.jpg",
    "note": ""
   },
@@ -4342,7 +4342,7 @@
    "section": "SECI scenario S1",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.8,
+   "seconds": 1.79,
    "screenshot": "screens/seci-S1-finance.jpg",
    "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
@@ -4350,7 +4350,7 @@
    "section": "SECI scenario S1",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.16,
    "screenshot": null,
    "note": "models/SECI_S1_financial_model.xlsx"
   },
@@ -4358,7 +4358,7 @@
    "section": "SECI bid agent",
    "name": "Open the bid agent (GPT-Live) panel",
    "status": "pass",
-   "seconds": 0.41,
+   "seconds": 0.44,
    "screenshot": "screens/seci-agent-panel.jpg",
    "note": "voice not configured on this server"
   },
@@ -4366,7 +4366,7 @@
    "section": "SECI bid agent",
    "name": "Agent chart: peak window",
    "status": "pass",
-   "seconds": 1.06,
+   "seconds": 1.08,
    "screenshot": "screens/seci-chart-peak_window.jpg",
    "note": ""
   },
@@ -4374,7 +4374,7 @@
    "section": "SECI bid agent",
    "name": "Agent chart: typical day",
    "status": "pass",
-   "seconds": 1.09,
+   "seconds": 1.05,
    "screenshot": "screens/seci-chart-typical_day.jpg",
    "note": ""
   },
@@ -4414,7 +4414,7 @@
    "section": "SECI bid agent",
    "name": "Close the agent",
    "status": "pass",
-   "seconds": 0.03,
+   "seconds": 0.04,
    "screenshot": null,
    "note": ""
   },
@@ -4422,7 +4422,7 @@
    "section": "SECI bid forms",
    "name": "Particulars: the bidder, signing, the offer, the project, eligibility",
    "status": "pass",
-   "seconds": 1.17,
+   "seconds": 1.13,
    "screenshot": "screens/seci-forms-00-particulars.jpg",
    "note": ""
   },
@@ -4430,7 +4430,7 @@
    "section": "SECI bid forms",
    "name": "Quote the tariff for the target IRR (Use ₹…/kWh)",
    "status": "pass",
-   "seconds": 0.2,
+   "seconds": 0.19,
    "screenshot": "screens/seci-forms-01-tariff.jpg",
    "note": "₹7.05/kWh"
   },
@@ -4438,7 +4438,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.1: Covering Letter",
    "status": "pass",
-   "seconds": 2.35,
+   "seconds": 2.37,
    "screenshot": "screens/seci-forms-7.1.jpg",
    "note": "37 OF 37 BLANKS FILLED; reviewed"
   },
@@ -4446,7 +4446,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.3A: Bank Guarantee for EMD",
    "status": "pass",
-   "seconds": 1.85,
+   "seconds": 1.86,
    "screenshot": "screens/seci-forms-7.3A.jpg",
    "note": "17 OF 17 BLANKS FILLED; reviewed"
   },
@@ -4454,7 +4454,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.4: Board Resolutions",
    "status": "pass",
-   "seconds": 1.75,
+   "seconds": 1.64,
    "screenshot": "screens/seci-forms-7.4.jpg",
    "note": "5 OF 5 BLANKS FILLED; reviewed"
   },
@@ -4462,7 +4462,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.6: Financial Requirement",
    "status": "pass",
-   "seconds": 2.26,
+   "seconds": 2.29,
    "screenshot": "screens/seci-forms-7.6.jpg",
    "note": "20 OF 20 BLANKS FILLED; reviewed"
   },
@@ -4470,7 +4470,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.7: Undertaking (not a wilful defaulter or blacklisted)",
    "status": "pass",
-   "seconds": 1.5,
+   "seconds": 1.52,
    "screenshot": "screens/seci-forms-7.7.jpg",
    "note": "5 OF 5 BLANKS FILLED; reviewed"
   },
@@ -4478,7 +4478,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.8: Disclosure (no group company bidding)",
    "status": "pass",
-   "seconds": 1.69,
+   "seconds": 1.68,
    "screenshot": "screens/seci-forms-7.8.jpg",
    "note": "15 OF 15 BLANKS FILLED; reviewed"
   },
@@ -4486,7 +4486,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.8-annex: Annexure to Format 7.8/7.8A: land-border declaration",
    "status": "pass",
-   "seconds": 1.68,
+   "seconds": 1.71,
    "screenshot": "screens/seci-forms-7.8-annex.jpg",
    "note": "11 OF 11 BLANKS FILLED; reviewed"
   },
@@ -4494,7 +4494,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.9: Integrity Pact",
    "status": "pass",
-   "seconds": 1.57,
+   "seconds": 1.5,
    "screenshot": "screens/seci-forms-7.9.jpg",
    "note": "NOTHING TO FILL: SIGN AND STAMP THE RFS DOCUMENT; reviewed"
   },
@@ -4502,7 +4502,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.10: Financial Bid covering letter",
    "status": "pass",
-   "seconds": 1.62,
+   "seconds": 1.58,
    "screenshot": "screens/seci-forms-7.10.jpg",
    "note": "15 OF 15 BLANKS FILLED; reviewed"
   },
@@ -4510,7 +4510,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.11: Preliminary Estimate of Cost of RE Power Project",
    "status": "pass",
-   "seconds": 1.52,
+   "seconds": 1.53,
    "screenshot": "screens/seci-forms-7.11.jpg",
    "note": "5 OF 5 BLANKS FILLED; reviewed"
   },
@@ -4518,7 +4518,7 @@
    "section": "SECI bid forms",
    "name": "Format Annexure-B: Special Instructions for e-Tendering and Reverse Auction",
    "status": "pass",
-   "seconds": 1.51,
+   "seconds": 1.52,
    "screenshot": "screens/seci-forms-Annexure-B.jpg",
    "note": "NOTHING TO FILL: SIGN AND STAMP THE RFS DOCUMENT; reviewed"
   },
@@ -4542,7 +4542,7 @@
    "section": "SECI bid forms",
    "name": "Download the bid pack (Word)",
    "status": "pass",
-   "seconds": 0.11,
+   "seconds": 0.13,
    "screenshot": null,
    "note": "bid-pack/SECI_RTC_TM_V_bid_200MW.docx"
   },
@@ -4550,7 +4550,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.1: Covering Letter",
    "status": "pass",
-   "seconds": 0.38,
+   "seconds": 0.39,
    "screenshot": "screens/seci-letter-7.1.jpg",
    "note": "1561 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4558,7 +4558,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Change a paragraph's wording in place (Format 7.1)",
    "status": "pass",
-   "seconds": 0.71,
+   "seconds": 0.63,
    "screenshot": "screens/seci-letter-edit.jpg",
    "note": "paragraph 8: marked as your wording; the format's review asks to be redone (CHANGED SINCE REVIEW: MARK REVIEWED AGAIN)"
   },
@@ -4566,15 +4566,15 @@
    "section": "SECI RTC tender: the letters",
    "name": "Revert the paragraph to the RfS wording",
    "status": "pass",
-   "seconds": 0.17,
+   "seconds": 0.19,
    "screenshot": "screens/seci-letter-revert.jpg",
-   "note": "back to the RfS wording; the review stands again: REVIEWED 24 OCT 2026, 7:23 PM UNDO"
+   "note": "back to the RfS wording; the review stands again: REVIEWED 24 OCT 2026, 8:06 PM UNDO"
   },
   {
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.3A: Bank Guarantee for EMD",
    "status": "pass",
-   "seconds": 0.35,
+   "seconds": 0.28,
    "screenshot": "screens/seci-letter-7.3A.jpg",
    "note": "812 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4582,7 +4582,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.4: Board Resolutions",
    "status": "pass",
-   "seconds": 0.3,
+   "seconds": 0.27,
    "screenshot": "screens/seci-letter-7.4.jpg",
    "note": "695 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.4_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.4_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4590,7 +4590,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.6: Financial Requirement",
    "status": "pass",
-   "seconds": 0.34,
+   "seconds": 0.28,
    "screenshot": "screens/seci-letter-7.6.jpg",
    "note": "1070 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.6_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.6_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4598,7 +4598,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.7: Undertaking (not a wilful defaulter or blacklisted)",
    "status": "pass",
-   "seconds": 0.28,
+   "seconds": 0.3,
    "screenshot": "screens/seci-letter-7.7.jpg",
    "note": "215 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.7_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.7_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4606,7 +4606,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.8: Disclosure (no group company bidding)",
    "status": "pass",
-   "seconds": 0.33,
+   "seconds": 0.3,
    "screenshot": "screens/seci-letter-7.8.jpg",
    "note": "615 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.8_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.8_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4614,7 +4614,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.8-annex: Annexure to Format 7.8/7.8A: land-border declaration",
    "status": "pass",
-   "seconds": 0.28,
+   "seconds": 0.3,
    "screenshot": "screens/seci-letter-7.8-annex.jpg",
    "note": "337 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.8-annex_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.8-annex_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4622,7 +4622,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.9: Integrity Pact",
    "status": "pass",
-   "seconds": 0.3,
+   "seconds": 0.31,
    "screenshot": "screens/seci-letter-7.9.jpg",
    "note": "103 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.9_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.9_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4630,7 +4630,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.10: Financial Bid covering letter",
    "status": "pass",
-   "seconds": 0.32,
+   "seconds": 0.29,
    "screenshot": "screens/seci-letter-7.10.jpg",
    "note": "379 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.10_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.10_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4638,7 +4638,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.11: Preliminary Estimate of Cost of RE Power Project",
    "status": "pass",
-   "seconds": 0.33,
+   "seconds": 0.28,
    "screenshot": "screens/seci-letter-7.11.jpg",
    "note": "198 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.11_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.11_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4646,7 +4646,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter Annexure-B: Special Instructions for e-Tendering and Reverse Auction",
    "status": "pass",
-   "seconds": 0.37,
+   "seconds": 0.34,
    "screenshot": "screens/seci-letter-Annexure-B.jpg",
    "note": "3622 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_Annexure-B_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_Annexure-B_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4654,7 +4654,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "All letters in one Word file",
    "status": "pass",
-   "seconds": 0.07,
+   "seconds": 0.08,
    "screenshot": null,
    "note": "letters/SECI_RTC_TM_V_Bid_letters_Arkaja_Renewables_Private_Limited.docx"
   },
@@ -4662,7 +4662,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "All letters in one PDF",
    "status": "pass",
-   "seconds": 0.15,
+   "seconds": 0.13,
    "screenshot": null,
    "note": "letters/SECI_RTC_TM_V_Bid_letters_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4670,7 +4670,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Save the bid to the scenario library (forms, reviews and letters)",
    "status": "pass",
-   "seconds": 0.49,
+   "seconds": 0.45,
    "screenshot": "screens/seci-saved.jpg",
    "note": "Saved “Arkaja Renewables Private Limited: SECI RTC-TM-V bid” version 1: the particulars, every format's blanks, the letters with their edits and the sizing."
   },
@@ -4694,7 +4694,7 @@
    "section": "SECI RTC tender: losses, dispatch",
    "name": "Solar capex per MWac, shown per MWp",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.13,
    "screenshot": "screens/seci-solar-mwp.jpg",
    "note": "= ₹2.857 cr/MWp at DC:AC 1.40"
   },
@@ -4702,7 +4702,7 @@
    "section": "SECI RTC tender: losses, dispatch",
    "name": "The plant in MWac and MWp",
    "status": "pass",
-   "seconds": 0.54,
+   "seconds": 0.58,
    "screenshot": "screens/seci-sizes-mwp.jpg",
    "note": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no desi"
   },
@@ -4710,17 +4710,17 @@
    "section": "SECI RTC tender: losses, dispatch",
    "name": "Hover an hour of the year-1 dispatch: the hour as a see-through Sankey against its block's floor",
    "status": "pass",
-   "seconds": 0.54,
+   "seconds": 0.55,
    "screenshot": "screens/seci-sankey.jpg",
-   "note": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Transformer & line losses · 2 MW Peak floor 90%: met · 180 MW Above the flo"
+   "note": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Losses to the meter · 2 MW Peak floor 90%: met · 180 MW"
   },
   {
    "section": "SECI RTC tender: losses, dispatch",
    "name": "The 25-year dispatch in 15-minute blocks, the time-block floors in every block",
    "status": "pass",
-   "seconds": 84.52,
+   "seconds": 85.06,
    "screenshot": "screens/seci-d15.jpg",
-   "note": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose."
+   "note": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose. Year 1: 97.3 MU short here, 96.3 MU in the hourly sizing. The penalty is on the energy shor"
   },
   {
    "section": "SECI RTC tender: losses, dispatch",
@@ -4734,9 +4734,9 @@
    "section": "SECI RTC tender: the team",
    "name": "Open the Team panel: the tender's seats (demo: View as)",
    "status": "pass",
-   "seconds": 1.07,
+   "seconds": 0.98,
    "screenshot": "screens/team-00-panel.jpg",
-   "note": "Tender manager Tender management Finance desk Finance REMOVE Legal desk Legal REMOVE Procurement desk Procurement REMOVE Technical desk Technical REMOVE Tender management Finance Procurement Legal Tec"
+   "note": "Tender manager, Finance desk, Legal desk, Procurement desk, Technical desk"
   },
   {
    "section": "SECI RTC tender: the team",
@@ -4750,7 +4750,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Send Format 7.1 to finance for the signed copy",
    "status": "pass",
-   "seconds": 1.01,
+   "seconds": 0.99,
    "screenshot": "screens/team-02-assign-format.jpg",
    "note": "to Finance"
   },
@@ -4766,7 +4766,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Procurement answers with its figure",
    "status": "pass",
-   "seconds": 1.1,
+   "seconds": 1.21,
    "screenshot": "screens/team-04-procurement.jpg",
    "note": "₹3.85 cr/MWac"
   },
@@ -4774,7 +4774,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Finance downloads the filled letter and uploads the signed copy",
    "status": "pass",
-   "seconds": 0.87,
+   "seconds": 0.91,
    "screenshot": "screens/team-05-finance.jpg",
    "note": "SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4782,7 +4782,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Legal gives its reading",
    "status": "pass",
-   "seconds": 0.85,
+   "seconds": 0.87,
    "screenshot": "screens/team-06-legal.jpg",
    "note": ""
   },
@@ -4790,7 +4790,7 @@
    "section": "SECI RTC tender: the team",
    "name": "The tender manager sees three answers to accept",
    "status": "pass",
-   "seconds": 0.84,
+   "seconds": 0.81,
    "screenshot": "screens/team-07-manager.jpg",
    "note": "3 waiting"
   },
@@ -4806,7 +4806,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Accept the signed copy of Format 7.1",
    "status": "pass",
-   "seconds": 0.17,
+   "seconds": 0.2,
    "screenshot": "screens/team-09-accept-signed.jpg",
    "note": "Accepted “Format 7.1: Covering Letter (signed copy)” from Finance desk: saved as version 3."
   },
@@ -4814,7 +4814,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Return legal's reading with a note",
    "status": "pass",
-   "seconds": 0.21,
+   "seconds": 0.25,
    "screenshot": "screens/team-10-return.jpg",
    "note": ""
   },
@@ -4822,7 +4822,7 @@
    "section": "SECI RTC tender: the team",
    "name": "Legal answers again; the manager accepts",
    "status": "pass",
-   "seconds": 1.64,
+   "seconds": 1.67,
    "screenshot": "screens/team-11-accepted.jpg",
    "note": "ARKAJA RENEWABLES PRIVATE LIMITED: SECI RTC-TM-V BID · V4"
   },
@@ -4830,7 +4830,7 @@
    "section": "SECI RTC tender: the team",
    "name": "In the bid: the signed copy on Format 7.1, our reading under the condition",
    "status": "pass",
-   "seconds": 1.36,
+   "seconds": 1.32,
    "screenshot": "screens/team-12-in-bid.jpg",
    "note": "Signed copy: SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf · Finance desk · Our reading (Legal desk): Amendment-01 cl. 8.1 as amended by Amendment-02: SECI declares the Peak Hours a day ahead with"
   },
@@ -4838,7 +4838,7 @@
    "section": "SECI RTC tender: the team",
    "name": "The new capex cleared the sizing: size again",
    "status": "pass",
-   "seconds": 45.21,
+   "seconds": 46.68,
    "screenshot": "screens/team-13-resized.jpg",
    "note": "SOLAR 534 MWac 748 MWp (DC:AC 1.40) · 2.67 × contracted WIND 281 MW 1.41 × contracted BATTERY 433 MW / 1,733 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.957/kWh no design below ₹6.957"
   },
@@ -4846,7 +4846,7 @@
    "section": "Round the Clock",
    "name": "Open the tab: default plant, tariff and returns",
    "status": "pass",
-   "seconds": 2.26,
+   "seconds": 2.2,
    "screenshot": "screens/rtc-00.jpg",
    "note": "TARIFF FOR TARGET IRR ₹4.189 flat, ₹/kWh LCOE ₹3.635 @ 10.0% discount EQUITY IRR 14.00% NPV @ target ₹0 cr PROJECT IRR 9.98% post-tax, unlevered DSCR MIN / AVG "
   },
@@ -4854,7 +4854,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Energy needed",
    "status": "pass",
-   "seconds": 0.64,
+   "seconds": 0.65,
    "screenshot": "screens/rtc-energy.jpg",
    "note": ""
   },
@@ -4862,7 +4862,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Supply type",
    "status": "pass",
-   "seconds": 0.68,
+   "seconds": 0.69,
    "screenshot": "screens/rtc-supply.jpg",
    "note": ""
   },
@@ -4878,7 +4878,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Solar",
    "status": "pass",
-   "seconds": 0.73,
+   "seconds": 0.74,
    "screenshot": "screens/rtc-solar.jpg",
    "note": ""
   },
@@ -4886,7 +4886,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Wind",
    "status": "pass",
-   "seconds": 0.73,
+   "seconds": 0.71,
    "screenshot": "screens/rtc-wind.jpg",
    "note": ""
   },
@@ -4894,7 +4894,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Battery storage",
    "status": "pass",
-   "seconds": 0.7,
+   "seconds": 0.68,
    "screenshot": "screens/rtc-battery.jpg",
    "note": ""
   },
@@ -4902,7 +4902,7 @@
    "section": "Round the Clock",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.18,
+   "seconds": 0.19,
    "screenshot": null,
    "note": "models/Round_the_clock_285MW_financial_model.xlsx"
   },
@@ -4918,7 +4918,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Tender",
    "status": "pass",
-   "seconds": 0.81,
+   "seconds": 0.8,
    "screenshot": "screens/bess-tender.jpg",
    "note": ""
   },
@@ -4934,7 +4934,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Battery",
    "status": "pass",
-   "seconds": 0.8,
+   "seconds": 0.82,
    "screenshot": "screens/bess-battery.jpg",
    "note": ""
   },
@@ -4950,7 +4950,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Finance",
    "status": "pass",
-   "seconds": 0.81,
+   "seconds": 0.82,
    "screenshot": "screens/bess-finance.jpg",
    "note": ""
   },
@@ -4958,7 +4958,7 @@
    "section": "BESS Tender",
    "name": "Optimize: the battery and augmentation plan with the lowest capacity charge",
    "status": "pass",
-   "seconds": 5.53,
+   "seconds": 5.57,
    "screenshot": "screens/bess-optimized.jpg",
    "note": "01 TENDER Upload the RfS 02 REQUIREMENTS 250 MW / 500 MWh · 2×/day 03 BATTERY LFP · DoD 90% · RTE 88.6% 04 COSTS DC ₹0.78 cr/MWh · PCS ₹0.28 cr/MW 05 FINANCE Equity IRR 14.0% · debt 70% 06 OPTIMIZE lo"
   },
@@ -4966,7 +4966,7 @@
    "section": "BESS Tender",
    "name": "Download the yearly table (CSV)",
    "status": "pass",
-   "seconds": 0.05,
+   "seconds": 0.04,
    "screenshot": null,
    "note": "models/BESS_financial_model_yearly.csv"
   },
@@ -4974,7 +4974,7 @@
    "section": "CfD Bid",
    "name": "Open the tab",
    "status": "pass",
-   "seconds": 0.17,
+   "seconds": 0.19,
    "screenshot": "screens/cfd-00.jpg",
    "note": ""
   },
@@ -4982,7 +4982,7 @@
    "section": "CfD Bid",
    "name": "Next step (1)",
    "status": "pass",
-   "seconds": 0.87,
+   "seconds": 0.88,
    "screenshot": "screens/cfd-01.jpg",
    "note": ""
   },
@@ -4990,7 +4990,7 @@
    "section": "CfD Bid",
    "name": "Next step (2)",
    "status": "pass",
-   "seconds": 0.81,
+   "seconds": 0.8,
    "screenshot": "screens/cfd-02.jpg",
    "note": ""
   },
@@ -4998,7 +4998,7 @@
    "section": "CfD Bid",
    "name": "Next step (3)",
    "status": "pass",
-   "seconds": 0.97,
+   "seconds": 0.92,
    "screenshot": "screens/cfd-03.jpg",
    "note": ""
   },
@@ -5006,7 +5006,7 @@
    "section": "CfD Bid",
    "name": "Next step (4)",
    "status": "pass",
-   "seconds": 0.91,
+   "seconds": 0.89,
    "screenshot": "screens/cfd-04.jpg",
    "note": ""
   },
@@ -5030,7 +5030,7 @@
    "section": "CfD Bid",
    "name": "Download the CfD financial model (Excel)",
    "status": "pass",
-   "seconds": 0.09,
+   "seconds": 0.08,
    "screenshot": null,
    "note": "models/CfD-I_100MW_bid_model.xlsx"
   }
