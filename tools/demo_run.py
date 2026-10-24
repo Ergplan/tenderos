@@ -605,7 +605,7 @@ def seci_team(page, run: Run, letters: dict) -> dict:
     with run.step(S, "Open the Team panel: the tender's seats (demo: View as)", "team-00-panel", "[data-testid=team-panel]") as e:
         _view_as(page, "Tender manager")
         page.click("[data-testid=team-tab-members]")
-        e["note"] = _flat(page.locator("[data-testid=team-members]").inner_text())[:200]
+        e["note"] = ", ".join(t.strip() for t in page.locator("[data-testid=team-members] .team-member b").all_inner_texts() if t.strip())
     with run.step(S, "Assign the solar capex to procurement", "team-01-assign-cost", "[data-testid=source-solar]") as e:
         _close_team(page)  # after the panel's screenshot
         page.click("[data-testid=seci-step-sources]")

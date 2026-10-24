@@ -51,11 +51,11 @@ export function hourFlows(hourly, t, { gens, titles, colors, rules = [], peakHou
     { id: "charge", label: "Battery charging", color: colors.bess },
     { id: "sold", label: "Sold", color: colors.surplus || "#7a8cff" },
     { id: "curtail", label: "Curtailed", color: "#8d8d99" },
-    { id: "loss", label: "Transformer & line losses", color: "#ff8a5f" },
+    { id: "loss", label: "Losses to the meter", color: "#ff8a5f" },
   ];
   const ruleLabel = cond.rule ? `${cond.peak ? "Peak" : "Off-peak"} floor ${Math.round(cond.rule.target * 100)}%` : "Contract";
   const right = [{ id: "met", label: `${ruleLabel}: met`, color: "#7ddc9a" }, { id: "above", label: "Above the floor", color: "#4fd1c5" }];
-  if (cond.short > MIN) right.push({ id: "short", label: `Short of the floor${cond.rule?.penaltyMultiple != null ? ` (${cond.rule.penaltyMultiple}× tariff)` : ""}`, color: "#ff6b5f", ghost: true });
+  if (cond.short > MIN) right.push({ id: "short", label: `Short${cond.rule?.penaltyMultiple != null ? ` (${cond.rule.penaltyMultiple}× tariff)` : " of the floor"}`, color: "#ff6b5f", ghost: true });
 
   const links = [];
   // every flow counts (the nodes add up); only sources under MIN are left out of the picture
@@ -76,13 +76,15 @@ export function hourFlows(hourly, t, { gens, titles, colors, rules = [], peakHou
   add("ppa", "above", cond.above, "#4fd1c5");
   // the losses node holds what the links bring; checked against the hour's loss series
   const lossIn = links.filter((l) => l.to === "loss").reduce((a, l) => a + l.value, 0);
-  return { columns: [sources, uses.filter((u) => links.some((l) => l.to === u.id)), right.filter((r) => r.ghost || links.some((l) => l.to === r.id))], links, cond, lossCheck: { links: lossIn, series: loss } };
+  // a node is drawn when it carries at least MIN; its flows still count in the totals
+  const carries = (id) => links.filter((l) => l.to === id).reduce((a, l) => a + l.value, 0) >= MIN;
+  return { columns: [sources, uses.filter((u) => carries(u.id)), right.filter((r) => r.ghost || carries(r.id))], links, cond, lossCheck: { links: lossIn, series: loss } };
 }
 
 /** The flows laid out as an SVG string: translucent bands, nodes with their MW. */
-export function sankeySvg(flows, { width = 540, height = 210 } = {}) {
+export function sankeySvg(flows, { width = 640, height = 220 } = {}) {
   const { columns, links, cond } = flows;
-  const xs = [118, 262, 400];
+  const xs = [120, 286, 470];
   const nodeW = 9;
   const gap = 7;
   const top = 6;
@@ -140,6 +142,6 @@ export function hourSankeyHtml(hourly, t, opts) {
     ? `<span style="color:#ff6b5f">short ${mw(c.short)}${c.rule?.penaltyMultiple != null ? `, paid at ${c.rule.penaltyMultiple}× the tariff` : ""}</span>`
     : `<span style="color:#7ddc9a">met</span>`;
   const rule = c.rule ? `${c.peak ? "Peak" : "Off-peak"} block · floor ${Math.round(c.rule.target * 100)}% of ${mw(c.contracted)} = ${mw(c.need)}` : `Contract ${mw(c.contracted)}`;
-  return `<div style="min-width:540px"><div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:4px"><b>${esc(opts.label || "")}</b>`
+  return `<div style="min-width:640px"><div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:4px"><b>${esc(opts.label || "")}</b>`
     + `<span style="opacity:.85">${esc(rule)} · delivered ${mw(c.delivered)} · ${verdict}</span></div>${sankeySvg(flows)}</div>`;
 }
