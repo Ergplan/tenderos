@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Bot, Loader2, Mic, MicOff, PhoneOff, Sparkles, X } from "lucide-react";
+import { BarChart3, Bot, Loader2, Maximize2, Mic, MicOff, Minimize2, PhoneOff, Sparkles, X } from "lucide-react";
+import { LiveChart } from "../rtc/charts";
 import { LiveEvents, createToolRunner } from "./agent";
+import { agentChart } from "./charts";
 
 const TOOL_WORDS = {
   get_status: () => "Read the bid on screen",
@@ -17,6 +19,7 @@ const TOOL_WORDS = {
   get_financials: () => "Read the financial model",
   check_tariff: (a, r) => (r?.ok ? `Checked ₹${a.tariff}/kWh: equity IRR ${r.equityIrrPct}%, project IRR ${r.projectIrrPct}%` : `Tariff check: ${r?.error || ""}`),
   review_bid_forms: () => "Reviewed the bid forms",
+  show_chart: (a, r) => (r?.ok ? `Showed a chart: ${r.shown}` : `Chart: ${r?.error || ""}`),
   open_format: (a) => `Opened ${a.id === "particulars" ? "the particulars" : `Format ${a.id}`}`,
   mark_format_reviewed: (a) => `${a.reviewed ? "Marked" : "Unmarked"} Format ${a.id} reviewed`,
 };
@@ -45,17 +48,40 @@ function iceGathered(pc) {
   });
 }
 
+const CHART_BUTTONS = [["peak_window", "Peak Hours"], ["typical_day", "A day"], ["monthly_energy", "Months"], ["irr_vs_tariff", "IRR vs tariff"], ["cash_flows", "Cash flows"], ["money", "Money"]];
+
+/** A chart the agent opened, in its column (charts.js draws it from the bid itself); it can be enlarged. */
+export function ChartWindow({ chart, onClose }) {
+  const [big, setBig] = useState(false);
+  if (!chart) return null;
+  return (
+    <section className={`agent-chart ${big ? "big" : ""}`} aria-label={chart.title} data-testid="agent-chart" data-kind={chart.kind}>
+      <header>
+        <strong><BarChart3 size={14} /> {chart.title}</strong>
+        <span>
+          <button type="button" className="rtc-icon-btn" onClick={() => setBig((v) => !v)} aria-label={big ? "Make the chart smaller" : "Enlarge the chart"} data-testid="agent-chart-size">{big ? <Minimize2 size={14} /> : <Maximize2 size={14} />}</button>
+          <button type="button" className="rtc-icon-btn" onClick={onClose} aria-label="Close the chart"><X size={14} /></button>
+        </span>
+      </header>
+      <LiveChart key={big ? "big" : "small"} option={chart.option} height={big ? 460 : 250} />
+      <p className="rtc-note">{chart.caption}</p>
+    </section>
+  );
+}
+
 /**
  * The bid agent: a GPT-Live voice conversation whose backend works this tab through the tools in
  * agent.js (setting inputs, running HiGHS, reading results, checking a tariff, the bid forms).
  * The server creates the session (/api/seci/live); audio flows over WebRTC; nothing is recorded.
  */
-export default function LiveAgent({ state, setState, terms, goto, sizing, info }) {
+export default function LiveAgent({ state, setState, terms, goto, sizing, info, onDock = () => {} }) {
   const [open, setOpen] = useState(false);
+  useEffect(() => { onDock(open); }, [open, onDock]);
   const [phase, setPhase] = useState("idle"); // idle | connecting | connected | working | closing
   const [turns, setTurns] = useState([]);
   const [error, setError] = useState("");
   const [micOn, setMicOn] = useState(true);
+  const [chart, setChart] = useState(null);
   const stateRef = useRef(state);
   stateRef.current = state;
   const termsRef = useRef(terms);
@@ -105,6 +131,8 @@ export default function LiveAgent({ state, setState, terms, goto, sizing, info }
       runSizing: async () => { await new Promise((r) => setTimeout(r, 80)); return sizingRef.current.startSizing(); },
       stopSizing: () => sizingRef.current.stopSizing(),
       getRun: () => sizingRef.current.run,
+      getHourly: () => sizingRef.current.hourly,
+      showChart: setChart,
     });
     const c = { audio: new Audio() };
     c.audio.autoplay = true;
@@ -196,6 +224,15 @@ export default function LiveAgent({ state, setState, terms, goto, sizing, info }
         </span>
       </div>
       {error && <p className="voice-note" role="alert" data-testid="agent-error">{error}</p>}
+      <div className="agent-charts" role="group" aria-label="Charts">
+        {CHART_BUTTONS.map(([kind, label]) => (
+          <button key={kind} type="button" className={chart?.kind === kind ? "active" : ""} data-testid={`agent-chart-${kind}`}
+            onClick={() => {
+              try { setChart(agentChart(kind, { state: stateRef.current, terms: termsRef.current, hourly: sizingRef.current.hourly })); setError(""); } catch (err) { setError(err.message); }
+            }}>{label}</button>
+        ))}
+      </div>
+      <ChartWindow chart={chart} onClose={() => setChart(null)} />
       <div className="voice-log agent-log" data-testid="agent-log" aria-live="polite">
         {turns.length === 0 && <p>{info?.backendModel ? `Voice ${info.model}; the bid work by ${info.backendModel}.` : ""}</p>}
         {turns.map((t, i) => <p key={i} className={t.who}>{t.text}</p>)}

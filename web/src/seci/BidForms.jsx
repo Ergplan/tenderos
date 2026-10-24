@@ -163,10 +163,11 @@ function FormatView({ state, setState, format, setField, onPrev, onNext }) {
             <>
               <div className="seci-group-title">Enclose</div>
               {format.attachments.map((a, i) => (
-                <label key={i} className="seci-attach">
-                  <input type="checkbox" checked={Boolean(state.forms?.[`${format.id}.att.${i}`])} onChange={(e) => setField(`${format.id}.att.${i}`, e.target.checked || null)} data-testid={`seci-attach-${format.id}-${i}`} />
-                  <span>{a.label} <button type="button" className="seci-blank-ctx inline" onClick={() => setPage(a.context.page)}>p. {a.context.page}</button></span>
-                </label>
+                <div key={i} className="seci-attach">
+                  <input type="checkbox" id={`att-${format.id}-${i}`} checked={Boolean(state.forms?.[`${format.id}.att.${i}`])} onChange={(e) => setField(`${format.id}.att.${i}`, e.target.checked || null)} data-testid={`seci-attach-${format.id}-${i}`} />
+                  <label htmlFor={`att-${format.id}-${i}`}>{a.label}</label>
+                  <button type="button" className="seci-blank-ctx inline" onClick={() => setPage(a.context.page)}>p. {a.context.page}</button>
+                </div>
               ))}
             </>
           )}
@@ -175,7 +176,7 @@ function FormatView({ state, setState, format, setField, onPrev, onNext }) {
           <div className="seci-rfs-pages">
             {pages.map((p) => <button key={p} type="button" className={p === page ? "active" : ""} onClick={() => setPage(p)}>p. {p}</button>)}
           </div>
-          <iframe key={page} title={`RfS page ${page}`} src={`${RFS}#page=${page}&view=FitH`} data-testid="seci-rfs-frame" />
+          <iframe title={`RfS page ${page}`} src={`${RFS}#page=${page}&view=FitH`} data-testid="seci-rfs-frame" />
         </div>
       </div>
       <footer className="seci-format-foot">

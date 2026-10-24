@@ -217,6 +217,22 @@ browser, against the same state the screen shows:
 | `get_results`, `get_financials` | The plant, floors met, shortfall, EMD, PBG, net worth, dates; tariff, equity and project IRR, DSCR, penalties |
 | `check_tariff` | Equity and project IRR at a quoted tariff, with the warning; records it as the quote |
 | `review_bid_forms`, `open_format`, `mark_format_reviewed` | The formats this bid needs, a format's blanks with their input keys, and the bidder's review (only on their word) |
+| `show_chart` | Opens a chart in the agent's column, with a summary the agent describes; it uses it when asked to show or compare something, and on its own when a picture explains better |
+
+**Charts.** `web/src/seci/charts.js` draws every chart from the bid itself, never from numbers
+the model says:
+
+* **Peak Hours:** the 24-hour day, the 18:00–10:00 window, the floor in each hour under your plan,
+  and, once sized, the average and worst-hour delivery.
+* **A day:** the sized plant hour by hour, by source and battery, for the year or one month.
+* **Months:** delivered energy, the shortfall against the floors, and surplus sold.
+* **IRR vs tariff:** equity and project IRR against the tariff, with the target and your quote.
+* **Cash flows:** revenue, operating cost, penalties, debt service and cash to equity.
+* **Money:** capex by source, EMD, PBG, net worth, equity and debt.
+
+The chart opens inside the agent's column and can be enlarged. The same six charts are buttons on
+the panel, so they also work without talking. On a wide screen the panel docks as a column and the
+page makes room for it.
 
 **Rules for the backend model.** Its instructions (`BACKEND_INSTRUCTIONS`) are:
 
@@ -247,9 +263,9 @@ panel says how to set it up. The microphone needs HTTPS or localhost.
 | The pack's quotes are on their pages, the gaps answered, the formats cover Section 7 | `make test` (`tests/test_seci_pack.py`) |
 | Block floors in the LP: hard (fast), penalty (slow) | `make test`, `make test-slow` (`tests/engine/test_block_rules.py`) |
 | Terms, LP payload, dates, money at stake, the quote against the target IRR, forms and formats, spoken numbers and dates, and the agent's script | `make check-web` (`tools/check_seci.mjs`) |
-| The bid agent's tools against a stand-in tab, the guided order, the tender lookup, the GPT-Live event loop | `make check-web` (`tools/check_seci_agent.mjs`) |
+| The bid agent's tools against a stand-in tab, the guided order, the tender lookup, every chart, the GPT-Live event loop | `make check-web` (`tools/check_seci_agent.mjs`) |
 | The block penalty in the Live model, recalculated by LibreOffice | `make check-web` (`tools/check_live_model.mjs`) |
-| In the browser: documents, the RfS, conditions with the RfS's wording, a bid through the tab's controls (bid, benchmarks, HiGHS sizing, money at stake, finance), a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the agent panel without a key and against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
+| In the browser: documents, the RfS, conditions with the RfS's wording, a bid through the tab's controls (bid, benchmarks, HiGHS sizing, money at stake, finance), a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the six charts from the sized plant; the agent panel without a key and against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
 
 ## Access and settings
 

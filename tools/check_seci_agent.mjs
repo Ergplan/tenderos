@@ -6,6 +6,8 @@
 import assert from "node:assert/strict";
 import { AGENT_TOOLS, LiveEvents, agentInputs, createToolRunner, liveSessionConfig, nextQuestion, readValue, tenderLookup } from "../web/src/seci/agent.js";
 import { DEFAULT_SETTINGS, seciTerms } from "../web/src/seci/terms.js";
+import { CHART_KINDS, agentChart, floorsByHour } from "../web/src/seci/charts.js";
+import * as E from "../web/src/rtc/engine.js";
 import { defaultSeciState as defaultSeciStateForChecks } from "../web/src/seci/state.js";
 
 // ---- a stand-in for the tab
@@ -17,8 +19,24 @@ const lp = {
   perYear: [{ year: 1, rules: [{ id: "peak", basis: "block", hoursMet: 0.98, shortfallMu: 2, met: false }, { id: "offpeak", basis: "block", hoursMet: 1, shortfallMu: 0, met: true }], blockShortfallMu: 2 }],
   lifetime: Array.from({ length: 25 }, (_, i) => ({ year: i + 1, demandMwh: 200 * 8760, deliveredMwh: 0.86 * 200 * 8760, exportMwh: 1.5e5, blockShortfallMwh: 2000 })),
 };
+// a year-1 hourly dispatch: solar by day, wind all day, the battery at night
+const hourly = (() => {
+  const h = { demand: [], solar: [], wind: [], direct: [], charge: [], discharge: [], export: [] };
+  for (let t = 0; t < E.HOURS; t += 1) {
+    const hr = E.HOUR_OF_DAY[t];
+    const solar = hr >= 7 && hr <= 17 ? 600 * Math.sin((Math.PI * (hr - 6)) / 12) : 0;
+    const wind = 90;
+    const direct = Math.min(200, solar + wind);
+    h.demand.push(200); h.solar.push(solar); h.wind.push(wind); h.direct.push(direct);
+    h.charge.push(Math.max(0, solar + wind - direct)); h.discharge.push(hr >= 18 || hr < 6 ? 95 : 0); h.export.push(0);
+  }
+  return h;
+})();
+let chartShown = null;
 let sized = 0;
 const ctx = {
+  getHourly: () => (state.lp ? hourly : null),
+  showChart: (c) => { chartShown = c; },
   getState: () => state,
   apply: (fn) => { state = fn(state); },
   getTerms: () => seciTerms(state.seci),
@@ -143,6 +161,38 @@ assert.equal((await run("review_bid_forms")).formats.list.find((f) => f.id === "
 await run("set_input", { key: "forms.7.1.refNo", value: "ACME/SECI/2026/02" });
 assert.equal((await run("review_bid_forms")).formats.list.find((f) => f.id === "7.1").reviewed, "changed", "an edit after the review shows");
 assert.ok((await run("open_format", { id: "particulars" })).particulars.some((x) => x.key === "forms.signatory"));
+
+// ---- charts: drawn from the bid, each with a summary for the agent to describe
+assert.deepEqual(Object.keys(CHART_KINDS), ["peak_window", "typical_day", "monthly_energy", "irr_vs_tariff", "cash_flows", "money"]);
+const floorsAny = floorsByHour({ bid: { baseMw: 200 }, seci: { peakPlan: "any" } });
+assert.equal(floorsAny.filter((v) => v === 180).length, 16, "any 6 of 16: every window hour held at 90%");
+assert.deepEqual([floorsAny[18], floorsAny[9], floorsAny[10], floorsAny[17]], [180, 180, 140, 140]);
+const floorsEve = floorsByHour({ bid: { baseMw: 200 }, seci: { peakPlan: "evening" } });
+assert.equal(floorsEve.filter((v) => v === 180).length, 6);
+const unsized = agentChart("peak_window", { state: { ...state, lp: null, seci: { ...state.seci, peakPlan: "evening" } }, terms: ctx.getTerms() });
+assert.equal(unsized.summary.sized, false);
+assert.equal(unsized.summary.hoursHeldToPeakFloor, 6);
+assert.ok(unsized.option.series.some((x) => x.name === "Floor if a morning hour is picked"), "the evening plan shows the morning risk");
+assert.throws(() => agentChart("typical_day", { state: { ...state, lp: null }, terms: ctx.getTerms() }), /Size the plant first/);
+assert.throws(() => agentChart("nonsense", { state, terms: ctx.getTerms() }), /No chart/);
+let shown = await run("show_chart", { kind: "peak_window", month: null, from: null, to: null });
+assert.ok(shown.ok && chartShown.kind === "peak_window" && shown.summary.sized === true, JSON.stringify(shown).slice(0, 300));
+assert.equal(chartShown.option.series[0].data.length, 24);
+assert.ok(Array.isArray(shown.summary.hoursWhereTheWorstDayFallsBelowTheFloor));
+shown = await run("show_chart", { kind: "typical_day", month: 6, from: null, to: null });
+assert.ok(shown.ok && /Jun/.test(shown.shown) && shown.summary.solarPeak.hour === "12", JSON.stringify(shown.summary));
+assert.equal(shown.summary.batteryDischargePeak.mw, 95);
+shown = await run("show_chart", { kind: "monthly_energy", month: null, from: null, to: null });
+assert.ok(shown.ok && shown.summary.deliveredMu > 1000 && chartShown.option.xAxis.data.length === 12, JSON.stringify(shown.summary));
+shown = await run("show_chart", { kind: "irr_vs_tariff", month: null, from: null, to: null });
+assert.ok(shown.ok && Math.abs(shown.summary.targetEquityIrrPct - 14) < 0.01 && shown.summary.quote?.equityIrrPct > 0, JSON.stringify(shown.summary));
+const eq = chartShown.option.series[0].data;
+assert.ok(eq.length >= 10 && eq.every((p, i) => i === 0 || p[1] >= eq[i - 1][1] - 1e-9), "the equity IRR rises with the tariff");
+for (const kind of ["cash_flows", "money"]) {
+  shown = await run("show_chart", { kind, month: null, from: null, to: null });
+  assert.ok(shown.ok && chartShown.kind === kind, `${kind}: ${JSON.stringify(shown).slice(0, 200)}`);
+}
+assert.ok(shown.summary.EMD > 0 && shown.summary["Net worth needed"] > shown.summary.EMD);
 
 // ---- status
 const st = await run("get_status");

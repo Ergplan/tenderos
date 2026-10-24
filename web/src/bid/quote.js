@@ -44,3 +44,25 @@ export function quotedReturns(state, terms, tariff) {
     message,
   };
 }
+
+/**
+ * Equity and project IRR at each of several tariffs (the IRR-against-tariff curve): the tariff the
+ * target needs is solved once, then the model runs at each tariff with the tariff fixed.
+ * Returns null without a sized plant; { target: {tariff, equityIrr, projectIrr}, points: [{tariff,
+ * equityIrr, projectIrr}] } otherwise (an IRR is NaN where none exists).
+ */
+export function irrCurve(state, terms, tariffs) {
+  if (!state?.lp) return null;
+  const { costs, fin, bess } = modelInputs(state, terms);
+  const annual = terms?.rules?.find((r) => r.id === "annual")?.target ?? 0;
+  const ops = opsFromLp(state.lp, fin, bess);
+  const run = (locked, t) => E.runFinancialModel(null, state.lp.sizes, { costs, fin: { ...fin, tariff: t }, bess, dfrTarget: annual, tariffLocked: locked, ops, solveBy: "npv" });
+  const target = run(false, fin.tariff);
+  return {
+    target: { tariff: target.tariff, equityIrr: target.equityIrr, projectIrr: target.projectIrr, targetEquityIrr: fin.targetEquityIrr },
+    points: tariffs.filter((t) => isNum(t) && t > 0).map((t) => {
+      const f = run(true, t);
+      return { tariff: t, equityIrr: f.equityIrr, projectIrr: f.projectIrr };
+    }),
+  };
+}

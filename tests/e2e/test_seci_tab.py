@@ -102,6 +102,18 @@ def test_bid_on_screen(tmp_path):
             assert label in size_text, size_text
         table = page.locator("[data-testid=bid-compliance]").inner_text()
         assert "of hours" in table and "Peak Hours floor" in table, table
+        # the agent's charts, drawn from the sized plant (the agent opens the same ones as it talks)
+        page.click("[data-testid=agent-open]")
+        for kind in ("peak_window", "typical_day", "monthly_energy", "irr_vs_tariff", "cash_flows", "money"):
+            page.click(f"[data-testid=agent-chart-{kind}]")
+            chart = page.locator("[data-testid=agent-chart]")
+            assert chart.get_attribute("data-kind") == kind and chart.locator("canvas").count() >= 1, kind
+        page.click("[data-testid=agent-chart-peak_window]")
+        assert "18:00–10:00" in page.locator("[data-testid=agent-chart]").inner_text()
+        page.click("[data-testid=agent-chart-size]")
+        assert "big" in page.locator("[data-testid=agent-chart]").get_attribute("class")
+        page.click("[data-testid=agent-chart-size]")
+        page.click("[aria-label='Close the agent']")
         page.click("[data-testid=seci-step-bid]")
         money = page.locator("[data-testid=seci-money]").inner_text()
         assert "EMD" in money.upper() and "cr" in money, money

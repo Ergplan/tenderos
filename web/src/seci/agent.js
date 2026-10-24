@@ -13,6 +13,7 @@ import { quotedReturns } from "../bid/quote.js";
 import { PACK, PEAK_PLANS, SHORTFALL_MODES, keyDates, moneyAtStake } from "./terms.js";
 import { FORM_FIELDS, bidChecks, formIssues, visibleFields } from "./forms.js";
 import { applies, blankValue, formatPrint, formatStatus, formatsSummary } from "./formats.js";
+import { CHART_KINDS, agentChart } from "./charts.js";
 import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "./voice.js";
 
 export const LIVE_MODEL = "gpt-live-1";
@@ -233,13 +234,16 @@ export const AGENT_TOOLS = [
   { type: "function", name: "check_tariff", description: "What a tariff the bidder may quote earns: equity IRR and project IRR at that tariff against the target, with a warning when it is below the tariff the target needs. Also records it as the tariff quoted in the bid forms when record is true.", parameters: obj({ tariff: { type: "number", description: "₹/kWh" }, record: { type: "boolean" } }, ["tariff", "record"]) },
   { type: "function", name: "review_bid_forms", description: "The bid forms: the particulars still empty, every RfS format this bid needs with its blanks left and whether the bidder reviewed it, and every check against the tender (capacity, tariff, storage, substation, net worth, experience, EMD, PBG, dates).", parameters: obj() },
   { type: "function", name: "open_format", description: "Show one RfS bid format on screen (e.g. '7.1' Covering Letter, '7.6' Financial Requirement, '7.10' Financial Bid) or 'particulars', and list its blanks: the input key to set each with set_input, the value now, where it comes from, and the RfS words around the blank with the page.", parameters: obj({ id: { type: "string" } }, ["id"]) },
+  { type: "function", name: "show_chart", description: `Open a chart beside the conversation, drawn from the bid itself, and get a short summary of what it shows to describe it. Use it whenever the user asks to see, draw, plot or compare something, and on your own when a picture explains better: ${Object.entries(CHART_KINDS).map(([k, v]) => `${k}: ${v}`).join("; ")}.`,
+    parameters: obj({ kind: { type: "string", enum: Object.keys(CHART_KINDS) }, month: { type: ["integer", "null"], description: "typical_day only: 1-12, or null for the whole year" }, from: { type: ["number", "null"], description: "irr_vs_tariff only: lowest tariff, or null" }, to: { type: ["number", "null"], description: "irr_vs_tariff only: highest tariff, or null" } }, ["kind", "month", "from", "to"]) },
   { type: "function", name: "mark_format_reviewed", description: "Record that the bidder has reviewed a format as filled. Only when the bidder says they have reviewed it.", parameters: obj({ id: { type: "string" }, reviewed: { type: "boolean" } }, ["id", "reviewed"]) },
 ];
 
 /**
  * Runs the tools against the tab. ctx: { getState() (the latest state, updated at once by apply),
  * apply(fn) (set the state), getTerms(), goto(step), highlight(target), runSizing() (resolves
- * with the sizing or null), stopSizing(), getRun() }.
+ * with the sizing or null), stopSizing(), getRun(), getHourly() (the year-1 hourly dispatch),
+ * showChart(chart) (open the chart window) }.
  */
 export function createToolRunner(ctx) {
   const input = (key) => agentInputs(ctx.getState()).find((x) => x.key === key);
@@ -382,6 +386,16 @@ export function createToolRunner(ctx) {
         enclose: (fmt.attachments || []).map((a) => a.label),
       };
     },
+    show_chart: ({ kind, month = null, from = null, to = null }) => {
+      let chart;
+      try {
+        chart = agentChart(kind, { state: ctx.getState(), terms: ctx.getTerms(), hourly: ctx.getHourly?.() || null, params: { month, from, to } });
+      } catch (err) {
+        return { ok: false, error: err.message };
+      }
+      ctx.showChart?.(chart);
+      return { ok: true, shown: chart.title, caption: chart.caption, summary: chart.summary };
+    },
     mark_format_reviewed: ({ id, reviewed }) => {
       const fmt = PACK.formats.find((f) => f.id === id);
       if (!fmt) return { ok: false, error: `No format ${id}.` };
@@ -412,7 +426,7 @@ export const LIVE_INSTRUCTIONS = `You are the voice of the TenderOS bid agent fo
 
 Speak briefly: one to three sentences, then let the user talk. Use Indian number words (lakh, crore) and say units in full. Use the user's language if they switch.
 
-Delegate to the backend whenever the user asks about the tender, gives or changes any input, asks to run or re-run the optimiser, asks about results, financials, IRR, the tariff to quote or the bid forms, or says next or go on. Never state a tender condition, an input value or a result yourself unless the backend has just given it to you; if you do not know, say you will check and delegate.
+Delegate to the backend whenever the user asks about the tender, asks to see, draw or compare something (the backend opens a chart beside you), gives or changes any input, asks to run or re-run the optimiser, asks about results, financials, IRR, the tariff to quote or the bid forms, or says next or go on. Never state a tender condition, an input value or a result yourself unless the backend has just given it to you; if you do not know, say you will check and delegate.
 
 Lead a guided model-filling exercise. At the start, greet the user in one sentence and ask the backend to brief the key bid conditions and give the first question. After each answer, ask the backend to set it and fetch the next question. When everything is in, offer to run the optimiser. While it runs (a minute or more), say so; you can keep answering questions about the tender meanwhile. Then explain the results and the financials, ask what tariff they want to quote, and finish with the bid forms.
 
@@ -432,6 +446,8 @@ The guided exercise:
 4. get_financials: the tariff for the target equity IRR, rounded up to the paisa for quoting, the equity IRR and the project IRR, the minimum DSCR and the penalties.
 5. Ask what tariff they will quote; check_tariff with record true. If it is below the target tariff, warn clearly and give the equity IRR and the project IRR at that tariff.
 6. review_bid_forms. Fill the particulars first (open_format "particulars"), then each RfS format the bid needs in order: open_format, read out its blanks still empty, set them as the user answers (the keys come from open_format), and ask the user to review it on screen; mark_format_reviewed only when they say it is reviewed.
+
+Show, don't only tell: call show_chart whenever the user asks to see, draw, plot or compare something, and on your own when explaining the Peak Hours and the floors (peak_window), how the sized plant runs through a day (typical_day), the energy month by month (monthly_energy), what a tariff earns (irr_vs_tariff), the cash flows (cash_flows) or the money at stake (money). Then describe the chart in one or two sentences from its summary.
 
 At any time: answer tender questions with tender_lookup; change any input the user names (list_inputs gives the keys; percent inputs are in percent, 24 means 24%); after a change that clears the sizing, offer to run the optimizer again; go_to_step to show what you talk about.
 

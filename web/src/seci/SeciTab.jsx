@@ -65,6 +65,7 @@ export default function SeciTab() {
   const sizing = useSizing({ state, setState, terms, prices, session: sizingSession, module: "seci" });
 
   const [agent, setAgent] = useState(null); // { available, model, backendModel } from /api/seci/live
+  const [docked, setDocked] = useState(false); // the agent's panel is open: the page makes room for it
   useEffect(() => { loadMarketPrices().then(setPrices).catch(() => setPrices(null)); }, []);
   useEffect(() => {
     fetch("/api/seci/live", { credentials: "same-origin" }).then((r) => (r.ok ? r.json() : null)).then(setAgent).catch(() => setAgent(null));
@@ -117,7 +118,7 @@ export default function SeciTab() {
   const props = { state, setState, patch, set, lockProps, isLocked, goto, prices, terms, missing };
 
   return (
-    <div className="rtc story bid seci" data-testid="seci-tab">
+    <div className={`rtc story bid seci ${docked ? "agent-docked" : ""}`} data-testid="seci-tab">
       <section className="story-hero">
         <div>
           <div className="eyebrow"><Gavel size={13} /> {PACK.short} · RfS No. {PACK.rfsNo}</div>
@@ -161,7 +162,7 @@ export default function SeciTab() {
         {next && <button type="button" className="primary chapter-next" onClick={() => goto(next.id)} style={{ "--next": next.color }}>Next: {next.title} <ArrowRight size={14} /></button>}
       </footer>
 
-      <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} />
+      <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} onDock={setDocked} />
     </div>
   );
 }

@@ -2,19 +2,11 @@
 // Ergplan/charting library. Colour is reserved for data; chrome stays grey.
 import * as echarts from "echarts";
 import { registerTheme as registerFlowTheme } from "energy-flow-chart";
+import { DATA_COLORS } from "./dataColors.js";
 
 export const THEME_NAME = "fdre-dark";
 
-export const DATA_COLORS = {
-  solar: "#f5b83d",
-  wind: "#5ab4e8",
-  bess: "#a98bff",
-  surplus: "#6fcf97",
-  unmet: "#ff6b5f",
-  demand: "#f4f4f1",
-  signal: "#d4ff3f",
-  muted: "#86867f",
-};
+export { DATA_COLORS };
 
 const MONO = '"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace';
 const axis = {
