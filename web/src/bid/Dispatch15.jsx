@@ -6,6 +6,18 @@ import { getJson } from "./readTender";
 const PLANT_TITLE = { biomass: "Biomass", thermal: "Thermal", hydro: "Hydro" };
 
 /**
+ * Year 1 short of the time-block floors here against the hourly sizing. The tender charges the
+ * energy short, not the blocks: at the same energy (and penalty) the 15-minute dispatch may spread
+ * the shortfall over more blocks than the sizing, so its share of blocks at the floor is lower.
+ */
+function sizingShort(lp, y1) {
+  const hourly = lp?.perYear?.find((r) => r.year === y1?.year)?.blockShortfallMu;
+  if (!(hourly >= 0) || !y1) return "";
+  const peak = lp.perYear.find((r) => r.year === y1.year)?.rules?.find((r) => r.basis === "block" && r.hoursMet != null);
+  return ` Year ${y1.year}: ${nf(y1.shortfallMu, 1)} MU short here, ${nf(hourly, 1)} MU in the hourly sizing. The penalty is on the energy short, so it is the same whether that energy falls in a few blocks or is spread over many; the 15-minute dispatch spreads it${peak ? ` (the sizing had ${pf(peak.hoursMet, 0)} of ${peak.id} hours at the floor)` : ""}, which is why fewer blocks are at the floor here.`;
+}
+
+/**
  * Size step 4.5: the sized plant dispatched in 15-minute blocks (96 a day) for every PPA year,
  * with biomass and thermal held at their technical minimum and ramp limit in every block.
  * Runs on the engine as a job (a few minutes); the per-year results show as each year finishes,
@@ -101,7 +113,7 @@ export default function Dispatch15({ lp, start }) {
           {failedYears.length ? <TriangleAlert size={14} /> : <CheckCircle2 size={14} />}
           <span>
             {failedYears.length && priced
-              ? `In 15-minute blocks the plant is short of the time-block floors in ${failedYears.length} of ${years.length} years: ${nf(failedYears.reduce((a, y) => a + y.shortfallMu, 0), 1)} MU in all, paid at ${rules[0].penaltyMultiple} × the tariff, as the sizing chose.`
+              ? `In 15-minute blocks the plant is short of the time-block floors in ${failedYears.length} of ${years.length} years: ${nf(failedYears.reduce((a, y) => a + y.shortfallMu, 0), 1)} MU in all, paid at ${rules[0].penaltyMultiple} × the tariff, as the sizing chose.${sizingShort(lp, years[0])}`
               : failedYears.length
               ? `In 15-minute blocks the plant misses a supply floor in ${failedYears.length} of ${years.length} years (years ${failedYears.map((y) => y.year).join(", ")}); shortfall ${nf(failedYears.reduce((a, y) => a + y.shortfallMu, 0), 1)} MU in all. Size again with more battery or a fixed larger biomass.`
               : `Every supply floor is met in all ${years.length} years in 15-minute blocks.`}

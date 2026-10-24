@@ -211,7 +211,14 @@ request used. Runs are kept on the engine for 24 hours.
   1.5×). A hard floor gets a large penalty, so a miss is reported instead of failing the year.
 * The table gives, per floor, the share of blocks at the floor.
 * Inside an hour, solar's ramp can leave one block short where the hourly average was met. So the
-  15-minute check is a little stricter than the hourly sizing (a few percent of blocks).
+  15-minute check is a little stricter than the hourly sizing.
+* **With a penalty, compare energy, not blocks.** The penalty is on the energy short, so the LP
+  pays the same whether that energy falls in a few blocks or is spread over many. The 15-minute
+  dispatch spreads it, because its tie-breaker keeps delivery smooth. Its share of blocks at the floor
+  can therefore be much lower than the sizing's share of hours, with nearly the same energy short.
+  * Example, the demo bid in year 1: 97.3 MU short in 15-minute blocks against 96.3 MU in the hourly
+    sizing; 54% of peak blocks at the floor against 86% of peak hours.
+  * The verdict gives both energies.
 
 ### Reading the hourly dispatch chart
 
