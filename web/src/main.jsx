@@ -85,7 +85,7 @@ function Restricted({ label, contacts = [] }) {
   );
 }
 
-const MODULE_TAB = { rtc: "rtc", bess: "bessTender" };
+const MODULE_TAB = { rtc: "rtc", bess: "bessTender", seci: "seciRtc" };
 
 export default function App({ user = null, initialScenario = null }) {
   const allowed = useMemo(() => new Set(user?.allowedTabs ?? ALL_TAB_IDS), [user]);
@@ -102,7 +102,7 @@ export default function App({ user = null, initialScenario = null }) {
         {!canView && <Restricted label={TABS.find((t) => t[0] === activeTab)?.[2] || "This tab"} contacts={user?.adminContacts} />}
         {canView && activeTab === "tenderBid" && <BidTab user={user} openTab={(id) => { if (allowed.has(id)) setActiveTab(id); }} />}
         {canView && activeTab === "rtc" && <RtcTab user={user} initialScenario={opened("rtc")} />}
-        {canView && activeTab === "seciRtc" && <SeciTab />}
+        {canView && activeTab === "seciRtc" && <SeciTab initialScenario={opened("seci")} />}
         {canView && activeTab === "bessTender" && <BessTab initialScenario={opened("bess")} />}
         {canView && activeTab === "cfd" && <CfdTab />}
       </main>

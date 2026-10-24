@@ -7,7 +7,7 @@ export function assertId(id) {
   if (!UUID.test(String(id))) throw new HttpError(404, "Scenario not found.");
 }
 
-const MODULES = new Set(["rtc", "bess"]);
+const MODULES = new Set(["rtc", "bess", "seci"]);
 
 export async function listScenarios({ module, q, archived = false }) {
   const vals = [archived];

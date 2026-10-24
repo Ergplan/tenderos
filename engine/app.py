@@ -6,6 +6,7 @@
   /api/bess/parse                     BESS requirements, from the same extraction
   /api/rtc/lp                         HiGHS least-tariff sizing, streamed as NDJSON
   /api/bid/dispatch15[...]            15-minute dispatch of a sized plant for every PPA year
+  /api/bid/document/pdf               HTML parts (the SECI bid letters) laid out as one A4 PDF
 
 The web app (Next.js) is the only client: it signs users in and forwards these paths.
 Run: uvicorn engine.app:app --port 8000
@@ -27,6 +28,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from engine.bess import requirements as BESS
+from engine.documents.pdf import html_to_pdf
 from engine.extraction import TENDER_TYPES, catalog, jobs, llm_available, read_tender
 from engine.extraction.extract import MODES, require_llm, resolve_mode
 from engine.extraction.llm import model_id
@@ -64,6 +66,12 @@ class ReadSetRequest(BaseModel):
 
 class BessParseRequest(BaseModel):
     file: UploadFile
+
+
+class PdfRequest(BaseModel):
+    parts: list[str]
+    css: str = ""
+    title: str = ""
 
 
 def _decode(content: str) -> bytes:
@@ -300,3 +308,14 @@ def dispatch15_zip(job_id: str) -> FileResponse:
     if path is None or job is None or job.get("status") != "done":
         raise HTTPException(status_code=404, detail="The 15-minute dispatch is not ready")
     return FileResponse(path, media_type="application/zip", filename="dispatch_15min_all_years.zip")
+
+
+@app.post("/api/bid/document/pdf")
+def document_pdf(req: PdfRequest) -> Response:
+    """Lay out HTML parts as one A4 PDF, each part from a new page (the SECI bid letters)."""
+    try:
+        data = html_to_pdf(req.parts, req.css, req.title)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    name = re.sub(r"[^A-Za-z0-9._-]+", "_", req.title or "document").strip("_")[:100] or "document"
+    return Response(data, media_type="application/pdf", headers={"content-disposition": f'attachment; filename="{name}.pdf"'})

@@ -1,5 +1,6 @@
 // A minimal Word (.docx) writer: paragraphs and fixed-width tables in Calibri, A4. Used for the
-// pre-bid queries (app/api/bid/queries) and the SECI bid pack (app/api/seci/forms).
+// pre-bid queries (app/api/bid/queries), the SECI bid pack (app/api/seci/forms) and the SECI
+// letters (app/api/seci/letters).
 import JSZip from "jszip";
 
 export const str = (v, n = 4000) => String(v ?? "").slice(0, n);
@@ -9,18 +10,33 @@ const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 const R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 const PKG = "http://schemas.openxmlformats.org/package/2006/relationships";
 
-export function run(text, { bold = false, italic = false, size = null, color = null } = {}) {
-  const props = [bold ? "<w:b/>" : "", italic ? "<w:i/>" : "", color ? `<w:color w:val="${color}"/>` : "", size ? `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>` : ""].join("");
-  return `<w:r>${props ? `<w:rPr>${props}</w:rPr>` : ""}<w:t xml:space="preserve">${esc(text)}</w:t></w:r>`;
+export function run(text, { bold = false, italic = false, size = null, color = null, strike = false, font = null, highlight = null } = {}) {
+  // rPr children in the schema's order
+  const props = [font ? `<w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:cs="${font}"/>` : "", bold ? "<w:b/>" : "", italic ? "<w:i/>" : "", strike ? "<w:strike/>" : "",
+    color ? `<w:color w:val="${color}"/>` : "", size ? `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>` : "", highlight ? `<w:highlight w:val="${highlight}"/>` : ""].join("");
+  // a line break inside the text is a <w:br/>
+  const parts = str(text, 20000).split("\n").map((t) => `<w:t xml:space="preserve">${esc(t)}</w:t>`).join("<w:br/>");
+  return `<w:r>${props ? `<w:rPr>${props}</w:rPr>` : ""}${parts}</w:r>`;
 }
+
+/** A paragraph of several runs (each [text, run options]); align "center" | "both" | null. */
+export function runsPara(runs, { before = 0, after = 100, align = null } = {}) {
+  return `<w:p><w:pPr><w:spacing w:before="${before}" w:after="${after}"/>${align ? `<w:jc w:val="${align}"/>` : ""}</w:pPr>${runs.map(([t, o]) => run(t, o)).join("")}</w:p>`;
+}
+
+export const pageBreak = () => '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
 
 export function para(text, opts = {}) {
   const spacing = `<w:spacing w:before="${opts.before ?? 0}" w:after="${opts.after ?? 80}"/>`;
   return `<w:p><w:pPr>${spacing}${opts.center ? '<w:jc w:val="center"/>' : ""}</w:pPr>${run(text, opts)}</w:p>`;
 }
 
-/** A cell: each line of the text is its own paragraph. */
+/** A cell: each line of the text is its own paragraph; or, given as { runs }, one paragraph of runs. */
 export function cell(text, width, { bold = false, boldFirst = false, fill = null, size = 18 } = {}) {
+  if (text && typeof text === "object" && Array.isArray(text.runs)) {
+    const p = `<w:p><w:pPr><w:spacing w:before="0" w:after="60"/></w:pPr>${text.runs.map(([t, o]) => run(t, { size, bold, ...o })).join("")}</w:p>`;
+    return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : ""}</w:tcPr>${p}</w:tc>`;
+  }
   const lines = str(text).split("\n");
   const ps = lines.map((line, i) => `<w:p><w:pPr><w:spacing w:before="0" w:after="60"/></w:pPr>${run(line, { bold: bold || (boldFirst && i === 0), size })}</w:p>`).join("");
   return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : ""}</w:tcPr>${ps}</w:tc>`;

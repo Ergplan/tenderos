@@ -155,3 +155,41 @@
   .agent-panel { top: 22px; max-height: calc(100vh - 44px); align-content: start; }
   .agent-panel .agent-log { max-height: none; }
 }
+
+/* the format as its letter (LetterView.jsx): a sheet of paper in the RfS wording */
+.seci-format-modes { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin: 6px 0 12px; }
+.seci-format-modes button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.seci-format-modes button.active { color: var(--ink); border-bottom-color: var(--signal); }
+.letter-view { display: grid; gap: 10px; }
+.letter-tools { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.letter-buttons { display: inline-flex; gap: 6px; }
+.letter-paper { background: #fbfaf6; color: #1a1a1a; max-width: 820px; width: 100%; margin: 0 auto; padding: 44px 56px 56px; box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 18px 40px rgba(0,0,0,0.45);
+  font-family: "Times New Roman", Georgia, serif; font-size: 15px; line-height: 1.5; }
+.letter-paper p { margin: 0 0 10px; }
+.letter-letterhead { text-align: center; border-bottom: 1.5px solid #222; padding-bottom: 8px; margin-bottom: 18px; display: grid; gap: 2px; }
+.letter-letterhead strong { font-size: 19px; letter-spacing: 0.02em; }
+.letter-letterhead small, .letter-stamp small { color: #555; font-size: 12px; }
+.letter-stamp { border: 1px dashed #999; padding: 6px 10px; margin-bottom: 18px; text-align: center; }
+.letter-heading { text-align: center; font-weight: 700; margin: 0 0 4px !important; }
+.letter-subheading { font-weight: 700; margin: 14px 0 6px !important; }
+.letter-note { font-style: italic; color: #444; }
+.letter-para { position: relative; margin: 0 0 10px; }
+.letter-text { white-space: normal; text-align: justify; outline: none; border-radius: 2px; padding: 1px 3px; margin: 0 -3px; }
+.letter-text[contenteditable="true"]:hover { background: rgba(212, 255, 63, 0.10); cursor: text; }
+.letter-text[contenteditable="true"]:focus { background: #fff; box-shadow: 0 0 0 2px #b6d63a; }
+.letter-para.edited .letter-text { background: rgba(169, 139, 255, 0.10); box-shadow: inset 3px 0 0 #8b6cf0; }
+.letter-para.struck .letter-text { color: #777; }
+.letter-value { background: rgba(212, 255, 63, 0.28); border-bottom: 1px solid #9ab52a; padding: 0 2px; border-radius: 2px; }
+.letter-value.missing { background: rgba(255, 107, 95, 0.18); border-bottom-color: #c0392b; color: #a32; }
+.letter-alt.struck { color: #777; }
+.letter-flag { display: flex; gap: 6px; align-items: center; font-family: var(--font-sans); font-size: 11px; color: #666; margin: 2px 0; }
+.letter-flag.warn { color: #b26b00; }
+.letter-flag.edited { color: #6a4fd6; }
+.letter-flag .rtc-link { font-size: 11px; color: #6a4fd6; }
+.letter-omitted { opacity: 0.45; border-left: 2px dashed #bbb; padding-left: 8px; margin: 0 0 10px; }
+.letter-omitted small { font-family: var(--font-sans); font-size: 11px; color: #666; }
+.letter-table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; font-size: 13px; }
+.letter-table th, .letter-table td { border: 1px solid #888; padding: 5px 6px; vertical-align: top; text-align: left; }
+.letter-table th { background: #ecebe6; }
+.alert.warn { border-color: var(--warn); color: var(--warn); }
+@media (max-width: 760px) { .letter-paper { padding: 22px 16px; font-size: 14px; } }

@@ -2985,6 +2985,17 @@
      }
     },
     {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 74,
+      "quote": "to the RfS No. ____________ dated ___________ issued by Solar Energy Corporation of India"
+     }
+    },
+    {
      "key": "bank",
      "label": "Bank name and address",
      "kind": "textarea",
@@ -3041,25 +3052,47 @@
     },
     {
      "key": "bankSignatory",
-     "label": "Bank officer name and power of attorney no.",
+     "label": "Bank officer name and designation",
      "kind": "text",
      "maps": null,
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "Name:"
+     }
+    },
+    {
+     "key": "bankPoa",
+     "label": "Bank officer's Power of Attorney No.",
+     "kind": "text",
      "context": {
       "doc": "rfs",
       "page": 75,
       "quote": "Power of Attorney No.:"
-     }
+     },
+     "maps": null
     },
     {
      "key": "bankContact",
-     "label": "Bank contact details and e-mail",
+     "label": "Contact details of the bank",
      "kind": "text",
      "maps": null,
      "context": {
       "doc": "rfs",
       "page": 75,
-      "quote": "E-mail ID of the Bank:"
+      "quote": "Contact Details of the Bank:"
      }
+    },
+    {
+     "key": "bankEmail",
+     "label": "E-mail ID of the bank",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 75,
+      "quote": "E-mail ID of the Bank:"
+     },
+     "maps": null
     },
     {
      "key": "dated",
@@ -3187,6 +3220,17 @@
      }
     },
     {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 76,
+      "quote": "in response to the RfS No."
+     }
+    },
+    {
      "key": "issuerAddress",
      "label": "REC/PFC name, address and registered office",
      "kind": "textarea",
@@ -3283,6 +3327,17 @@
       "doc": "rfs",
       "page": 79,
       "quote": "In accordance with your RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 79,
+      "quote": "your RfS No."
      }
     },
     {
@@ -3539,6 +3594,17 @@
      }
     },
     {
+     "key": "place",
+     "label": "Place of payment (from SECI's address)",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 81,
+      "quote": "[Insert Name of the Place from the address of the SECI]"
+     }
+    },
+    {
      "key": "pbgAmount",
      "label": "Amount (Rs, also in words)",
      "kind": "number",
@@ -3573,7 +3639,7 @@
     },
     {
      "key": "bankSignatory",
-     "label": "Bank officer, power of attorney no., contact and e-mail",
+     "label": "Bank officer name and designation",
      "kind": "text",
      "maps": null,
      "context": {
@@ -3581,6 +3647,50 @@
       "page": 82,
       "quote": "Power of Attorney No.:"
      }
+    },
+    {
+     "key": "bankPoa",
+     "label": "Bank officer's Power of Attorney No.",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 82,
+      "quote": "Power of Attorney No.:"
+     },
+     "maps": null
+    },
+    {
+     "key": "bankContact",
+     "label": "Contact details of the bank",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 83,
+      "quote": "Contact Details of the Bank:"
+     },
+     "maps": null
+    },
+    {
+     "key": "bankEmail",
+     "label": "E-mail ID of the bank",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 83,
+      "quote": "E-mail ID of the Bank:"
+     },
+     "maps": null
+    },
+    {
+     "key": "dated",
+     "label": "Date of the guarantee",
+     "kind": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 83,
+      "quote": "Dated this ____ day of ____, 20__"
+     },
+     "maps": null
     },
     {
      "key": "witnesses",
@@ -3708,6 +3818,17 @@
      }
     },
     {
+     "key": "location",
+     "label": "Project location(s)",
+     "kind": "text",
+     "maps": "solarSite",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "[Insert name of the Project location(s)]"
+     }
+    },
+    {
      "key": "title",
      "label": "RfS name",
      "kind": "text",
@@ -3730,6 +3851,17 @@
      }
     },
     {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "in response to the RfS dated"
+     }
+    },
+    {
      "key": "issuerAddress",
      "label": "REC/PFC name, address, registered office",
      "kind": "textarea",
@@ -3738,6 +3870,17 @@
       "doc": "rfs",
       "page": 84,
       "quote": "[insert name & address of PFC/REC]"
+     }
+    },
+    {
+     "key": "place",
+     "label": "Place of payment (from SECI's address)",
+     "kind": "text",
+     "maps": "place",
+     "context": {
+      "doc": "rfs",
+      "page": 84,
+      "quote": "[Insert Name of the Place from the address of the SECI]"
      }
     },
     {
@@ -3837,6 +3980,17 @@
       "doc": "rfs",
       "page": 87,
       "quote": "in response to the RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 87,
+      "quote": "RfS No."
      }
     },
     {
@@ -4258,9 +4412,20 @@
      }
     },
     {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Date: ___________"
+     }
+    },
+    {
      "key": "bidder",
-     "label": "Bidding Company / Lead Member name and address",
-     "kind": "textarea",
+     "label": "Bidding Company / Lead Member name",
+     "kind": "text",
      "maps": "bidder",
      "context": {
       "doc": "rfs",
@@ -4269,14 +4434,36 @@
      }
     },
     {
+     "key": "address",
+     "label": "Bidder address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
      "key": "phoneEmail",
-     "label": "Telephone and e-mail",
+     "label": "Telephone",
      "kind": "text",
      "maps": "phone",
      "context": {
       "doc": "rfs",
       "page": 96,
       "quote": "Tel.#:"
+     }
+    },
+    {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "E-mail address#"
      }
     },
     {
@@ -4288,6 +4475,28 @@
       "doc": "rfs",
       "page": 96,
       "quote": "Response to RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Response to RfS No. _______________ dated _______ for ____________."
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 96,
+      "quote": "Response to RfS No. _______________ dated _______ for ____________."
      }
     },
     {
@@ -4400,7 +4609,7 @@
     },
     {
      "key": "caDetails",
-     "label": "CA signature, stamp, membership no., firm regn. no., UDIN, date",
+     "label": "Chartered Accountant (name, designation, firm)",
      "kind": "text",
      "maps": null,
      "context": {
@@ -4408,6 +4617,61 @@
       "page": 99,
       "quote": "(Signature and Stamp of CA)"
      }
+    },
+    {
+     "key": "signatory",
+     "label": "Authorised signatory",
+     "kind": "text",
+     "maps": "signatory",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "(Signature & Name of the Authorized Signatory)"
+     }
+    },
+    {
+     "key": "caMembershipNo",
+     "label": "CA membership no.",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "Membership No."
+     },
+     "maps": null
+    },
+    {
+     "key": "caFirmRegnNo",
+     "label": "Registration no. of the CA's firm",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "Regn. No. of the CA’s Firm:"
+     },
+     "maps": null
+    },
+    {
+     "key": "caUdin",
+     "label": "UDIN",
+     "kind": "text",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "UDIN:"
+     },
+     "maps": null
+    },
+    {
+     "key": "caDate",
+     "label": "Date of the CA's certificate",
+     "kind": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 99,
+      "quote": "Date: Note: (i) Along with the above format, in a separate sheet on the letterhead of the Chartered"
+     },
+     "maps": null
     }
    ],
    "attachments": [
@@ -4476,6 +4740,17 @@
      }
     },
     {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 100,
+      "quote": "in respect to our response to RfS vide RfS No. _____________ dated ___________"
+     }
+    },
+    {
      "key": "lastBidDate",
      "label": "Last date of bid submission (twice)",
      "kind": "date",
@@ -4532,9 +4807,9 @@
    "fields": [
     {
      "key": "refNo",
-     "label": "Reference number and date",
+     "label": "Reference number",
      "kind": "text",
-     "maps": "date",
+     "maps": null,
      "context": {
       "doc": "rfs",
       "page": 101,
@@ -4542,9 +4817,20 @@
      }
     },
     {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "Date: ___________"
+     }
+    },
+    {
      "key": "bidder",
-     "label": "Bidding Company / Lead Member name and address",
-     "kind": "textarea",
+     "label": "Bidding Company / Lead Member name",
+     "kind": "text",
      "maps": "bidder",
      "context": {
       "doc": "rfs",
@@ -4553,14 +4839,36 @@
      }
     },
     {
+     "key": "address",
+     "label": "Bidder address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "(Insert name and address of Bidding Company/ Lead Member of Consortium)"
+     }
+    },
+    {
      "key": "phoneEmail",
-     "label": "Telephone and e-mail",
+     "label": "Telephone",
      "kind": "text",
      "maps": "phone",
      "context": {
       "doc": "rfs",
       "page": 101,
       "quote": "Tel. #:"
+     }
+    },
+    {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "E-mail address#"
      }
     },
     {
@@ -4572,6 +4880,28 @@
       "doc": "rfs",
       "page": 101,
       "quote": "(Enter Address of SECI)"
+     }
+    },
+    {
+     "key": "rfsNoSub",
+     "label": "RfS number (subject)",
+     "kind": "text",
+     "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "Sub: Response to RfS No. _____________ dated ________ for _____________."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 101,
+      "quote": "Sub: Response to RfS No. _____________ dated ________ for _____________."
      }
     },
     {
@@ -4673,13 +5003,24 @@
    "fields": [
     {
      "key": "refNo",
-     "label": "Reference number and date",
+     "label": "Reference number",
      "kind": "text",
-     "maps": "date",
+     "maps": null,
      "context": {
       "doc": "rfs",
       "page": 103,
       "quote": "DISCLOSURE Ref. No."
+     }
+    },
+    {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "Date: ___________"
      }
     },
     {
@@ -4705,10 +5046,32 @@
      }
     },
     {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "E-mail address#"
+     }
+    },
+    {
      "key": "rfsNo",
      "label": "RfS number, date and title",
      "kind": "text",
      "maps": "rfsNo",
+     "context": {
+      "doc": "rfs",
+      "page": 103,
+      "quote": "Sub: Response to RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
      "context": {
       "doc": "rfs",
       "page": 103,
@@ -4814,9 +5177,9 @@
    "fields": [
     {
      "key": "refNo",
-     "label": "Reference number and date",
+     "label": "Reference number",
      "kind": "text",
-     "maps": "date",
+     "maps": null,
      "context": {
       "doc": "rfs",
       "page": 105,
@@ -4824,9 +5187,20 @@
      }
     },
     {
+     "key": "date",
+     "label": "Letter date",
+     "kind": "date",
+     "maps": "date",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Date: ___________"
+     }
+    },
+    {
      "key": "bidder",
-     "label": "Bidding Company / member name and address",
-     "kind": "textarea",
+     "label": "Bidding Company / Member name",
+     "kind": "text",
      "maps": "bidder",
      "context": {
       "doc": "rfs",
@@ -4835,14 +5209,36 @@
      }
     },
     {
+     "key": "address",
+     "label": "Bidder address",
+     "kind": "textarea",
+     "maps": "address",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "(Insert name and address of Bidding Company/Member of Consortium)"
+     }
+    },
+    {
      "key": "phoneEmail",
-     "label": "Telephone and e-mail",
+     "label": "Telephone",
      "kind": "text",
      "maps": "phone",
      "context": {
       "doc": "rfs",
       "page": 105,
       "quote": "Tel#:"
+     }
+    },
+    {
+     "key": "email",
+     "label": "E-mail",
+     "kind": "text",
+     "maps": "email",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "E-mail address#"
      }
     },
     {
@@ -4854,6 +5250,28 @@
       "doc": "rfs",
       "page": 105,
       "quote": "Sub: Response to RfS No"
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Sub: Response to RfS No ………………… dated …………………………….. for the tender for"
+     }
+    },
+    {
+     "key": "title",
+     "label": "RfS title",
+     "kind": "text",
+     "maps": "title",
+     "context": {
+      "doc": "rfs",
+      "page": 105,
+      "quote": "Sub: Response to RfS No ………………… dated …………………………….. for the tender for"
      }
     },
     {
@@ -5283,6 +5701,17 @@
       "doc": "rfs",
       "page": 139,
       "quote": "is participating in the RfS issued by SECI vide RfS No."
+     }
+    },
+    {
+     "key": "rfsDate",
+     "label": "RfS date",
+     "kind": "date",
+     "maps": "rfsDate",
+     "context": {
+      "doc": "rfs",
+      "page": 139,
+      "quote": "RfS No."
      }
     },
     {

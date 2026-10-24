@@ -29,5 +29,6 @@ export function defaultSeciState() {
     seci: { ...DEFAULT_SETTINGS },
     forms: {}, // the particulars and every format's blanks
     formsReview: {}, // format id -> { at, print }: reviewed, and on which values
+    letters: {}, // format id -> { block index: the bidder's wording of that paragraph }
   };
 }

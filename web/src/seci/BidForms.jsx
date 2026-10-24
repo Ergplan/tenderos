@@ -3,10 +3,13 @@ import { CheckCircle2, ChevronLeft, ChevronRight, CircleDashed, ClipboardList, D
 import { Section, nf } from "../rtc/ui";
 import { financeOf } from "./voice";
 import { FORM_FIELDS, bidChecks, bidPackRequest, formIssues, visibleFields } from "./forms";
-import { blankValue, formatGroups, formatPrint, formatStatus, formatsForPack, formatsSummary } from "./formats";
+import { applies, blankValue, formatGroups, formatPrint, formatStatus, formatsForPack, formatsSummary } from "./formats";
 import { PACK, prov } from "./terms";
 import { SourceChip } from "../bid/RequirementsStep";
 import QuoteCheck from "../bid/QuoteCheck";
+import LetterView from "./LetterView";
+import { TEMPLATES, lettersForBid } from "./letters/index.js";
+import { downloadLetters } from "./letters/export.js";
 
 export { formIssues };
 
@@ -131,6 +134,9 @@ function Blank({ state, format, field, setField, onFocusPage }) {
 /** One format: what it is, its blanks beside the RfS page, the enclosures, and the review mark. */
 function FormatView({ state, setState, format, setField, onPrev, onNext }) {
   const [page, setPage] = useState(format.pages[0]);
+  // the format as blanks beside the RfS page, or as the full letter (state, so it stays as chosen)
+  const mode = TEMPLATES[format.id] && state.formsMode === "letter" ? "letter" : "blanks";
+  const setMode = (m) => setState((st) => ({ ...st, formsMode: m }));
   const s = formatStatus(state, format);
   const pages = [];
   for (let p = format.pages[0]; p <= format.pages[1]; p += 1) pages.push(p);
@@ -157,6 +163,13 @@ function FormatView({ state, setState, format, setField, onPrev, onNext }) {
         <div><dt>When</dt><dd>{format.when}</dd></div>
         <div><dt>In the RfS</dt><dd><a className="seci-link" href={`${RFS}#page=${format.pages[0]}`} target="_blank" rel="noreferrer">pp. {format.pages[0]}–{format.pages[1]}</a></dd></div>
       </dl>
+      {TEMPLATES[format.id] && (
+        <div className="seci-format-modes" role="tablist">
+          <button type="button" role="tab" aria-selected={mode === "blanks"} className={mode === "blanks" ? "active" : ""} onClick={() => setMode("blanks")} data-testid="seci-format-mode-blanks">Blanks beside the RfS</button>
+          <button type="button" role="tab" aria-selected={mode === "letter"} className={mode === "letter" ? "active" : ""} onClick={() => setMode("letter")} data-testid="seci-format-mode-letter">The letter</button>
+        </div>
+      )}
+      {mode === "letter" ? <LetterView state={state} setState={setState} format={format} /> : (
       <div className="seci-format-body">
         <div className="seci-blanks">
           <div className="seci-group-title">{s.total ? `${s.filled} of ${s.total} blanks filled` : "Nothing to fill: sign and stamp the RfS document"}</div>
@@ -181,6 +194,7 @@ function FormatView({ state, setState, format, setField, onPrev, onNext }) {
           <iframe title={`RfS page ${page}`} src={`${RFS}#page=${page}&view=FitH`} data-testid="seci-rfs-frame" />
         </div>
       </div>
+      )}
       <footer className="seci-format-foot">
         <button type="button" className="secondary" onClick={onPrev} disabled={!onPrev}><ChevronLeft size={14} /> Previous</button>
         {s.reviewed === "current" ? (
@@ -208,6 +222,7 @@ function navBadge(st) {
 /** Step 7: the bid forms. The particulars once, then every RfS format this bid needs, reviewed one by one, and the checks. */
 export default function BidForms({ state, setState, terms, goto }) {
   const [saving, setSaving] = useState(false);
+  const [lettersBusy, setLettersBusy] = useState("");
   const [error, setError] = useState("");
   const view = state.formsView || "particulars"; // in the tab's state, so the voice agent can open a format
   const setView = (id) => setState((s) => ({ ...s, formsView: id }));
@@ -225,6 +240,17 @@ export default function BidForms({ state, setState, terms, goto }) {
     <>
       <Section index="7" title="Bid forms" note={`${sum.needed} RfS formats for this bid · ${sum.reviewed} reviewed · ${sum.blanksLeft} blanks to fill`}
         actions={(
+          <>
+          {["word", "pdf"].map((kind) => (
+            <button key={kind} type="button" className="secondary" disabled={Boolean(lettersBusy)} data-testid={`seci-letters-${kind}`}
+              title="Every format this bid needs, as its full letter in the RfS wording with your blanks and edits"
+              onClick={async () => {
+                setLettersBusy(kind); setError("");
+                try { await downloadLetters(lettersForBid(state, applies), kind); } catch (err) { setError(err.message); } finally { setLettersBusy(""); }
+              }}>
+              {lettersBusy === kind ? <Loader2 className="spin" size={14} /> : <FileText size={14} />} All letters ({kind === "word" ? "Word" : "PDF"})
+            </button>
+          ))}
           <button type="button" className="primary" disabled={saving} data-testid="seci-forms-download"
             onClick={async () => {
               setSaving(true); setError("");
@@ -232,6 +258,7 @@ export default function BidForms({ state, setState, terms, goto }) {
             }}>
             {saving ? <Loader2 className="spin" size={14} /> : <Download size={14} />} Download bid pack (Word)
           </button>
+          </>
         )}>
         {error && <div className="alert"><TriangleAlert size={14} /> {error}</div>}
         <div className="seci-forms-layout">

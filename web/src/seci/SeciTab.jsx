@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, Gavel, Layers, ListChecks, RotateCcw, Scale, Zap } from "lucide-react";
+import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, FolderOpen, Gavel, Layers, ListChecks, RotateCcw, Save, Scale, Zap } from "lucide-react";
+import SaveDialog from "../scenarios/SaveDialog";
 import { nf } from "../rtc/ui";
 import { loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
 import useSizing from "../bid/useSizing";
@@ -29,19 +30,24 @@ export const SECI_STEPS = [
   { id: "forms", title: "Bid forms", icon: ClipboardCheck, color: "#a98bff" },
 ];
 
+/** A saved bid (this browser's, or one opened from the library) as the tab's state. */
+function fromSaved(saved) {
+  const merged = mergeBidState(saved);
+  return {
+    ...merged,
+    tender: TENDER,
+    step: SECI_STEPS.some((s) => s.id === saved.step) ? saved.step : "documents",
+    seci: { ...DEFAULT_SETTINGS, ...(saved.seci || {}) },
+    forms: saved.forms || {},
+    formsReview: saved.formsReview || {},
+    letters: saved.letters || {},
+  };
+}
+
 function loadState() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultSeciState();
-    const saved = JSON.parse(raw);
-    const merged = mergeBidState(saved);
-    return {
-      ...merged,
-      tender: TENDER,
-      step: SECI_STEPS.some((s) => s.id === saved.step) ? saved.step : "documents",
-      seci: { ...DEFAULT_SETTINGS, ...(saved.seci || {}) },
-      forms: saved.forms || {},
-    };
+    return raw ? fromSaved(JSON.parse(raw)) : defaultSeciState();
   } catch {
     return defaultSeciState();
   }
@@ -49,6 +55,7 @@ function loadState() {
 
 // survive switching dashboard tabs
 let sessionState = null;
+let sessionLinked = null;
 const sizingSession = { hourly: null, run: null };
 
 /**
@@ -57,8 +64,14 @@ const sizingSession = { hourly: null, run: null };
  * steps), the financial model with its formula workbook, the bid forms, and a voice bid agent
  * (GPT-Live) that works through it all on screen.
  */
-export default function SeciTab() {
-  const [state, setState] = useState(() => sessionState || loadState());
+export default function SeciTab({ initialScenario = null }) {
+  const opened = initialScenario?.current?.inputs?.state;
+  const [state, setState] = useState(() => (opened ? fromSaved(opened) : sessionState || loadState()));
+  // the saved bid this one is a version of (library: Saved scenarios, module "seci")
+  const [linked, setLinked] = useState(() => (opened ? { id: initialScenario.scenario.id, name: initialScenario.scenario.name, version: initialScenario.current.version } : sessionLinked));
+  const [showSave, setShowSave] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  useEffect(() => { sessionLinked = linked; }, [linked]);
   const [prices, setPrices] = useState(null);
   const terms = useMemo(() => seciTerms(state.seci), [state.seci]);
   const missing = useMemo(() => missingInputs(state, terms), [state, terms]);
@@ -86,6 +99,23 @@ export default function SeciTab() {
     setState((s) => ({ ...s, step }));
     window.scrollTo?.({ top: 0, behavior: "smooth" });
   }, []);
+
+  function buildSave() {
+    const lp = state.lp;
+    return {
+      inputs: { state },
+      results: { lp: lp ? { sizes: lp.sizes, tariff: lp.tariff, years: lp.years } : null },
+      summary: {
+        solarMw: lp?.sizes?.solarMw ?? null,
+        windMw: lp?.sizes?.windMw ?? null,
+        bessMw: lp?.sizes?.bessMw ?? null,
+        bessMwh: lp?.sizes?.bessMwh ?? null,
+        tariff: state.forms?.tariff ?? lp?.tariff ?? null,
+        contractedMw: state.bid.baseMw,
+        bidder: state.forms?.bidder || null,
+      },
+    };
+  }
 
   function resetAll() {
     if (!window.confirm("Clear your bid, sources, costs, sizing and bid forms in this tab?")) return;
@@ -126,9 +156,14 @@ export default function SeciTab() {
           <p>{PACK.title}. The tender and its amendments, the conditions in force, what you bid, your supply sources sized against every peak and off-peak block, the financial model, and the RfS's bid formats to fill and review. Talk to the bid agent to go through it by voice.</p>
         </div>
         <div className="story-hero-tools">
+          {linked && <span className="rtc-live" data-testid="seci-linked">{linked.name} · v{linked.version}</span>}
+          <button type="button" className="rtc-reset" onClick={() => setShowSave(true)} data-testid="seci-save"><Save size={13} /> Save</button>
+          <a className="rtc-reset" href="/scenarios?module=seci"><FolderOpen size={13} /> Open</a>
           <button type="button" className="rtc-reset" onClick={resetAll}><RotateCcw size={13} /> Reset inputs</button>
         </div>
       </section>
+
+      {saveMessage && <div className="alert ok" data-testid="seci-saved" role="status">{saveMessage}</div>}
 
       <nav className="bid-steps" aria-label="Steps">
         {SECI_STEPS.map((s, i) => {
@@ -161,6 +196,17 @@ export default function SeciTab() {
         {prev ? <button type="button" className="secondary" onClick={() => goto(prev.id)}><ChevronLeft size={14} /> {prev.title}</button> : <span />}
         {next && <button type="button" className="primary chapter-next" onClick={() => goto(next.id)} style={{ "--next": next.color }}>Next: {next.title} <ArrowRight size={14} /></button>}
       </footer>
+
+      {showSave && (
+        <SaveDialog
+          module="seci"
+          linked={linked}
+          defaultName={`${PACK.short} · ${state.forms?.bidder || "Bid"} · ${nf(state.bid.baseMw || 0, 0)} MW`}
+          build={buildSave}
+          onSaved={(saved) => { setLinked(saved); setShowSave(false); setSaveMessage(`Saved “${saved.name}” version ${saved.version}: the particulars, every format's blanks, the letters with their edits and the sizing.`); }}
+          onClose={() => setShowSave(false)}
+        />
+      )}
 
       <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} onDock={setDocked} />
     </div>

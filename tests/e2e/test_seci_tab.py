@@ -22,6 +22,7 @@ import re
 import zipfile
 from pathlib import Path
 
+import pymupdf
 import pytest
 
 from tests.e2e.test_tender_to_bid import DEMO, EMAIL, PASSWORD, URL, _check_live_model, _session
@@ -38,6 +39,21 @@ pytestmark = [
 def _open_tab(page):
     page.click("aside.sidebar button:has-text('SECI RTC tender')")
     page.wait_for_selector("[data-testid=seci-tab]", timeout=30_000)
+
+
+def _review(page):
+    """Mark the open format reviewed. The RfS page beside the blanks loads as the format opens and
+    can move the button under the pointer, so click again until the review shows."""
+    for _ in range(4):
+        page.locator("[data-testid=seci-format-review]").scroll_into_view_if_needed()
+        page.wait_for_timeout(300)
+        page.click("[data-testid=seci-format-review]")
+        try:
+            page.wait_for_selector("[data-testid=seci-format-reviewed]", timeout=4_000)
+            return
+        except Exception:  # noqa: BLE001 - try again
+            continue
+    raise AssertionError("the review did not register")
 
 
 def test_documents_and_conditions():
@@ -168,15 +184,64 @@ def test_bid_on_screen(tmp_path):
         page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/01")
         page.locator("[data-testid=seci-format-7\\.1] .seci-blank-ctx").nth(5).click()
         assert "#page=6" in page.locator("[data-testid=seci-rfs-frame]").get_attribute("src"), "a blank's words in the RfS open its page"
-        page.click("[data-testid=seci-format-review]")
+        _review(page)
         assert "reviewed" in page.locator("[data-testid=seci-format-reviewed]").inner_text().lower()
         assert "reviewed" in page.locator("[data-testid=seci-formsnav-7\\.1]").inner_text().lower()
         page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/02")
         assert "changed since review" in page.locator("[data-testid=seci-format-review]").inner_text().lower(), "an edit after the review shows"
-        page.click("[data-testid=seci-format-review]")
+        _review(page)
         page.click("[data-testid=seci-formsnav-7\\.10]")
         assert page.locator("[data-testid=seci-format-7\\.10]").count() == 1
         assert page.locator("[data-testid=seci-formsnav-7\\.2]").count() == 1 and "not needed" in page.locator("[data-testid=seci-formsnav-7\\.2]").inner_text().lower()
+
+        # the letter: the RfS wording with the blanks filled, a paragraph changed in place and reverted,
+        # Word and PDF of this letter and of every letter the bid needs
+        page.click("[data-testid=seci-formsnav-7\\.1]")
+        page.click("[data-testid=seci-format-mode-letter]")
+        letter = page.locator("[data-testid=seci-letter]")
+        text = letter.inner_text()
+        for needle in ("Acme Renewables Ltd", "ACME/SECI/2026/02", "COVERING LETTER", "200"):
+            assert needle in text, needle
+        assert "Choose in the blanks: groupDisclosure" in text, "an alternative not yet chosen asks for the choice"
+        page.click("[data-testid=seci-format-mode-blanks]")
+        page.select_option("[data-testid=seci-blank-7\\.1-groupDisclosure]", label="No group company has bid (Format 7.8)")
+        page.click("[data-testid=seci-format-mode-letter]")
+        struck = " ".join(letter.locator("s").all_inner_texts())
+        assert "26%" in struck or "shareholder" in struck.lower(), "the alternative not chosen is struck out"
+        _review(page)
+        para = letter.locator(".letter-para:not(.struck) .letter-text").nth(2)
+        block = para.get_attribute("data-testid").rsplit("-", 1)[1]
+        para.click()
+        page.keyboard.press("End")
+        page.keyboard.type(" We confirm this in writing.")
+        page.locator("[data-testid=seci-letter] .letter-heading").first.click()
+        assert "We confirm this in writing." in page.locator(f"[data-testid=letter-text-{block}]").inner_text()
+        assert "changed from the RfS" in page.locator(f"[data-testid=letter-block-{block}]").inner_text()
+        assert "changed since review" in page.locator("[data-testid=seci-format-review]").inner_text().lower(), "an edit to the letter needs a new review"
+        page.click(f"[data-testid=letter-revert-{block}]")
+        assert "We confirm this in writing." not in page.locator(f"[data-testid=letter-text-{block}]").inner_text()
+        page.click(f"[data-testid=letter-text-{block}]")
+        page.keyboard.press("End")
+        page.keyboard.type(" We confirm this in writing.")
+        page.locator("[data-testid=seci-letter] .letter-heading").first.click()
+        downloads = {}
+        for button in ("seci-letter-word", "seci-letter-pdf", "seci-letters-word", "seci-letters-pdf"):
+            with page.expect_download(timeout=120_000) as dl:
+                page.click(f"[data-testid={button}]")
+            downloads[button] = Path(tmp_path) / f"{button}-{dl.value.suggested_filename}"
+            dl.value.save_as(str(downloads[button]))
+        with zipfile.ZipFile(downloads["seci-letter-word"]) as z:
+            xml = z.read("word/document.xml").decode()
+        assert "Acme Renewables Ltd" in xml and "We confirm this in writing." in xml and "<w:strike/>" in xml
+        with zipfile.ZipFile(downloads["seci-letters-word"]) as z:
+            xml = z.read("word/document.xml").decode()
+        assert xml.count('w:type="page"') >= 5 and "FORMAT 7.10" in xml.upper()
+        with pymupdf.open(str(downloads["seci-letter-pdf"])) as doc:
+            pdf = " ".join(p.get_text(flags=0) for p in doc)  # flags=0 writes ligatures (fi, ffi) as letters
+        assert "Acme Renewables Ltd" in pdf and "We confirm this in writing." in " ".join(pdf.split())
+        with pymupdf.open(str(downloads["seci-letters-pdf"])) as doc:
+            assert doc.page_count >= 6
+        page.click("[data-testid=seci-format-mode-blanks]")
 
         with page.expect_download(timeout=60_000) as dl:
             page.click("[data-testid=seci-forms-download]")
@@ -202,6 +267,20 @@ def test_bid_on_screen(tmp_path):
         book = Path(tmp_path) / dl.value.suggested_filename
         dl.value.save_as(str(book))
         _check_live_model(book, tariff=float(tariff.group(1)), irr=float(irr.group(1)) / 100, tmp=tmp_path)
+
+        # saved with the bid: the library holds the edit, and the letter reopens with it
+        page.click("[data-testid=seci-save]")
+        page.fill(".modal input[required]", "Acme SECI letters test")
+        page.click(".modal button[type=submit]")
+        page.wait_for_selector("[data-testid=seci-saved]")
+        page.goto(f"{URL}/scenarios?module=seci")
+        page.locator("tr", has_text="Acme SECI letters test").first.locator("a:has-text('Open')").click()
+        page.wait_for_selector("[data-testid=seci-tab]", timeout=30_000)
+        assert "acme seci letters test" in page.locator("[data-testid=seci-linked]").inner_text().lower()
+        page.click("[data-testid=seci-step-forms]")
+        page.click("[data-testid=seci-formsnav-7\\.1]")
+        page.click("[data-testid=seci-format-mode-letter]")
+        assert "We confirm this in writing." in page.locator(f"[data-testid=letter-text-{block}]").inner_text(), "the edit is saved with the bid"
 
 
 def test_agent_panel():

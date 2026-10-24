@@ -79,8 +79,10 @@ export function applies(state, format) {
 export function formatPrint(state, format) {
   const vals = format.fields.map((x) => blankValue(state, format, x).value);
   const att = (format.attachments || []).map((_, i) => (state.forms?.[`${format.id}.att.${i}`] ? 1 : 0));
+  // an edit of the letter's wording also needs a new review
+  const edits = state.letters?.[format.id] || {};
   let h = 0;
-  for (const ch of JSON.stringify([vals, att])) h = (h * 31 + ch.charCodeAt(0)) | 0;
+  for (const ch of JSON.stringify([vals, att, edits])) h = (h * 31 + ch.charCodeAt(0)) | 0;
   return String(h);
 }
 

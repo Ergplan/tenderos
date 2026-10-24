@@ -60,7 +60,7 @@ clauses still refer to it.
 | Supply sources | Solar, wind, biomass and the mandatory battery, with costs (Tender to Bid's step) | `../bid/SourcesStep.jsx` |
 | Size | HiGHS sizes the least-tariff plant against every peak and off-peak block | `../bid/SizeStep.jsx`, `../bid/useSizing.js` |
 | Financials | The tariff for the target equity IRR, the equity and project IRR, **your quote** checked against the target, and the Excel workbook with its Live model tab (every cell a formula) | `../bid/FinanceStep.jsx`, `../bid/QuoteCheck.jsx`, `web/lib/liveModel.js` |
-| Bid forms | The particulars, asked once; every RfS format this bid needs, filled and reviewed one by one beside the RfS page; the checks against the tender; the bid pack as Word | `BidForms.jsx`, `forms.js`, `formats.js`, `POST /api/seci/forms` |
+| Bid forms | The particulars, asked once; every RfS format this bid needs, filled and reviewed one by one beside the RfS page; each format as its full letter in the RfS wording, editable in place; the checks against the tender; the bid pack as Word; the letters as Word and PDF | `BidForms.jsx`, `LetterView.jsx`, `forms.js`, `formats.js`, `letters/`, `POST /api/seci/forms`, `POST /api/seci/letters`, `POST /api/bid/document/pdf` |
 
 ## How the tender's supply rules reach the engine
 
@@ -178,7 +178,39 @@ contains:
 * every format this bid needs, with its signer, paper, envelope and RfS pages, every blank as
   filled, the enclosures and whether it was reviewed.
 
-**Print each format in the RfS's own wording** (the pages are given), on the paper it names.
+**The letters.** Each format has two views: *Blanks beside the RfS* and *The letter*. The letter is
+the format as SECI prints it in the RfS, with the blanks filled.
+
+* The wording is one template per format (`web/src/seci/letters/<id>.js`), taken from the RfS PDF
+  (`tools/build_seci_letters.py` drafts one from the RfS pages; Annexure-B was generated and
+  word-checked against pp. 116–124). A template marks each blank as `{{key}}` (a field of the
+  format), with `:num`, `:words` and `:crore` for amounts, and the RfS's alternatives as
+  `[if key=Option]` paragraphs, `[[key=Option|text]]` phrases and `[only consortium|company]`
+  paragraphs. The syntax is described in `web/src/seci/letters/index.js`.
+* The values are the blanks' values (`blankValue`): from the sizing, the particulars or typed.
+  They show as chips. Change a value in the blanks and every letter follows.
+* The alternatives the bidder did not choose are struck out, as the RfS asks ("strike out
+  whichever is not applicable"). Paragraphs for a consortium are left out of a single company's
+  letter, and the other way round.
+* **Editing in place.** Click a paragraph to change its wording. The edit is kept with the bid
+  (`state.letters[format][paragraph]`), with the value chips still linked. The paragraph is marked
+  "Your wording, changed from the RfS" and can be reverted. An edit counts as a change to the
+  format, so a reviewed format shows "changed since review". Headings, the RfS's notes and tables
+  are not editable. This is paragraph editing, not a word processor: there are no styles, tracked
+  changes or comments, and the Word file is the place for layout changes.
+* **Word and PDF.** Each letter downloads as Word (`POST /api/seci/letters`, `web/lib/docx.js`:
+  Times New Roman, struck runs, a page per letter) and PDF (`POST /api/bid/document/pdf`, the
+  engine lays the letter's HTML out on A4 with PyMuPDF's Story, `engine/documents/pdf.py`). *All
+  letters* gives every format this bid needs in one file. Letters on letterhead carry the bidder's
+  name and address at the top; the others name the stamp paper they go on.
+* **Saved.** *Save* (top of the tab) keeps the bid in the scenario library (module `seci`): the
+  inputs, the particulars, the blanks, the reviews and the letter edits. *Open* in the library
+  brings it back to this tab.
+
+Check each letter against its RfS pages before signing: the templates are the RfS text as
+extracted, and `tools/check_seci_letters.mjs` checks that every blank is placed, not that every
+word matches. Blanks that only a consortium or another bid would need (Format 7.2, 7.5 and parts of
+7.3B–F, such as witness lines and SECI's own entries) may stay empty in the letter as dashes.
 
 **Checks.** `bidChecks` checks the bid against the tender:
 
@@ -267,9 +299,11 @@ panel says how to set it up. The microphone needs HTTPS or localhost.
 | The pack's quotes are on their pages, the gaps answered, the formats cover Section 7 | `make test` (`tests/test_seci_pack.py`) |
 | Block floors in the LP: hard (fast), penalty (slow) | `make test`, `make test-slow` (`tests/engine/test_block_rules.py`) |
 | Terms, LP payload, dates, money at stake, the quote against the target IRR, forms and formats, spoken numbers and dates, and the agent's script | `make check-web` (`tools/check_seci.mjs`) |
+| The letter templates: every token is a field, every field placed or left out on purpose, every alternative a valid option; the demo bid's letters filled with no blank left, the right alternatives struck, an edit kept | `make check-web` (`tools/check_seci_letters.mjs`) |
+| The PDF writer: a page per letter, long letters flow, ₹ written as Rs., no images or scripts | `make test` (`tests/engine/test_document_pdf.py`) |
 | The bid agent's tools against a stand-in tab, the guided order, the tender lookup, every chart, the GPT-Live event loop | `make check-web` (`tools/check_seci_agent.mjs`) |
 | The block penalty in the Live model, recalculated by LibreOffice | `make check-web` (`tools/check_live_model.mjs`) |
-| In the browser: documents, the RfS, conditions with the RfS's wording, a bid through the tab's controls (bid, benchmarks, HiGHS sizing, money at stake, finance), a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the six charts from the sized plant; the agent panel without a key and against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
+| In the browser: documents, the RfS, conditions with the RfS's wording, a bid through the tab's controls (bid, benchmarks, HiGHS sizing, money at stake, finance), a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, its letter with a paragraph changed and reverted, the letter and all letters as Word and PDF, the Word pack, the Excel workbook, the bid saved to the library and reopened with its letter edit; the six charts from the sized plant; the agent panel without a key and against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
 
 ## Access and settings
 

@@ -15,7 +15,7 @@ flowchart LR
 | Part | Folder | What it does |
 | --- | --- | --- |
 | Web app | `web/` | The TenderOS interface (the jouleWise design). It holds the shell with its tabs, sign-in, users and tab access, saved scenarios, the activity log, tender readings and the Excel exports. The browser computes the financial models (`web/src/rtc/engine.js`, `web/src/bid/model.js`, `web/src/cfd/`). |
-| Engine | `engine/` | A stateless FastAPI service. It reads tenders (`extraction/`), runs the BESS tender adapter (`bess/`), sizes plants with the HiGHS LP (`sizing/rtc_lp.py`) and runs the 15-minute dispatch (`sizing/dispatch15.py`). |
+| Engine | `engine/` | A stateless FastAPI service. It reads tenders (`extraction/`), runs the BESS tender adapter (`bess/`), sizes plants with the HiGHS LP (`sizing/rtc_lp.py`) runs the 15-minute dispatch (`sizing/dispatch15.py`) and lays out documents as PDF (`documents/pdf.py`, the SECI letters). |
 | Docling | `docling` service (image `docling-serve-cpu`) | Reads the tables of a tender set's amendments and clarifications for the engine (`DOCLING_URL`); not published. Without it the engine uses PyMuPDF's table finder. |
 | Database | Postgres | Holds users, sessions, tab access, scenarios, activity, resource profiles and tender readings (`web/db/migrations`, applied by the web app on start). |
 
@@ -69,7 +69,11 @@ floors (`basis: "block"`, peak 90% and off-peak 70%, a shortfall priced at 1.5 Ã
 which `rtc_lp.py` models with a shortfall column per hour. The sizing is shared with Tender to Bid
 through `web/src/bid/useSizing.js`. The bid forms go to `POST /api/seci/forms` (a Next route that
 writes a Word file with `web/lib/docx.js`), with every RfS format this bid needs as filled
-(`web/src/seci/formats.js`).
+(`web/src/seci/formats.js`). Each format is also a full letter in the RfS wording
+(`web/src/seci/letters/`), editable paragraph by paragraph in the browser; the letters download
+as Word (`POST /api/seci/letters`) and as PDF (`POST /api/bid/document/pdf`, PyMuPDF on the
+engine). The bid, with its forms and letter edits, is saved in the scenario library (module
+`seci`).
 
 The bid agent works as follows:
 
@@ -90,7 +94,7 @@ tabs, the bid forms and the agent.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`), the SECI tender pack's quotes (`tests/test_seci_pack.py`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack, with the agent panel (`tests/e2e/test_seci_tab.py`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack and the letters, with the agent panel (`tests/e2e/test_seci_tab.py`) |
 
 ## What is not here
 
