@@ -91,7 +91,9 @@ function Blank({ state, format, field, setField, onFocusPage }) {
   const raw = state.forms?.[b.key];
   const testid = `seci-blank-${format.id}-${field.key}`;
   let control;
-  if (b.source === "model") {
+  if (b.source === "na") {
+    control = <div className="seci-blank-model na" data-testid={testid}>{b.value}</div>;
+  } else if (b.source === "model") {
     control = <div className="seci-blank-model" data-testid={testid}>{b.value || <em>Size the plant first</em>}</div>;
   } else if (b.source === "shared") {
     const x = FORM_FIELDS.find((y) => y.key === b.key);
@@ -116,7 +118,7 @@ function Blank({ state, format, field, setField, onFocusPage }) {
     <div className={`seci-blank ${empty ? "empty" : ""}`} data-voice={`form.${b.key}`} onFocus={() => onFocusPage(field.context.page)}>
       <div className="seci-blank-head">
         <span>{field.label}</span>
-        <em>{b.source === "model" ? "from your bid" : b.source === "shared" ? "your particulars" : field.kind === "table" ? "schedule, optional" : "this format"}</em>
+        <em>{b.source === "na" ? "consortium only" : b.source === "model" ? "from your bid" : b.source === "shared" ? "your particulars" : field.kind === "table" ? "schedule, optional" : "this format"}</em>
       </div>
       {control}
       <button type="button" className="seci-blank-ctx" onClick={() => onFocusPage(field.context.page)} title="Show this place in the RfS">

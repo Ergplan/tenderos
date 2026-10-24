@@ -4024,7 +4024,8 @@
       "doc": "rfs",
       "page": 90,
       "quote": "[Insert the % equity commitment as specified in Consortium Agreement]"
-     }
+     },
+     "when": "consortium"
     },
     {
      "key": "otherMembers",
@@ -4035,7 +4036,8 @@
       "doc": "rfs",
       "page": 90,
       "quote": "[Insert the name of other Members in the Consortium]"
-     }
+     },
+     "when": "consortium"
     },
     {
      "key": "caSignatory",
@@ -4046,7 +4048,8 @@
       "doc": "rfs",
       "page": 90,
       "quote": "is hereby authorized to execute the Consortium Agreement."
-     }
+     },
+     "when": "consortium"
     },
     {
      "key": "consortiumAgreementDate",
@@ -4057,7 +4060,8 @@
       "doc": "rfs",
       "page": 90,
       "quote": "terms and conditions contained in the Consortium Agreement dated"
-     }
+     },
+     "when": "consortium"
     },
     {
      "key": "certifiedBy",
@@ -4347,7 +4351,8 @@
       "doc": "rfs",
       "page": 97,
       "quote": "Net Worth Requirement to be met by Member: INR"
-     }
+     },
+     "when": "consortium"
     },
     {
      "key": "turnover",

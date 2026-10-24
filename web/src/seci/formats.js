@@ -36,9 +36,19 @@ const MODEL = new Set(["contractedMw", "solarMw", "windMw", "bessMw", "bessMwh",
 /** Shared particulars a format blank maps to (state.forms keys); `date` is the letters' date. */
 const SHARED = { date: "letterDate", tariff: "tariff", netWorthCr: "netWorthCr", netWorthYear: "netWorthYear" };
 
-/** Where a blank's value comes from: { source: "model"|"shared"|"own", key, value }. */
+/** Whether a blank applies to this bid: a blank marked `when: "consortium"` (a member's equity,
+ * the other members) is left out of a single company's format. */
+export function fieldApplies(state, field) {
+  if (field.when === "consortium") return state.forms?.bidderType === "consortium";
+  return true;
+}
+
+export const NOT_APPLICABLE = "Not applicable (single company)";
+
+/** Where a blank's value comes from: { source: "model"|"shared"|"own"|"na", key, value }. */
 export function blankValue(state, format, field) {
   const f = state.forms || {};
+  if (!fieldApplies(state, field)) return { source: "na", key: `${format.id}.${field.key}`, value: NOT_APPLICABLE };
   if (field.maps && MODEL.has(field.maps)) return { source: "model", key: field.maps, value: modelValues(state)[field.maps] };
   if (field.maps) {
     const key = SHARED[field.maps] || field.maps;
@@ -79,7 +89,7 @@ export function formatPrint(state, format) {
  * reviewed: null | "current" | "changed" }. Table blanks are optional (a schedule may be attached).
  */
 export function formatStatus(state, format) {
-  const needed = format.fields.filter((x) => x.kind !== "table");
+  const needed = format.fields.filter((x) => x.kind !== "table" && fieldApplies(state, x));
   const missing = needed.filter((x) => !blankValue(state, format, x).value).map((x) => x.label);
   const att = format.attachments || [];
   const review = state.formsReview?.[format.id] || null;

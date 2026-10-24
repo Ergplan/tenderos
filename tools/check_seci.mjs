@@ -10,7 +10,7 @@ import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience 
 import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "../web/src/seci/voice.js";
 import { defaultBidState } from "../web/src/bid/model.js";
 import { quotedReturns } from "../web/src/bid/quote.js";
-import { applies, blankValue, formatGroups, formatStatus, formatsForPack, formatsSummary } from "../web/src/seci/formats.js";
+import { NOT_APPLICABLE, applies, blankValue, fieldApplies, formatGroups, formatStatus, formatsForPack, formatsSummary } from "../web/src/seci/formats.js";
 
 // ---- the terms: two time-block floors with the 1.5x penalty, peak hours as planned
 const terms = seciTerms(DEFAULT_SETTINGS);
@@ -160,6 +160,15 @@ const bidderBlank = fmt("7.10").fields.find((x) => x.maps === "bidder");
 assert.equal(blankValue(company, fmt("7.10"), bidderBlank).value, "Acme Renewables Ltd");
 assert.equal(blankValue(company, fmt("7.1"), { maps: "connectivity", key: "c" }).value, "Final grant", "choices read as their labels");
 assert.equal(blankValue(company, fmt("7.1"), { maps: "date", key: "d" }).value, "20.05.2026", "the letters' date");
+// a consortium member's blanks of Format 7.4 (equity, other members, Consortium Agreement) are not
+// asked of a single company: shown as not applicable, not counted as empty
+const equity = fmt("7.4").fields.find((x) => x.key === "equityPct");
+assert.equal(fieldApplies(company, equity), false);
+assert.deepEqual(blankValue(company, fmt("7.4"), equity).value, NOT_APPLICABLE);
+const consortium = { ...company, forms: { ...company.forms, bidderType: "consortium" } };
+assert.equal(fieldApplies(consortium, equity), true);
+assert.equal(formatStatus(consortium, fmt("7.4")).total - formatStatus(company, fmt("7.4")).total, 4, "four 7.4 blanks are a consortium's only");
+assert.ok(!formatStatus(company, fmt("7.4")).missing.includes(equity.label));
 const st71 = formatStatus(company, fmt("7.1"));
 assert.ok(st71.total > 20 && st71.missing.length > 0 && st71.reviewed === null);
 const sum = formatsSummary(company);

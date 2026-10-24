@@ -156,6 +156,10 @@ The formats are grouped as submitted: Envelope I, Envelope II, after the award, 
 * **Your particulars:** editable on any format; an edit changes every format that uses it.
 * **This format:** a blank only this format has, such as a reference number, the board meeting
   date or the turnover.
+* **Consortium only:** for a single company, a consortium member's blanks show "Not applicable
+  (single company)" and are not counted as empty. These are Format 7.4's equity share, other
+  members, Consortium Agreement signatory and date, and Format 7.6's per-member net worth
+  (`when: "consortium"` in the pack).
 
 **Beside the blanks:** each blank shows the RfS's words around it. Clicking them shows that page of
 the RfS beside the blanks. The format also lists what to enclose, with a tick for each.
