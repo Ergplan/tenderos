@@ -606,8 +606,8 @@ def seci_team(page, run: Run, letters: dict) -> dict:
         _view_as(page, "Tender manager")
         page.click("[data-testid=team-tab-members]")
         e["note"] = _flat(page.locator("[data-testid=team-members]").inner_text())[:200]
-        _close_team(page)
     with run.step(S, "Assign the solar capex to procurement", "team-01-assign-cost", "[data-testid=source-solar]") as e:
+        _close_team(page)  # after the panel's screenshot
         page.click("[data-testid=seci-step-sources]")
         page.click('[data-testid="assign-src.solar.capex"]')
         page.fill("[data-testid=assign-request]", "Firm EPC price for the solar plant per MWac, from the two shortlisted EPC quotes")
