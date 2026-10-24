@@ -127,6 +127,14 @@ def test_bid_on_screen(tmp_path):
             assert label in size_text, size_text
         table = page.locator("[data-testid=bid-compliance]").inner_text()
         assert "of hours" in table and "Peak Hours floor" in table, table
+        # the hour under the mouse as a see-through Sankey: sources, uses, and the block's floor
+        chart = page.locator(".rtc-card", has_text="Year-1 dispatch").locator("canvas").first
+        chart.scroll_into_view_if_needed()
+        box = chart.bounding_box()
+        page.mouse.move(box["x"] + box["width"] * 0.45, box["y"] + box["height"] * 0.5)
+        page.wait_for_selector("svg[data-sankey]", timeout=10_000)
+        tip = page.locator("svg[data-sankey]").first.locator("xpath=../..").inner_text()
+        assert ("Peak block" in tip or "Off-peak block" in tip) and "To the PPA" in tip and "floor" in tip, tip
         # the agent's charts, drawn from the sized plant (the agent opens the same ones as it talks)
         page.click("[data-testid=agent-open]")
         for kind in ("peak_window", "typical_day", "monthly_energy", "irr_vs_tariff", "cash_flows", "money"):
@@ -277,6 +285,21 @@ def test_bid_on_screen(tmp_path):
         book = Path(tmp_path) / dl.value.suggested_filename
         dl.value.save_as(str(book))
         _check_live_model(book, tariff=float(tariff.group(1)), irr=float(irr.group(1)) / 100, tmp=tmp_path)
+
+        # every PPA year dispatched in 15-minute blocks with the time-block floors, as one workbook
+        page.click("[data-testid=seci-step-size]")
+        page.click("[data-testid=bid-d15-run]")
+        page.wait_for_selector("[data-testid=bid-d15-xlsx]", timeout=1_800_000)
+        assert "of blocks" in page.locator("[data-testid=bid-d15-table]").inner_text()
+        with page.expect_download(timeout=120_000) as dl:
+            page.click("[data-testid=bid-d15-xlsx]")
+        xlsx = Path(tmp_path) / "dispatch.xlsx"
+        dl.value.save_as(str(xlsx))
+        import openpyxl
+
+        wb = openpyxl.load_workbook(xlsx, read_only=True)
+        assert wb.sheetnames[:3] == ["About", "Summary", "Monthly"] and len(wb.sheetnames) == 3 + 25
+        assert wb["Year 25"].max_row == 8761, "a row per hour, every year"
 
         # saved with the bid: the library holds the edit, and the letter reopens with it
         page.click("[data-testid=seci-save]")

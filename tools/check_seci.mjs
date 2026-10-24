@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import * as E from "../web/src/rtc/engine.js";
 import { BENCHMARKS, SOURCE_FIELDS, defaultLosses, fillBenchmarks, hourlyAtMeter, lossFactorsOf, lpPayload, missingInputs, modelInputs, resourceProfiles } from "../web/src/bid/model.js";
 import { defaultSeciState } from "../web/src/seci/state.js";
+import { hourCondition, hourFlows, hourSankeyHtml } from "../web/src/bid/hourSankey.js";
 import { DEFAULT_SETTINGS, PACK, keyDates, moneyAtStake, prov, seciTerms } from "../web/src/seci/terms.js";
 import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience } from "../web/src/seci/forms.js";
 import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "../web/src/seci/voice.js";
@@ -59,6 +60,24 @@ assert.ok(Math.abs(mean(atBus.ctx.solarCf) - mean(payload.ctx.solarCf)) < 1e-6, 
 const h = hourlyAtMeter({ demand: [302], direct: [200], discharge: [100], export: [10], charge: [5], solar: [400], curtail: [0] }, 0.99);
 assert.deepEqual([h.demand[0], h.direct[0], h.discharge[0], h.export[0], h.charge[0], h.solar[0]].map((v) => Math.round(v * 100) / 100), [298.98, 198, 99, 9.9, 5, 400]);
 assert.ok(Math.abs(h.evacLoss[0] - 3.1) < 1e-9 && hourlyAtMeter(h, 0.99) === h, "converted once");
+// the hover Sankey of an hour: every MW from a source lands somewhere, and the delivery splits into
+// the block's floor, what is above it, and what is short of it
+// the LP's hour at the 33 kV bus: generation = direct + sold + charging + curtailment
+const busUse = 200 + 20 + 50 + 10;
+const hr = hourlyAtMeter({ demand: [300 / 0.991], direct: [200], discharge: [80], export: [20], charge: [50], curtail: [10], solar: [250], wind: [busUse - 250] }, 0.991);
+const peakRules = terms.rules;
+const fl = hourFlows(hr, 0, { gens: ["solar", "wind"], titles: { solar: "Solar", wind: "Wind" }, colors: { solar: "#f5b83d", wind: "#3fa7d6", bess: "#a98bff" }, rules: peakRules, peakHour: () => true });
+const flowSum = (f) => fl.links.filter(f).reduce((a, l) => a + l.value, 0);
+assert.ok(Math.abs(flowSum((l) => l.from === "solar" || l.from === "wind") - busUse) < 1e-6, "each source's output is all accounted for");
+assert.ok(Math.abs(flowSum((l) => l.to === "ppa") - (hr.direct[0] + hr.discharge[0])) < 1e-6, "the PPA gets direct supply and the battery's discharge, at the meter");
+assert.ok(Math.abs(fl.lossCheck.links - fl.lossCheck.series) < 1e-6, "the losses node equals the hour's transformer and line losses");
+const cond = hourCondition(hr, 0, { rules: peakRules, peakHour: () => true });
+assert.equal(cond.rule.id, "peak");
+assert.ok(Math.abs(cond.met + cond.above - cond.delivered) < 1e-9 && cond.short === 0, "a peak hour above 90% is met");
+const offShort = hourCondition({ demand: [300], direct: [150], discharge: [0] }, 0, { rules: peakRules, peakHour: () => false });
+assert.equal(offShort.rule.id, "offpeak");
+assert.equal(Math.round(offShort.short), 60, "70% of 300 MW needs 210 MW: 60 MW short");
+assert.ok(/<svg[^>]*data-sankey/.test(hourSankeyHtml(hr, 0, { gens: ["solar", "wind"], titles: {}, colors: {}, rules: peakRules, peakHour: () => true, label: "Jan 10h" })));
 // solar capex per MWac; per MWp follows from the DC:AC
 assert.equal(SOURCE_FIELDS.solar.find((f) => f.key === "capex").unit, "₹ cr/MWac");
 assert.ok(!SOURCE_FIELDS.solar.find((f) => f.key === "dcAc").profileOnly, "the DC:AC is asked even with an uploaded profile (MWp)");

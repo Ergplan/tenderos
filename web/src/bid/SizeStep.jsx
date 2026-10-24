@@ -8,6 +8,7 @@ import { SIZE_KEY, SOURCES, anyHours, energyMix, marketLabel, peakHours, plantMw
 import { SOURCE_COLORS } from "./SourcesStep";
 import Checklist, { BidderInputs } from "./Checklist";
 import Dispatch15 from "./Dispatch15";
+import { hourSankeyHtml } from "./hourSankey";
 
 function ComplianceTable({ lp }) {
   const years = lp.perYear || [];
@@ -43,7 +44,9 @@ const DISPATCHABLE = ["biomass", "thermal", "hydro"];
  * market sales on top; the dashed lines are what biomass, thermal and hydro actually generated
  * (their output also charges the battery). The tooltip gives the hour's full balance.
  */
-function DispatchWeek({ hourly, peak, market, peakAny, sizes }) {
+function DispatchWeek({ hourly, peak, market, peakAny, sizes, rules = [] }) {
+  // a tender with time-block floors (SECI RTC-TM): the hover is a see-through Sankey of the hour
+  const sankey = rules.some((r) => r.basis === "block");
   const [week, setWeek] = useState(0);
   const option = useMemo(() => {
     if (!hourly) return null;
@@ -73,6 +76,13 @@ function DispatchWeek({ hourly, peak, market, peakAny, sizes }) {
     const tooltip = (params) => {
       const t = idx[params[0]?.dataIndex ?? 0];
       if (t === undefined) return "";
+      if (sankey) {
+        return hourSankeyHtml(hourly, t, {
+          gens, titles: { ...Object.fromEntries(gens.map((k) => [k, title(k)])), bess: "Battery" },
+          colors: { ...SOURCE_COLORS, ppa: "#d4ff3f", surplus: DATA_COLORS.surplus },
+          rules, peakHour: (h) => ph.has(E.HOUR_OF_DAY[h]), label: labels[t - start],
+        });
+      }
       const parts = [`<b>${labels[t - start]}</b>`, head("Output")];
       for (const k of gens) {
         const mw = sizes?.[SIZE_KEY[k]] || 0;
@@ -93,7 +103,10 @@ function DispatchWeek({ hourly, peak, market, peakAny, sizes }) {
       animation: false,
       grid: { left: 56, right: 16, top: 34, bottom: 46 },
       legend: { top: 0, right: 0 },
-      tooltip: { trigger: "axis", formatter: tooltip },
+      tooltip: sankey
+        ? { trigger: "axis", formatter: tooltip, backgroundColor: "rgba(14,14,14,0.42)", borderColor: "rgba(255,255,255,0.14)", padding: [8, 10],
+          textStyle: { color: "#f4f4f1" }, extraCssText: "backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); box-shadow: none;", confine: true }
+        : { trigger: "axis", formatter: tooltip },
       xAxis: { type: "category", data: labels, axisLabel: { interval: 23 } },
       yAxis: [{ type: "value", name: "MW" }, { type: "value", name: "₹/kWh", min: 0, splitLine: { show: false }, show: Boolean(hourly.price) }],
       series: [
@@ -107,12 +120,12 @@ function DispatchWeek({ hourly, peak, market, peakAny, sizes }) {
         { name: "Contracted supply", type: "line", step: "middle", data: idx.map((t) => hourly.demand[t]), lineStyle: { color: "#f4f4f1", type: "dashed", width: 1 }, itemStyle: { color: "#f4f4f1" }, symbol: "none" },
       ],
     };
-  }, [hourly, week, peak, market, peakAny, sizes]);
+  }, [hourly, week, peak, market, peakAny, sizes, rules, sankey]);
   if (!hourly) return <p className="rtc-note">Run the sizing again to see the hour-by-hour dispatch (it is not kept when the page reloads).</p>;
   return (
     <div className="rtc-card">
       <div className="rtc-card-head">
-        <span>Year-1 dispatch · week {week + 1}{peakAny ? "" : " · peak window shaded"} · areas: supply to the PPA by source · dashed: plant output</span>
+        <span>Year-1 dispatch · week {week + 1}{peakAny ? "" : " · peak window shaded"} · areas: supply to the PPA by source · dashed: plant output{sankey ? " · hover an hour: how it meets its block's floor" : ""}</span>
         <input type="range" min="0" max="51" value={week} onChange={(e) => setWeek(Number(e.target.value))} aria-label="Week of the year" />
       </div>
       <LiveChart option={option} height={300} />
@@ -150,7 +163,6 @@ function SplitSites({ lp }) {
 
 export default function SizeStep({ state, terms, run, startSizing, stopSizing, startDispatch15, hourly, goto, prices, missing }) {
   const lp = state.lp;
-  const blockFloors = (terms.rules || []).some((r) => r.basis === "block");
   const mix = useMemo(() => energyMix(hourly), [hourly]);
   const running = Boolean(run?.active);
   const atMax = lp ? sizesAtMax(lp, state, terms) : [];
@@ -227,12 +239,11 @@ export default function SizeStep({ state, terms, run, startSizing, stopSizing, s
                 <Stat label="Curtailed" value={`${nf(mix.curtail / 1000, 0)} MU`} />
               </div>
             )}
-            <DispatchWeek hourly={hourly} peak={terms.peak} market={lp.market} peakAny={terms.peakAny} sizes={lp.sizes} />
+            <DispatchWeek hourly={hourly} peak={terms.peak} market={lp.market} peakAny={terms.peakAny} sizes={lp.sizes} rules={terms.rules || []} />
           </Section>
         </>
       )}
-      {lp && !lp.sites?.split && !blockFloors && <Dispatch15 lp={lp} start={startDispatch15} />}
-      {lp && blockFloors && <p className="rtc-note bid-hint" data-testid="bid-d15-blocks">The 15-minute dispatch checks annual and monthly floors only; this tender's time-block floors are checked hour by hour in the sizing above.</p>}
+      {lp && !lp.sites?.split && <Dispatch15 lp={lp} start={startDispatch15} />}
       {lp?.sites?.split && <p className="rtc-note bid-hint" data-testid="bid-d15-split">The 15-minute dispatch models one battery site; it is not available yet for separate solar and wind sites. The hourly sizing above models both sites.</p>}
       {!lp && !running && <p className="rtc-note bid-hint">Size the plant to see the least-tariff design, the tender conditions it meets and the dispatch.</p>}
     </>

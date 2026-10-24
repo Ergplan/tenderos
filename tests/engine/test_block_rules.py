@@ -84,3 +84,46 @@ def test_a_penalty_lets_the_plant_fall_short_when_that_is_cheaper(hard):
 def test_block_rule_inputs_are_checked(rules, extra, message):
     with pytest.raises(M.LpInputError, match=message):
         M.solve(_payload(rules, **extra))
+
+
+def test_fifteen_minute_dispatch_holds_the_block_floors_and_writes_the_workbook(tmp_path):
+    """The 25-year dispatch for a time-block tender: each 15-minute block of the peak and off-peak
+    hours on its own, a shortfall priced at 1.5 x the tariff, and the workbook adding up."""
+    import openpyxl
+
+    from engine.sizing import dispatch15 as D
+
+    payload = _payload(_rules(1.5))
+    payload["ctx"] = {**payload["ctx"], "trafoLossPct": 0.004, "lineLossPct": 0.005}
+    sized = M.solve(payload)
+    assert sized["ok"]
+    out = D.run(payload, sized["sizes"], sized["tariff"], years=[1, 2], zip_path=tmp_path / "d.zip", xlsx_path=tmp_path / "d.xlsx")
+    for y, lp_year in zip(out["years"], [sized["perYear"][0], None]):
+        rules = {r["id"]: r for r in y["rules"]}
+        assert set(rules) == {"peak", "offpeak"} and all(r["basis"] == "block" and r["penaltyMultiple"] == 1.5 for r in rules.values())
+        # within an hour the 15-minute blocks differ (solar ramps), so a block can miss a floor the
+        # hour's average met: the 15-minute check is a little stricter than the hourly sizing
+        if lp_year:
+            hourly = {r["id"]: r for r in lp_year["rules"]}
+            for rid in rules:
+                assert rules[rid]["hoursMet"] >= hourly[rid]["hoursMet"] - 0.03, (rid, rules[rid], hourly[rid])
+            assert y["shortfallMu"] == pytest.approx(sum(r["shortfallMu"] for r in hourly.values()), rel=0.1)
+            assert y["deliveredMu"] == pytest.approx(lp_year["deliveredMu"], rel=0.01)
+        assert y["shortfallMu"] == pytest.approx(sum(r["shortfallMu"] for r in rules.values()))
+    wb = openpyxl.load_workbook(tmp_path / "d.xlsx", read_only=True)
+    assert wb.sheetnames == ["About", "Summary", "Monthly", "Year 01", "Year 02"]
+    ws = wb["Year 01"]
+    rows = list(ws.iter_rows(values_only=True))
+    head, body = rows[0], rows[1:]
+    assert len(body) == M.HOURS and body[0][:2] == ("01-Jan", "00:00") and body[-1][:2] == ("31-Dec", "23:00")
+    col = {name: i for i, name in enumerate(head)}
+    y1 = out["years"][0]
+    delivered = sum(r[col["Delivered to PPA (MWh)"]] for r in body) / 1000
+    short = sum(r[col["Short of the floor (MWh)"]] for r in body) / 1000
+    assert delivered == pytest.approx(y1["deliveredMu"], rel=1e-5)
+    assert short == pytest.approx(y1["shortfallMu"], rel=1e-4, abs=1e-6)
+    assert "Power transformer and line losses (MWh)" in col and "Time-block floor (MWh)" in col
+    summary = list(wb["Summary"].iter_rows(values_only=True))
+    assert [r[0] for r in summary[1:]] == [1, 2]
+    monthly = list(wb["Monthly"].iter_rows(values_only=True))
+    assert len(monthly) == 1 + 24

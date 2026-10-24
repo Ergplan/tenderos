@@ -277,6 +277,7 @@
 .bid-d15-row.failed { background: rgba(255, 107, 95, 0.06); }
 .bid-d15-row .ok { color: var(--good); display: inline-flex; gap: 5px; align-items: center; }
 .bid-d15-row .bad { color: var(--bad); display: inline-flex; gap: 5px; align-items: center; }
+.bid-d15-row .warn { color: var(--warn); display: inline-flex; gap: 5px; align-items: center; }
 
 /* ---------------------------------------------------------------- start screen */
 .bid-start { display: grid; gap: 22px; }

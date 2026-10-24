@@ -135,6 +135,28 @@ sources → *Losses to the billing meter* is the Round the clock tab's loss chai
 * The sized plant, the checklist, the agent and Format 7.1 give solar as MWac with its MWp, for
   example "511 MWac (715 MWp DC)".
 
+## The dispatch, hour by hour and for 25 years
+
+**Hover an hour** of the year-1 dispatch chart (Size step) and the tooltip is a see-through Sankey
+of that hour (`web/src/bid/hourSankey.js`). It reads left to right:
+
+1. **Sources:** solar, wind and battery discharge.
+2. **Where the energy went:** to the PPA, battery charging, sold, curtailed, and the transformer
+   and line losses.
+3. **The hour's tender condition:**
+   * the delivery that meets the peak (90%) or off-peak (70%) floor;
+   * any delivery above the floor;
+   * any shortfall, as a dashed box, with the 1.5× tariff penalty it costs.
+
+The header gives the floor, the delivery and the verdict. `tools/check_seci.mjs` checks the
+arithmetic: every MW from a source lands somewhere; the losses node equals the hour's losses; and
+met + above = delivered.
+
+**The 25-year dispatch** (Size step 4.5) dispatches every PPA year in 15-minute blocks, with the
+time-block floors in every block and the shortfall priced at 1.5× the tariff. **25-year dispatch
+(Excel)** downloads it as one workbook: a summary by year, the months, and every year hour by hour.
+The ZIP has the 15-minute rows. See `docs/TENDER_TO_BID.md`, "15-minute dispatch, every PPA year".
+
 ## Your quote against the target IRR
 
 `quotedReturns(state, terms, tariff)` (`web/src/bid/quote.js`) runs the financial model of the

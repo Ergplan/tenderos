@@ -45,6 +45,7 @@ from typing import Any, Callable
 import numpy as np
 import scipy.sparse as sp
 
+from engine.sizing import dispatch_workbook as W
 from engine.sizing import rtc_lp as RLP
 
 try:
@@ -102,8 +103,13 @@ def _inputs(payload: dict) -> dict:
     for item in payload.get("compliance") or []:
         target = float(item.get("target") or 0)
         if target > 0:
+            basis = item.get("basis") or "annual"
+            mult = item.get("penaltyMultiple")
+            if basis not in ("annual", "monthly", "block"):
+                raise DispatchError("compliance basis must be 'annual', 'monthly' or 'block'")
             rules.append({"id": str(item.get("id") or f"rule{len(rules) + 1}"), "label": str(item.get("label") or ""),
-                          "target": min(1.0, target), "hours": item.get("hours") or "all", "basis": item.get("basis") or "annual"})
+                          "target": min(1.0, target), "hours": item.get("hours") or "all", "basis": basis,
+                          "penalty": None if mult is None else max(0.0, float(mult))})
     if not rules:
         target = float(payload.get("dfrTarget") or 0)
         if target > 0:
@@ -143,6 +149,17 @@ def _inputs(payload: dict) -> dict:
         "bio": bio, "plants": plants,
         "green_min": float(payload.get("greenShareMin") or 0),
     }
+
+
+def _block_mask(rule: dict, peak_mask_blocks: np.ndarray | None) -> np.ndarray:
+    """The 15-minute blocks a time-block floor applies to, each on its own (SECI RTC-TM: 90% in every
+    peak block, 70% in every off-peak block)."""
+    peak = peak_mask_blocks if peak_mask_blocks is not None else np.zeros(BLOCKS, bool)
+    if rule["hours"] == "peak" or rule["hours"] == "any":
+        return peak if peak_mask_blocks is not None else np.ones(BLOCKS, bool)
+    if rule["hours"] == "offpeak":
+        return ~peak
+    return np.ones(BLOCKS, bool)
 
 
 def _rule_groups(rule: dict, peak_mask_blocks: np.ndarray | None) -> list[tuple[int, np.ndarray]]:
@@ -285,6 +302,8 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
     # supply floors, each with a shortfall column (MWh) so a floor the plant cannot meet is measured
     floor_rows = []
     for rule in inp["rules"]:
+        if rule["basis"] == "block":
+            continue
         for m, mask in _rule_groups(rule, peak_blocks):
             idx = b[mask]
             if idx.size == 0:
@@ -300,6 +319,24 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
         idx = b[fr["mask"]]
         add_one(np.r_[col["dir"][idx], col["dis"][idx], short0 + k],
                 np.r_[np.full(2 * idx.size, DT * 1e-3), 1e-3], 1e-3 * fr["need"], np.inf)
+    # time-block floors: every block of the rule on its own, with a shortfall column per block that
+    # costs penaltyMultiple x the tariff at the meter (SECI: 1.5); a hard floor (no multiple) gets the
+    # large penalty, so a block it cannot meet is reported rather than failing the year
+    block_cols = []
+    for rule in inp["rules"]:
+        if rule["basis"] != "block":
+            continue
+        idx = b[_block_mask(rule, peak_blocks)]
+        if idx.size == 0:
+            continue
+        c0 = n_col
+        n_col += idx.size
+        price = rule["penalty"] * lam * poi if rule["penalty"] is not None else SHORTFALL_PENALTY * max(lam, 1.0)
+        lo = np.r_[lo, np.zeros(idx.size)]
+        hi = np.r_[hi, np.full(idx.size, np.inf)]
+        cost = np.r_[cost, np.full(idx.size, price * DT)]
+        add_rows([(col["dir"][idx], 1.0), (col["dis"][idx], 1.0), (c0 + np.arange(idx.size), 1.0)], rule["target"] * dem[idx], np.inf, idx.size)
+        block_cols.append((rule["id"], idx, c0))
     # a smooth schedule: delivery may move from block to block (up - down columns) at a negligible
     # cost, so energy the floors and revenue do not place is spread evenly, not in alternate blocks
     k = BLOCKS - 1
@@ -326,7 +363,7 @@ def _build(inp: dict, sizes: dict, tariff: float, year: int) -> dict:
     A = sp.csc_matrix((np.concatenate(rows_v), (np.concatenate(rows_i), np.concatenate(rows_j))), shape=(n_row, n_col))
     A.sum_duplicates()
     return {"A": A, "cost": cost, "lo": lo, "hi": hi, "rlo": np.concatenate(rlo), "rhi": np.concatenate(rhi), "col": col,
-            "short0": short0, "floor_rows": floor_rows, "year": year, "dem": dem, "sgen": sgen, "wgen": wgen, "ren": ren,
+            "short0": short0, "floor_rows": floor_rows, "block_cols": block_cols, "year": year, "dem": dem, "sgen": sgen, "wgen": wgen, "ren": ren,
             "eta": eta, "E": E, "bf": bf, "min_soc": min_soc, "BM": BM, "pl_live": pl_live, "peak_blocks": peak_blocks,
             "price_b": price_b, "inp": inp, "sizes": sizes}
 
@@ -353,6 +390,18 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
 
     rules_out = []
     for rule in inp["rules"]:
+        if rule["basis"] == "block":
+            # every block on its own: the share of the rule's blocks at the floor, the lowest block,
+            # and the energy short of the floor (MU at the meter), as rtc_lp reports the hours
+            mask = _block_mask(rule, peak_blocks)
+            ratio = delivered[mask] / np.maximum(1e-9, dem[mask])
+            short = np.maximum(0.0, rule["target"] * dem[mask] - delivered[mask])
+            met_share = float((ratio >= rule["target"] - 1e-6).mean()) if ratio.size else 1.0
+            rules_out.append({"id": rule["id"], "label": rule["label"], "target": rule["target"], "basis": "block",
+                              "achieved": float(ratio.min()) if ratio.size else 1.0, "hoursMet": met_share,
+                              "met": met_share >= 1 - 1e-9, "shortfallMu": float(short.sum() * DT * poi / 1000),
+                              "penaltyMultiple": rule["penalty"]})
+            continue
         groups = [(m, mask) for m, mask in _rule_groups(rule, peak_blocks) if mask.any()]
         achieved = min(share(mask) for _, mask in groups) if groups else 1.0
         short = poi * sum(float(x[short0 + k]) for k, fr in enumerate(floor_rows) if fr["rule"] == rule["id"])
@@ -401,6 +450,15 @@ def _result(m: dict, x: np.ndarray, status: str, seconds: float) -> dict:
               "soc": soc, "direct": direct * poi, "delivered": delivered * poi, "sold": ex * poi, "curtailed": curtail}
     if poi < 1:
         series["evacLoss"] = (delivered + ex) * (1 - poi)
+    # each block's time-block floor (the highest rule over it) and the delivery short of it, at the meter
+    block_rules = [r for r in inp["rules"] if r["basis"] == "block"]
+    if block_rules:
+        need = np.zeros(BLOCKS)
+        for rule in block_rules:
+            mask = _block_mask(rule, peak_blocks)
+            need[mask] = np.maximum(need[mask], rule["target"] * dem[mask])
+        series["floor"] = need * poi
+        series["floorShort"] = np.maximum(0.0, need - delivered) * poi
     if price_b is not None:
         series["price"] = price_b
     return {"summary": summary, "series": series}
@@ -478,19 +536,22 @@ def year_csv(series: dict, year: int) -> str:
     cols = [("demand", "Contracted supply MW"), ("solar", "Solar output MW"), ("wind", "Wind output MW"),
             ("biomass", "Biomass output MW")]
     cols += [(k, f"{k.capitalize()} output MW") for k in series if k not in
-             ("demand", "solar", "wind", "biomass", "charge", "discharge", "soc", "direct", "delivered", "sold", "curtailed", "price", "evacLoss")]
+             ("demand", "solar", "wind", "biomass", "charge", "discharge", "soc", "direct", "delivered", "sold", "curtailed", "price", "evacLoss",
+              "floor", "floorShort")]
     cols += [("charge", "Battery charging MW"), ("discharge", "Battery discharging MW"), ("soc", "Battery state of charge %"),
              ("direct", "Direct to PPA MW"), ("delivered", "Delivered to PPA MW"), ("sold", "Sold in market MW"),
              ("curtailed", "Curtailed MW")]
     if "evacLoss" in series:
         cols.append(("evacLoss", "Power transformer and line losses MW"))
+    if "floor" in series:
+        cols += [("floor", "Time-block floor MW"), ("floorShort", "Short of the floor MW")]
     if "price" in series:
         cols.append(("price", "Market price Rs/kWh"))
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(["PPA year", "Day", "Month", "Date", "Block", "Time"] + [label for _, label in cols])
     # three decimals for the price and for the losses: a near-flat loss would round with a bias
-    digits = {k: 3 if k in ("price", "evacLoss") else 2 for k, _ in cols}
+    digits = {k: 3 if k in ("price", "evacLoss", "floorShort") else 2 for k, _ in cols}
     data = [np.round(series[k] * (100 if k == "soc" else 1), digits[k]) for k, _ in cols]
     month_idx = MONTH_OF_BLOCK
     for i in range(BLOCKS):
@@ -506,6 +567,7 @@ def summary_csv(summaries: list[dict]) -> str:
     plant_ids = list(summaries[0]["plants"]) if summaries else []
     head = ["PPA year", "Delivered MU", "Contracted MU", "Annual supply %"]
     head += [f"{rid} floor achieved %" for rid in rule_ids] + [f"{rid} floor met" for rid in rule_ids]
+    head += [f"{rid} blocks at the floor %" for rid in rule_ids]
     head += ["Shortfall MU", "Solar MU", "Wind MU", "Sold MU", "Curtailed MU", "Battery charged MU", "Battery discharged MU", "Green share %"]
     for pid in plant_ids:
         head += [f"{pid} MU", f"{pid} lowest output % of MW", f"{pid} technical minimum %", f"{pid} largest 15-min change % of MW", f"{pid} ramp limit per block %"]
@@ -513,6 +575,7 @@ def summary_csv(summaries: list[dict]) -> str:
     for s in summaries:
         row = [s["year"], round(s["deliveredMu"], 2), round(s["demandMu"], 2), round(100 * s["annualShare"], 2)]
         row += [round(100 * r["achieved"], 2) for r in s["rules"]] + ["yes" if r["met"] else "NO" for r in s["rules"]]
+        row += [round(100 * r["hoursMet"], 2) if r.get("hoursMet") is not None else "" for r in s["rules"]]
         row += [round(s["shortfallMu"], 3), round(s["solarMu"], 2), round(s["windMu"], 2), round(s["soldMu"], 2), round(s["curtailedMu"], 2),
                 round(s["chargedMu"], 2), round(s["dischargedMu"], 2), round(100 * s["greenShare"], 2)]
         for pid in plant_ids:
@@ -540,6 +603,10 @@ How it is computed
   and discharge in the same block.
 * The tender's supply floors are applied as in the sizing (peak hours: every hour of the day, each
   month, when the procurer picks the hours). A floor that cannot be met is reported with its shortfall.
+* A time-block floor (SECI RTC-TM: 90% in every peak block, 70% in every off-peak block) applies to
+  every 15-minute block on its own; a block short of it costs the penalty multiple x the tariff
+  (SECI: 1.5) on the energy short. The summary gives the share of blocks at the floor, the lowest
+  block ("achieved") and the energy short.
 * Solar, wind and the battery are dispatched at the 33 kV main bus bar, where the profiles are.
   When the power transformer and line losses are set, what is injected at the bus loses them on the
   way to the 220 kV billing meter: the contract, delivery, sales and battery discharge are given at
@@ -583,8 +650,10 @@ def _cleanup() -> None:
 
 
 def run(payload: dict, sizes: dict, tariff: float, years: list[int] | None = None,
-        progress: Callable[[int, int, dict | None], None] | None = None, zip_path: Path | None = None) -> dict:
-    """Dispatch every requested year; write the ZIP (when zip_path is given); return the summaries."""
+        progress: Callable[[int, int, dict | None], None] | None = None, zip_path: Path | None = None,
+        xlsx_path: Path | None = None) -> dict:
+    """Dispatch every requested year; write the ZIP and the workbook (when their paths are given);
+    return the summaries."""
     inp = _inputs(payload)
     n = int(inp["fin"].get("years") or 25)
     years = years or list(range(1, n + 1))
@@ -593,6 +662,7 @@ def run(payload: dict, sizes: dict, tariff: float, years: list[int] | None = Non
     if not (isinstance(tariff, (int, float)) and math.isfinite(tariff) and tariff > 0):
         raise DispatchError("tariff must be a positive number (Rs/kWh)")
     summaries = []
+    hourly: dict[int, dict] = {}  # year -> hourly series, for the workbook
     zf = zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) if zip_path else None
     try:
         if progress:
@@ -602,6 +672,8 @@ def run(payload: dict, sizes: dict, tariff: float, years: list[int] | None = Non
             summaries.append(res["summary"])
             if zf:
                 zf.writestr(f"dispatch_15min_year_{res['summary']['year']:02d}.csv", year_csv(res["series"], res["summary"]["year"]))
+            if xlsx_path:
+                hourly[res["summary"]["year"]] = W.hourly_of(res["series"])
             if progress:
                 progress(len(summaries), len(years), res["summary"])
 
@@ -611,6 +683,9 @@ def run(payload: dict, sizes: dict, tariff: float, years: list[int] | None = Non
             zf.writestr("README.txt", README)
             zf.writestr("request.json", json.dumps({"sizes": sizes, "tariff": tariff, "years": years,
                                                     "payload": {k: v for k, v in payload.items() if k not in ("ctx", "peakMask")}}, indent=2, default=float))
+        if xlsx_path:
+            W.write(xlsx_path, sorted(summaries, key=lambda x: x["year"]), hourly, sizes=sizes, tariff=float(tariff),
+                    poi=inp["poi"], rules=inp["rules"])
     finally:
         if zf:
             zf.close()
@@ -643,7 +718,7 @@ def start(payload: dict, sizes: dict, tariff: float, years: list[int] | None = N
         path = jobs_dir() / f"{job_id}.zip"
         try:
             with _slots:
-                out = run(payload, sizes, tariff, years, progress, zip_path=path)
+                out = run(payload, sizes, tariff, years, progress, zip_path=path, xlsx_path=path.with_suffix(".xlsx"))
             with _lock:
                 job["status"] = "done"
                 job["allMet"] = out["allMet"]
@@ -676,4 +751,11 @@ def zip_file(job_id: str) -> Path | None:
     if not isinstance(job_id, str) or not _JOB_ID.match(job_id):
         return None
     path = jobs_dir() / f"{job_id}.zip"
+    return path if path.is_file() else None
+
+
+def xlsx_file(job_id: str) -> Path | None:
+    if not isinstance(job_id, str) or not _JOB_ID.match(job_id):
+        return None
+    path = jobs_dir() / f"{job_id}.xlsx"
     return path if path.is_file() else None

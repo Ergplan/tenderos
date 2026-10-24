@@ -190,11 +190,28 @@ the WBSEDCL benchmark plant year 1 takes about 1.5 minutes and each later year a
 
 The table shows, for every year, each floor achieved, any shortfall, the lowest biomass/thermal
 output against its technical minimum, the largest 15-minute change against its ramp limit,
-curtailment and sales. **Download 15-minute dispatch (ZIP)** gives one CSV per year
+curtailment and sales. **25-year dispatch (Excel)** (`GET /api/bid/dispatch15/{id}/xlsx`,
+`engine/sizing/dispatch_workbook.py`) is one workbook:
+
+* **About:** the plant, tariff, losses and floors.
+* **Summary:** one row per PPA year.
+* **Monthly:** one row per year and month.
+* **Year 01 to Year 25:** 8,760 rows each, the four 15-minute blocks summed to MWh per hour.
+
+Each year sheet adds up to that year's summary. **15-minute blocks (ZIP)** gives one CSV per year
 (`dispatch_15min_year_NN.csv`: day, month, block 1–96, time, contracted supply, output of each
 source, battery charging, discharging and state of charge, direct and total delivery to the PPA,
-sales, curtailment, price), `summary_by_year.csv`, a README and the request used. Runs are kept
-on the engine for 24 hours.
+sales, curtailment, price; with losses set, the transformer and line losses; with time-block
+floors, each block's floor and the delivery short of it), `summary_by_year.csv`, a README and the
+request used. Runs are kept on the engine for 24 hours.
+
+**Time-block floors** (SECI RTC-TM) are checked in every 15-minute block on its own.
+
+* A block short of its floor costs the penalty multiple × the tariff on the energy short (SECI:
+  1.5×). A hard floor gets a large penalty, so a miss is reported instead of failing the year.
+* The table gives, per floor, the share of blocks at the floor.
+* Inside an hour, solar's ramp can leave one block short where the hourly average was met. So the
+  15-minute check is a little stricter than the hourly sizing (a few percent of blocks).
 
 ### Reading the hourly dispatch chart
 

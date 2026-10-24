@@ -5,7 +5,7 @@
                                       search for a whole tender set (RfS, amendments, clarifications)
   /api/bess/parse                     BESS requirements, from the same extraction
   /api/rtc/lp                         HiGHS least-tariff sizing, streamed as NDJSON
-  /api/bid/dispatch15[...]            15-minute dispatch of a sized plant for every PPA year
+  /api/bid/dispatch15[...]            15-minute dispatch of a sized plant for every PPA year (ZIP of CSVs, Excel)
   /api/bid/document/pdf               HTML parts (the SECI bid letters) laid out as one A4 PDF
 
 The web app (Next.js) is the only client: it signs users in and forwards these paths.
@@ -308,6 +308,16 @@ def dispatch15_zip(job_id: str) -> FileResponse:
     if path is None or job is None or job.get("status") != "done":
         raise HTTPException(status_code=404, detail="The 15-minute dispatch is not ready")
     return FileResponse(path, media_type="application/zip", filename="dispatch_15min_all_years.zip")
+
+
+@app.get("/api/bid/dispatch15/{job_id}/xlsx")
+def dispatch15_xlsx(job_id: str) -> FileResponse:
+    """The same dispatch as one workbook: a summary, the months, and every PPA year hour by hour."""
+    path = D15.xlsx_file(job_id)
+    job = D15.get(job_id)
+    if path is None or job is None or job.get("status") != "done":
+        raise HTTPException(status_code=404, detail="The 25-year dispatch workbook is not ready")
+    return FileResponse(path, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename="dispatch_25_years.xlsx")
 
 
 @app.post("/api/bid/document/pdf")
