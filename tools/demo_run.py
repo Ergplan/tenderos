@@ -523,6 +523,194 @@ def seci_letters(page, run: Run, forms: dict) -> dict:
     return out
 
 
+def seci_extras(page, run: Run) -> dict:
+    """The bid's losses to the meter and MWac/MWp, an hour of the dispatch as a Sankey, and the
+    25-year dispatch in 15-minute blocks downloaded as Excel."""
+    S = "SECI RTC tender: losses, dispatch"
+    out: dict = {}
+    with run.step(S, "Losses to the billing meter: solar, each part with its loss (CUF measured at the inverter output)", "seci-losses-solar", "[data-testid=bid-losses]") as e:
+        page.click("[data-testid=seci-step-sources]")
+        page.click("[data-testid=bid-loss-kind-solar]")
+        text = page.locator("[data-testid=bid-losses]").inner_text()
+        assert "Inverter-duty transformers" in text and "Power transformer 33/220 kV" in text
+        out["meter_cuf"] = _flat(re.search(r"Billed here: CUF [\d.]+%", text).group(0)) if re.search(r"Billed here: CUF [\d.]+%", text) else None
+        e["note"] = out["meter_cuf"] or "chain shown"
+    with run.step(S, "Losses: wind (WTG step-up transformers) and the battery (PCS, MV transformers, both ways)", "seci-losses-bess", "[data-testid=bid-losses]") as e:
+        page.click("[data-testid=bid-loss-kind-wind]")
+        assert "WTG step-up transformers" in page.locator("[data-testid=bid-losses]").inner_text()
+        page.click("[data-testid=bid-loss-kind-bess]")
+        assert "MV transformers" in page.locator("[data-testid=bid-losses]").inner_text()
+        e["note"] = "each technology's own transformer applied after where its CUF is measured"
+    with run.step(S, "Solar capex per MWac, shown per MWp", "seci-solar-mwp", "[data-testid=source-solar]") as e:
+        card = page.locator("[data-testid=source-solar]").inner_text()
+        assert "cr/MWp" in card
+        e["note"] = _flat(re.search(r"= ₹[\d.]+ cr/MWp at DC:AC [\d.]+", card).group(0))
+    with run.step(S, "The plant in MWac and MWp", "seci-sizes-mwp", "[data-testid=bid-sizes]") as e:
+        page.click("[data-testid=seci-step-size]")
+        page.wait_for_selector("[data-testid=bid-sizes]")
+        sizes = _flat(page.locator("[data-testid=bid-sizes]").inner_text())
+        assert "MWAC" in sizes.upper() and "MWP" in sizes.upper()
+        out["sizes"] = sizes
+        e["note"] = sizes[:160]
+    with run.step(S, "Hover an hour of the year-1 dispatch: the hour as a see-through Sankey against its block's floor", "seci-sankey") as e:
+        chart = page.locator(".rtc-card", has_text="Year-1 dispatch").locator("canvas").first
+        chart.scroll_into_view_if_needed()
+        page.evaluate("() => window.scrollBy(0, 120)")
+        box = chart.bounding_box()
+        page.mouse.move(box["x"] + box["width"] * 0.42, box["y"] + box["height"] * 0.45)
+        page.wait_for_selector("svg[data-sankey]", timeout=10_000)
+        page.wait_for_timeout(400)
+        tip = _flat(page.locator("svg[data-sankey]").first.locator("xpath=../..").inner_text())
+        out["sankey"] = tip[:300]
+        e["note"] = tip[:200]
+    with run.step(S, "The 25-year dispatch in 15-minute blocks, the time-block floors in every block", "seci-d15", "[data-testid=bid-d15-table]") as e:
+        page.mouse.move(5, 5)
+        page.click("[data-testid=bid-d15-run]")
+        page.wait_for_selector("[data-testid=bid-d15-xlsx]", timeout=SIZING_TIMEOUT)
+        out["d15_verdict"] = _flat(page.locator("[data-testid=bid-d15-verdict]").inner_text())
+        e["note"] = out["d15_verdict"][:240]
+    with run.step(S, "Download the 25-year dispatch (Excel: summary, months, every year hour by hour)") as e:
+        e["note"] = out["d15_xlsx"] = download(page, run, "[data-testid=bid-d15-xlsx]", "models", "SECI_bid_dispatch_25_years.xlsx")
+    return out
+
+
+def _view_as(page, name: str) -> None:
+    if not page.locator("[data-testid=team-panel]").count():
+        page.click("[data-testid=seci-team]")
+    page.wait_for_selector("[data-testid=team-panel]")
+    sel = page.locator("[data-testid=team-view-as]")
+    value = sel.locator("option", has_text=name).first.get_attribute("value")
+    sel.select_option(value=value)
+    page.wait_for_function("([v]) => document.querySelector('[data-testid=team-view-as]').value === v", arg=[value])
+    page.wait_for_timeout(600)
+
+
+def _close_team(page) -> None:
+    if page.locator("[data-testid=team-panel]").count():
+        page.click("[aria-label='Close the team panel']")
+
+
+def _answered(page, key: str) -> None:
+    page.wait_for_function(f"() => !document.querySelector('[data-testid=\"team-card-{key}\"] [data-testid=team-answer-send]')")
+
+
+def seci_team(page, run: Run, letters: dict) -> dict:
+    """The tender team on the saved bid: the manager assigns a cost to procurement, Format 7.1 to
+    finance for its signed copy and a condition to legal; each desk answers from its own view; the
+    manager accepts two, returns one and accepts it answered again."""
+    S = "SECI RTC tender: the team"
+    out: dict = {"steps": []}
+    signed = next((run.out / x["pdf"] for x in letters.get("letters", []) if x["id"] == "7.1"), None)
+    capex = COMPANY.get("team", {}).get("solarCapex", 3.85)
+    with run.step(S, "Open the Team panel: the tender's seats (demo: View as)", "team-00-panel", "[data-testid=team-panel]") as e:
+        _view_as(page, "Tender manager")
+        page.click("[data-testid=team-tab-members]")
+        e["note"] = _flat(page.locator("[data-testid=team-members]").inner_text())[:200]
+        _close_team(page)
+    with run.step(S, "Assign the solar capex to procurement", "team-01-assign-cost", "[data-testid=source-solar]") as e:
+        page.click("[data-testid=seci-step-sources]")
+        page.click('[data-testid="assign-src.solar.capex"]')
+        page.fill("[data-testid=assign-request]", "Firm EPC price for the solar plant per MWac, from the two shortlisted EPC quotes")
+        page.wait_for_timeout(300)
+        run.snap("team-01-assign-form", "[data-testid=assign-form]")
+        page.click("[data-testid=assign-send]")
+        page.wait_for_selector('[data-testid="assign-src.solar.capex"].team-chip')
+        e["note"] = "to Procurement"
+    with run.step(S, "Send Format 7.1 to finance for the signed copy", "team-02-assign-format", '[data-testid="seci-format-7.1"]') as e:
+        page.click("[data-testid=seci-step-forms]")
+        page.click("[data-testid=seci-formsnav-7\\.1]")
+        page.click('[data-testid="assign-format.7.1"]')
+        page.fill("[data-testid=assign-request]", "Print on the letterhead, have the authorised signatory sign and stamp it, upload the scan")
+        page.click("[data-testid=assign-send]")
+        page.wait_for_selector('[data-testid="assign-format.7.1"].team-chip')
+        e["note"] = "to Finance"
+    with run.step(S, "Ask legal for a reading of the Peak Hours condition", "team-03-assign-condition") as e:
+        page.click("[data-testid=seci-step-conditions]")
+        btn = page.locator(".seci-cond", has_text="Peak").locator('[data-testid^="assign-condition."]').first
+        out["condition"] = btn.get_attribute("data-testid").removeprefix("assign-")
+        btn.click()
+        page.fill("[data-testid=assign-request]", "Who chooses the Peak Hours and when? Does the 90% floor apply to all 16 candidate hours?")
+        page.click("[data-testid=assign-send]")
+        page.wait_for_selector(f'[data-testid="assign-{out["condition"]}"].team-chip')
+        btn.scroll_into_view_if_needed()
+        e["note"] = f"to Legal: {out['condition']}"
+    with run.step(S, "Procurement answers with its figure", "team-04-procurement", "[data-testid=team-panel]") as e:
+        _view_as(page, "Procurement desk")
+        page.click("[data-testid=team-tab-todo]")
+        card = page.locator('[data-testid="team-card-src.solar.capex"]')
+        card.locator("[data-testid=team-answer-value]").fill(str(capex))
+        card.locator("[data-testid=team-answer-note]").fill("Lower of two EPC quotes (fictional), incl. modules, BoS and the 33 kV yard")
+        run.snap("team-04-procurement-answer", "[data-testid=team-panel]")
+        card.locator("[data-testid=team-answer-send]").click()
+        _answered(page, "src.solar.capex")
+        e["note"] = f"₹{capex} cr/MWac"
+    with run.step(S, "Finance downloads the filled letter and uploads the signed copy", "team-05-finance", "[data-testid=team-panel]") as e:
+        _view_as(page, "Finance desk")
+        card = page.locator('[data-testid="team-card-format.7.1"]')
+        assert card.locator("[data-testid=team-letter-pdf]").count() == 1
+        card.locator("[data-testid=team-answer-file]").set_input_files(str(signed))
+        card.locator("[data-testid=team-answer-note]").fill("Signed by the authorised signatory (demo: the filled letter stands in for the scan)")
+        card.locator("[data-testid=team-answer-send]").click()
+        _answered(page, "format.7.1")
+        e["note"] = signed.name if signed else ""
+    with run.step(S, "Legal gives its reading", "team-06-legal", "[data-testid=team-panel]") as e:
+        _view_as(page, "Legal desk")
+        card = page.locator(f'[data-testid="team-card-{out["condition"]}"]')
+        card.locator("[data-testid=team-answer-note]").fill("SECI declares the Peak Hours; we must be able to supply 90% in any of them.")
+        card.locator("[data-testid=team-answer-send]").click()
+        _answered(page, out["condition"])
+    with run.step(S, "The tender manager sees three answers to accept", "team-07-manager", "[data-testid=team-panel]") as e:
+        _view_as(page, "Tender manager")
+        page.click("[data-testid=team-tab-todo]")
+        e["note"] = f"{page.locator('[data-testid=seci-team-count]').inner_text()} waiting"
+    with run.step(S, "Accept the capex into the bid (a new saved version)", "team-08-accept-cost", "[data-testid=team-panel]") as e:
+        page.locator('[data-testid="team-card-src.solar.capex"] [data-testid=team-accept]').click()
+        page.wait_for_selector("[data-testid=seci-saved]")
+        page.wait_for_function("() => /Accepted .Solar/.test(document.querySelector('[data-testid=seci-saved]')?.innerText || '')")
+        e["note"] = out["accepted_cost"] = _flat(page.locator("[data-testid=seci-saved]").inner_text())
+    with run.step(S, "Accept the signed copy of Format 7.1", "team-09-accept-signed") as e:
+        page.click("[data-testid=team-tab-all]")
+        page.locator('[data-testid="team-card-format.7.1"] [data-testid=team-accept]').click()
+        page.wait_for_function("() => document.querySelector('[data-testid=\"team-card-format.7.1\"]').className.includes('accepted')")
+        e["note"] = _flat(page.locator("[data-testid=seci-saved]").inner_text())
+    with run.step(S, "Return legal's reading with a note", "team-10-return", "[data-testid=team-panel]") as e:
+        key = out["condition"]
+        card = page.locator(f'[data-testid="team-card-{key}"]')
+        card.locator("[data-testid=team-return-note]").fill("Please cite the amendment clause that says so")
+        card.locator("[data-testid=team-return]").click()
+        page.wait_for_function(f"() => document.querySelector('[data-testid=\"team-card-{key}\"]').className.includes('returned')")
+    with run.step(S, "Legal answers again; the manager accepts", "team-11-accepted", "[data-testid=team-panel]") as e:
+        _view_as(page, "Legal desk")
+        card = page.locator(f'[data-testid="team-card-{key}"]')
+        card.locator("[data-testid=team-answer-note]").fill("Amendment-01 cl. 8.1 as amended by Amendment-02: SECI declares the Peak Hours a day ahead within 18:00-10:00; the 90% floor applies to each declared hour.")
+        card.locator("[data-testid=team-answer-send]").click()
+        _answered(page, key)
+        _view_as(page, "Tender manager")
+        page.click("[data-testid=team-tab-all]")
+        page.locator(f'[data-testid="team-card-{key}"] [data-testid=team-accept]').click()
+        page.wait_for_function(f"() => document.querySelector('[data-testid=\"team-card-{key}\"]').className.includes('accepted')")
+        out["history"] = _flat(page.locator(f'[data-testid="team-card-{key}"] .team-events').text_content())[:400]
+        e["note"] = _flat(page.locator("[data-testid=seci-linked]").inner_text())
+    with run.step(S, "In the bid: the signed copy on Format 7.1, our reading under the condition", "team-12-in-bid") as e:
+        _close_team(page)
+        page.click("[data-testid=seci-step-forms]")
+        page.click("[data-testid=seci-formsnav-7\\.1]")
+        out["signed"] = _flat(page.locator("[data-testid=seci-format-signed]").inner_text())
+        run.snap("team-12-signed", '[data-testid="seci-format-7.1"]')
+        page.click("[data-testid=seci-step-conditions]")
+        clar = page.locator(f'[data-testid="seci-cond-clarified-{key.removeprefix("condition.")}"]')
+        clar.scroll_into_view_if_needed()
+        out["reading"] = _flat(clar.inner_text())
+        e["note"] = f"{out['signed']} · {out['reading'][:120]}"
+    with run.step(S, "The new capex cleared the sizing: size again", "team-13-resized", "[data-testid=bid-sizes]") as e:
+        page.click("[data-testid=seci-step-sources]")
+        page.click("[data-testid=bid-size]")
+        page.wait_for_selector("[data-testid=bid-sizes]", timeout=SIZING_TIMEOUT)
+        page.wait_for_timeout(1000)
+        e["note"] = out["resized"] = _flat(page.locator("[data-testid=bid-sizes]").inner_text())[:200]
+    return out
+
+
 # ----------------------------------------------------------------------------- the other tabs
 
 
@@ -629,6 +817,10 @@ def main() -> int:
         run.data["forms"] = seci_forms(page, run, bid)
         run.save()
         run.data["letters"] = seci_letters(page, run, run.data["forms"])
+        run.save()
+        run.data["extras"] = seci_extras(page, run)
+        run.save()
+        run.data["team"] = seci_team(page, run, run.data["letters"])
         run.save()
         other_tabs(page, run)
         run.data["page_errors"] = page_errors

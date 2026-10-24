@@ -337,6 +337,51 @@ def build(run_dir: Path) -> Path:
             parts.append(f'<section class="page"><div class="eyebrow">The letters · as shown in TenderOS</div><h2>Format {esc(x["id"])}: {esc(x["title"])}</h2>'
                          f'{img(run_dir, shot_of(steps, "seci-letter-" + x["id"]))}</section>')
 
+    # ------------------------------------------------------------------ losses, Sankey, 25-year dispatch
+    extras = run.get("extras") or {}
+    if extras:
+        parts.append(f"""
+<section class="page">
+  <h2>Losses to the billing meter, MWac and MWp</h2>
+  <p>The bid is sized at the 220 kV billing meter. Each technology's losses apply from where its CUF is measured. Solar is measured at
+  the inverter output, so its inverter-duty transformers and 33 kV cables apply. Wind is measured at the turbine terminals, so its WTG
+  step-up transformers apply. The battery's round trip is quoted at the PCS, so its MV transformers apply both ways. The 33/220 kV
+  transformer and the 220 kV line are shared by all three. {esc(extras.get('meter_cuf') or '')}.</p>
+  <div class="half">{img(run_dir, shot_of(steps, 'seci-losses-solar'))}{img(run_dir, shot_of(steps, 'seci-losses-bess'))}</div>
+  <p class="small">Solar capex is entered per MWac and shown per MWp ({esc(next((s.get('note') for s in steps if s.get('name', '').startswith('Solar capex per MWac')), ''))}). The plant: {esc(extras.get('sizes'))}</p>
+  <div class="half">{img(run_dir, shot_of(steps, 'seci-solar-mwp'))}{img(run_dir, shot_of(steps, 'seci-sizes-mwp'))}</div>
+</section>
+<section class="page">
+  <h2>An hour of the dispatch, and every PPA year</h2>
+  <p>Hovering an hour of the year-1 dispatch shows it as a see-through Sankey. It runs from the sources, through where their energy
+  went (to the PPA, battery charging, sold, curtailed, transformer and line losses), to the block's floor: met, above it, or short.</p>
+  {img(run_dir, shot_of(steps, 'seci-sankey'), "shot mid")}
+  <p>The 25-year dispatch checks every PPA year in 15-minute blocks, with the time-block floors in every block. {esc(extras.get('d15_verdict'))}
+  The workbook <span class="mono">{esc(extras.get('d15_xlsx'))}</span> has a summary by year, the months, and every year hour by hour.</p>
+  {img(run_dir, shot_of(steps, 'seci-d15'), "shot mid")}
+</section>""")
+
+    # ------------------------------------------------------------------ the team
+    team = run.get("team") or {}
+    if team:
+        tsteps = [st for st in steps if st["section"] == "SECI RTC tender: the team"]
+        trow = "".join(f"<tr><td>{esc(st['name'])}</td><td class=\"{'pass' if st['status'] == 'pass' else 'fail'}\">{esc(st['status'])}</td><td class=small>{esc(st.get('note'))}</td></tr>" for st in tsteps)
+        parts.append(f"""
+<section class="page">
+  <h2>The team: assign, answer, accept</h2>
+  <p>The tender manager (the super admin) assigned three things on the saved bid. The solar capex went to procurement, Format 7.1 went
+  to finance for its signed copy, and the Peak Hours condition went to legal for a reading. Each desk answered from its own view; in a
+  demo, "View as" switches between the desks without signing in. Each accepted answer went into the bid as a new saved version. Legal's
+  first reading was returned with a note, answered again, and accepted.</p>
+  <table><tr><th>Step</th><th>Result</th><th>Note</th></tr>{trow}</table>
+  <p class="small">History of the condition: {esc(team.get('history'))}</p>
+</section>
+<section class="page"><h3>On screen</h3>
+  <div class="half">{img(run_dir, shot_of(steps, 'team-01-assign-form'))}{img(run_dir, shot_of(steps, 'team-04-procurement-answer'))}</div>
+  <div class="half">{img(run_dir, shot_of(steps, 'team-07-manager'))}{img(run_dir, shot_of(steps, 'team-11-accepted'))}</div>
+  <div class="half">{img(run_dir, shot_of(steps, 'team-12-signed'))}{img(run_dir, shot_of(steps, 'team-12-in-bid'))}</div>
+</section>""")
+
     # ------------------------------------------------------------------ other tabs
     rtc = run.get("rtc") or {}
     parts.append(f"""
@@ -373,6 +418,7 @@ def build(run_dir: Path) -> Path:
     <li>Costs, CUFs and financing are the app's benchmarks, not quotes; the tariffs follow from them.</li>
     <li>Tender reading ran in {esc(reading_mode)}. The model reading (Claude) is not part of this run.</li>
     <li>The GPT-Live voice agent was {'not configured on this server; its panel and charts were opened by click' if not any('voice available' in (s.get('note') or '') for s in steps) else 'available'}.</li>
+    <li>Email was off in this run (no SMTP on the test server): the team saw their work in the Team panel. The signed copy uploaded by finance is the filled letter standing in for a scan.</li>
     <li>The bid pack and the letters are drafts for the bidder to print on letterhead or stamp paper, sign and stamp; the EMD instrument and enclosures are the bidder's to obtain. The letters follow the RfS wording as extracted from the RfS PDF; check them against the RfS before signing.</li>
   </ul>
 </section>""")
