@@ -133,6 +133,65 @@ def start(name: str, payload: bytes, tender_type: str = "auto", mode: str = "aut
     return job_id
 
 
+def start_set(files: list[tuple[str, bytes]], tender_type: str = "auto", mode: str = "auto", sdk: Any | None = None) -> str:
+    """Queue a tender-set read (tenderset.read_set) like start(). Returns the job id."""
+    from engine.extraction.tenderset.read_set import read_set
+
+    cleanup()
+    job_id = uuid.uuid4().hex
+    job: dict[str, Any] = {
+        "job_id": job_id,
+        "kind": "set",
+        "status": "queued",
+        "progress": {"done": 0, "total": 0, "step": "Queued"},
+        "error": None,
+        "preview": None,
+        "result": None,
+        "created_at": _now(),
+        "updated_at": _now(),
+        "documents": [{"name": name, "bytes": len(payload)} for name, payload in files],
+        "tender_type": tender_type,
+        "mode": mode,
+    }
+    _write(job)
+
+    def progress(done: int, total: int, step: str) -> None:
+        with _lock:
+            job["progress"] = {"done": done, "total": total, "step": step}
+            _write(job)
+
+    def run() -> None:
+        with _lock:
+            job["status"] = "running"
+            _write(job)
+        def preview(pages: list[Any]) -> None:
+            try:
+                built = build_preview(pages)
+            except Exception:  # noqa: BLE001 - the scan screen works without it
+                return
+            with _lock:
+                job["preview"] = built
+                _write(job)
+
+        try:
+            result = read_set(files, tender_type=tender_type, mode=mode, progress=progress, sdk=sdk, on_rfs_pages=preview)
+        except Exception as exc:  # noqa: BLE001 - reported to the poller
+            with _lock:
+                job["status"] = "failed"
+                job["error"] = f"{type(exc).__name__}: {exc}"[:1000]
+                _write(job)
+            return
+        with _lock:
+            job["status"] = "done"
+            job["result"] = result
+            total = job["progress"].get("total") or 1
+            job["progress"] = {"done": total, "total": total, "step": "Done"}
+            _write(job)
+
+    threading.Thread(target=run, name=f"tender-set-{job_id[:8]}", daemon=True).start()
+    return job_id
+
+
 def get(job_id: str) -> dict[str, Any] | None:
     """The job as stored, or None for an unknown or malformed id."""
     if not isinstance(job_id, str) or not _JOB_ID.match(job_id):

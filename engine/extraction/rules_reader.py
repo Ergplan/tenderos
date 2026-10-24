@@ -695,7 +695,11 @@ def _peak_hours(pages: list[PageText]) -> list[Hit]:
     return hits
 
 
-_WINDOW = rf"{NUMW}{PAREN}\s*hours?\b[^.;]{{0,60}}?(\d{{1,2}}[:.]\d{{2}})\s*(?:hrs?\.?|hours)?\s*(?:to|-|–)\s*(\d{{1,2}}[:.]\d{{2}})"
+# "18:00 to 10:00", "18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning ..."
+_WINDOW = (
+    rf"{NUMW}{PAREN}\s*hours?\b[^.;]{{0,60}}?(\d{{1,2}}[:.]\d{{2}})\s*(?:hrs?\.?|hours)?\s*"
+    rf"(?:in\s+the\s+(?:evening|morning|night|afternoon)\s+of\s+(?:a|the|that)\s+day\s+)?(?:to|and|-|–)\s*(\d{{1,2}}[:.]\d{{2}})"
+)
 
 
 def _peak_blocks(pages: list[PageText]) -> list[tuple[int, int, int, list[dict[str, Any]]]]:
