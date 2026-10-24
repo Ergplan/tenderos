@@ -17,7 +17,8 @@ flowchart LR
 | Web app | `web/` | The TenderOS interface (the jouleWise design). It holds the shell with its tabs, sign-in, users and tab access, saved scenarios, the activity log, tender readings and the Excel exports. The browser computes the financial models (`web/src/rtc/engine.js`, `web/src/bid/model.js`, `web/src/cfd/`). |
 | Engine | `engine/` | A stateless FastAPI service. It reads tenders (`extraction/`), runs the BESS tender adapter (`bess/`), sizes plants with the HiGHS LP (`sizing/rtc_lp.py`) runs the 15-minute dispatch (`sizing/dispatch15.py`) and lays out documents as PDF (`documents/pdf.py`, the SECI letters). |
 | Docling | `docling` service (image `docling-serve-cpu`) | Reads the tables of a tender set's amendments and clarifications for the engine (`DOCLING_URL`); not published. Without it the engine uses PyMuPDF's table finder. |
-| Database | Postgres | Holds users, sessions, tab access, scenarios, activity, resource profiles and tender readings (`web/db/migrations`, applied by the web app on start). |
+| Database | Postgres | Holds users, sessions, tab access, scenarios, activity, resource profiles, tender readings and the tender team with its assignments (`web/db/migrations`, applied by the web app on start). |
+| Files | `team_files` volume (`FILES_DIR`) | Files the team uploads on assignments, such as signed copies (`docs/TEAM.md`) |
 
 On a VM, Caddy (`deploy/docker-compose.vm.yml`, `deploy/Caddyfile`) terminates HTTPS in front of
 the web app and is the only published service (`docs/DEPLOY.md`).
@@ -94,7 +95,7 @@ tabs, the bid forms and the agent.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`), the SECI tender pack's quotes (`tests/test_seci_pack.py`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack and the letters, with the agent panel (`tests/e2e/test_seci_tab.py`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack and the letters, with the agent panel (`tests/e2e/test_seci_tab.py`); and team sharing: assign, answer, accept and return (`tests/e2e/test_team.py`) |
 
 ## What is not here
 

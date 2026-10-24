@@ -1,5 +1,6 @@
 import React from "react";
-import { TriangleAlert } from "lucide-react";
+import { MessageSquareQuote, TriangleAlert } from "lucide-react";
+import AssignButton from "../team/AssignButton";
 import { Section } from "../rtc/ui";
 import { PACK } from "./terms";
 import { QuoteLink } from "./DocumentsStep";
@@ -15,7 +16,7 @@ const docTitle = (id) => PACK.documents.find((d) => d.id === id)?.title || id;
 const ORDER = ["The tender", "What you bid", "Bid process", "Supply", "Plant", "Dates", "Money at stake", "Eligibility"];
 
 /** Step 2: every bid condition now in force (after both amendments), with its quote and history. */
-export default function ConditionsStep() {
+export default function ConditionsStep({ state = null }) {
   const groups = [...new Set(PACK.conditions.map((c) => c.group))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
   const count = (status) => PACK.conditions.filter((c) => c.status === status).length;
   return (
@@ -35,6 +36,13 @@ export default function ConditionsStep() {
                   {c.was && <em>Was: {c.was}</em>}
                   {c.flag && <span className="seci-flag"><TriangleAlert size={12} /> {c.flag}</span>}
                   {c.sources.map((q, i) => <QuoteLink key={i} quote={q} />)}
+                  {state?.clarifications?.[c.id] && (
+                    <div className="team-clarified" data-testid={`seci-cond-clarified-${c.id}`}>
+                      <MessageSquareQuote size={12} /> <b>Our reading{state.clarifications[c.id].by ? ` (${state.clarifications[c.id].by})` : ""}:</b> {state.clarifications[c.id].text}
+                      {state.clarifications[c.id].fileId && <a href={`/api/team/files/${state.clarifications[c.id].fileId}`}> {state.clarifications[c.id].fileName}</a>}
+                    </div>
+                  )}
+                  <AssignButton target={{ kind: "condition", key: `condition.${c.id}`, label: c.label, context: { quote: c.sources[0]?.quote || null, page: c.sources[0]?.page || null, value: c.value } }} />
                   {c.rfs && (c.status !== "unchanged" || !c.sources.some((q) => q.doc === "rfs")) && (
                     <details className="seci-rfs-orig">
                       <summary>RfS as issued</summary>

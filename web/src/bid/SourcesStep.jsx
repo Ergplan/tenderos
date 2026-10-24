@@ -8,6 +8,7 @@ import * as E from "../rtc/engine";
 import { AUTO_MAX, BENCHMARK_NOTE, BIOMASS_COLOR, FINANCE_FIELDS, HYDRO_COLOR, MARKETS, SOURCES, SOURCE_FIELDS, THERMAL_COLOR, capacityLimit, fillBenchmarks, missingInputs, plantMw, solarMinMw, sourceIssues, splitSitesOn } from "./model";
 import { SourceChip } from "./RequirementsStep";
 import BidLosses from "./BidLosses";
+import AssignButton from "../team/AssignButton";
 import { POINTS } from "../rtc/LossChain";
 
 export const SOURCE_COLORS = { solar: DATA_COLORS.solar, wind: DATA_COLORS.wind, hydro: HYDRO_COLOR, biomass: BIOMASS_COLOR, thermal: THERMAL_COLOR, bess: DATA_COLORS.bess };
@@ -40,12 +41,12 @@ function MarketProfile({ prices, market }) {
   );
 }
 
-function InputField({ f, value, onChange, benchmark, note = null }) {
+function InputField({ f, value, onChange, benchmark, note = null, assign = null }) {
   const hint = [benchmark ? BENCHMARK_NOTE : f.hint, note].filter(Boolean).join(" · ");
   const el = f.options
     ? <SelectBox label={f.label} value={value ?? ""} onChange={(v) => onChange(v || null)} options={[["", "Choose…"], ...f.options]} hint={hint} />
     : <Field label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={value} onChange={onChange} step={f.step} min={f.min} max={f.max} hint={hint} />;
-  return <div className={benchmark ? "bid-benchmark" : undefined}>{el}</div>;
+  return <div className={`${benchmark ? "bid-benchmark" : ""} ${assign ? "has-assign" : ""}`}>{el}{assign}</div>;
 }
 
 /** Drop the benchmark marks of the fields the bidder has just changed. */
@@ -123,7 +124,8 @@ function SourceCard({ id, state, setState, terms, set, lockProps, isLocked, user
               <div className="rtc-grid rtc-grid-2">
                 {SOURCE_FIELDS[id].filter((f) => f.group === g).map((f) => (
                   (f.profileOnly && (id === "solar" ? state.solarUpload : state.windUpload)) ? null
-                    : <InputField key={f.key} f={f} value={s[f.key]} onChange={(v) => setSrc({ [f.key]: v })} benchmark={Boolean(state.filled?.[`${id}.${f.key}`])} note={fieldNote(state, id, f.key)} />
+                    : <InputField key={f.key} f={f} value={s[f.key]} onChange={(v) => setSrc({ [f.key]: v })} benchmark={Boolean(state.filled?.[`${id}.${f.key}`])} note={fieldNote(state, id, f.key)}
+                      assign={f.group === "Cost" ? <AssignButton compact target={{ kind: "cost", key: `src.${id}.${f.key}`, label: `${meta.title}: ${f.label}`, context: { unit: f.unit, pct: Boolean(f.pct), type: "number" } }} /> : null} />
                 ))}
               </div>
             </div>
@@ -222,9 +224,12 @@ export default function SourcesStep({ state, setState, terms, set, lockProps, is
       <Section index={state.losses ? "3.4" : "3.3"} title="Financing and project costs" note="Your terms; they set the tariff the optimizer minimises">
         <div className="rtc-grid rtc-grid-4" data-testid="bid-financing">
           {FINANCE_FIELDS.map((f) => (
-            <Field key={`${f.section}.${f.key}`} label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={state[f.section][f.key]}
+            <div key={`${f.section}.${f.key}`} className="has-assign">
+            <Field label={f.label} unit={f.unit === "%" ? undefined : f.unit} pct={Boolean(f.pct)} value={state[f.section][f.key]}
               onChange={(v) => setState((s) => ({ ...s, [f.section]: { ...s[f.section], [f.key]: v }, filled: unmark(s.filled, [`${f.section}.${f.key}`]), lp: null }))} step={f.step} min={f.min} max={f.max}
               hint={state.filled?.[`${f.section}.${f.key}`] ? BENCHMARK_NOTE : f.hint} />
+            <AssignButton compact target={{ kind: "finance", key: `${f.section}.${f.key}`, label: f.label, context: { unit: f.unit, pct: Boolean(f.pct), type: "number" } }} />
+            </div>
           ))}
         </div>
         <p className="rtc-note">PPA term {terms.years ? `${terms.years} years (${terms.yearsAssumed ? "assumed: not in the documents provided" : "from the tender"})` : "not stated"}. Repayment, depreciation, salvage and receivable days are on the Financials step.</p>

@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, FolderOpen, Gavel, Layers, ListChecks, RotateCcw, Save, Scale, Zap } from "lucide-react";
+import { ArrowRight, ChevronLeft, CircleDollarSign, ClipboardCheck, FileStack, FolderOpen, Gavel, Layers, ListChecks, RotateCcw, Save, Scale, Users, Zap } from "lucide-react";
 import SaveDialog from "../scenarios/SaveDialog";
+import { scenarioApi } from "../scenarios/client";
+import useTeam, { TeamContext } from "../team/useTeam";
+import TeamPanel from "../team/TeamPanel";
+import { applyAnswer } from "../team/apply";
+import { letterOf } from "./letters/index.js";
+import { downloadLetters } from "./letters/export.js";
 import { nf } from "../rtc/ui";
 import { defaultLosses, loadMarketPrices, mergeBidState, missingInputs } from "../bid/model";
 import useSizing from "../bid/useSizing";
@@ -43,6 +49,8 @@ function fromSaved(saved) {
     forms: saved.forms || {},
     formsReview: saved.formsReview || {},
     letters: saved.letters || {},
+    signed: saved.signed || {}, // format id -> the signed copy accepted from the team
+    clarifications: saved.clarifications || {}, // condition id -> the team's accepted reading
   };
 }
 
@@ -79,6 +87,22 @@ export default function SeciTab({ initialScenario = null }) {
   const missing = useMemo(() => missingInputs(state, terms), [state, terms]);
   const sizing = useSizing({ state, setState, terms, prices, session: sizingSession, module: "seci" });
 
+  // the tender team on the saved bid: assignments, answers, acceptance (src/team)
+  const team = useTeam(linked?.id || null);
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [teamFocus, setTeamFocus] = useState(null);
+  useEffect(() => {
+    // a link from a team email: ?open=<bid>&team=<assignment>
+    const id = new URLSearchParams(window.location.search).get("team");
+    if (id) { setTeamFocus(id === "1" ? null : id); setTeamOpen(true); }
+  }, []);
+  const teamCtx = useMemo(() => ({
+    ...team,
+    openPanel: (id) => { setTeamFocus(id || null); setTeamOpen(true); },
+    needSave: () => { setSaveMessage("Save the bid to the library first: assignments belong to a saved bid, so the whole team sees the same one."); setShowSave(true); },
+  }), [team]);
+  const teamCount = team.forMe.length + team.toAccept.length;
+
   const [agent, setAgent] = useState(null); // { available, model, backendModel } from /api/seci/live
   const [docked, setDocked] = useState(false); // the agent's panel is open: the page makes room for it
   useEffect(() => { loadMarketPrices().then(setPrices).catch(() => setPrices(null)); }, []);
@@ -102,21 +126,39 @@ export default function SeciTab({ initialScenario = null }) {
     window.scrollTo?.({ top: 0, behavior: "smooth" });
   }, []);
 
-  function buildSave() {
-    const lp = state.lp;
+  function buildSave(st = state) {
+    const lp = st.lp;
     return {
-      inputs: { state },
+      inputs: { state: st },
       results: { lp: lp ? { sizes: lp.sizes, tariff: lp.tariff, years: lp.years } : null },
       summary: {
         solarMw: lp?.sizes?.solarMw ?? null,
         windMw: lp?.sizes?.windMw ?? null,
         bessMw: lp?.sizes?.bessMw ?? null,
         bessMwh: lp?.sizes?.bessMwh ?? null,
-        tariff: state.forms?.tariff ?? lp?.tariff ?? null,
-        contractedMw: state.bid.baseMw,
-        bidder: state.forms?.bidder || null,
+        tariff: st.forms?.tariff ?? lp?.tariff ?? null,
+        contractedMw: st.bid.baseMw,
+        bidder: st.forms?.bidder || null,
       },
     };
+  }
+
+  /** Accept a team member's answer: write it into the bid and save that as a new version. */
+  async function acceptAnswer(a) {
+    if (!linked || linked.id !== a.scenario_id) throw new Error("Open this bid from the library to accept answers into it.");
+    const next = applyAnswer(state, a);
+    const res = await scenarioApi.saveVersion(linked.id, { ...buildSave(next), note: `Accepted from ${a.answer?.by || "the team"}: ${a.target_label}` });
+    setState(next);
+    setLinked({ ...linked, version: res.version });
+    await team.act(a.id, "accept", { version: res.version });
+    setSaveMessage(`Accepted “${a.target_label}” from ${a.answer?.by || "the team"}: saved as version ${res.version}.`);
+  }
+
+  /** The filled letter of a format, for the person asked to sign it. */
+  function letterFor(formatId, kind) {
+    const format = PACK.formats.find((f) => f.id === formatId);
+    const letter = format ? letterOf(state, format) : null;
+    if (letter) downloadLetters([letter], kind).catch((err) => window.alert(err.message));
   }
 
   function resetAll() {
@@ -150,7 +192,8 @@ export default function SeciTab({ initialScenario = null }) {
   const props = { state, setState, patch, set, lockProps, isLocked, goto, prices, terms, missing };
 
   return (
-    <div className={`rtc story bid seci ${docked ? "agent-docked" : ""}`} data-testid="seci-tab">
+    <TeamContext.Provider value={teamCtx}>
+    <div className={`rtc story bid seci ${docked ? "agent-docked" : ""} ${teamOpen ? "team-docked" : ""}`} data-testid="seci-tab">
       <section className="story-hero">
         <div>
           <div className="eyebrow"><Gavel size={13} /> {PACK.short} · RfS No. {PACK.rfsNo}</div>
@@ -160,6 +203,12 @@ export default function SeciTab({ initialScenario = null }) {
         <div className="story-hero-tools">
           {linked && <span className="rtc-live" data-testid="seci-linked">{linked.name} · v{linked.version}</span>}
           <button type="button" className="rtc-reset" onClick={() => setShowSave(true)} data-testid="seci-save"><Save size={13} /> Save</button>
+          {team.me && (
+            <button type="button" className={`rtc-reset team-open ${teamCount ? "has" : ""}`} onClick={() => teamCtx.openPanel(null)} data-testid="seci-team"
+              title={team.me ? `You: ${team.me.name}` : ""}>
+              <Users size={13} /> Team{teamCount ? <b data-testid="seci-team-count">{teamCount}</b> : null}
+            </button>
+          )}
           <a className="rtc-reset" href="/scenarios?module=seci"><FolderOpen size={13} /> Open</a>
           <button type="button" className="rtc-reset" onClick={resetAll}><RotateCcw size={13} /> Reset inputs</button>
         </div>
@@ -186,7 +235,7 @@ export default function SeciTab({ initialScenario = null }) {
 
       <div className="bid-page" style={{ "--chapter": step.color }} key={step.id}>
         {step.id === "documents" && <DocumentsStep />}
-        {step.id === "conditions" && <ConditionsStep />}
+        {step.id === "conditions" && <ConditionsStep state={state} />}
         {step.id === "bid" && <BidStep {...props} />}
         {step.id === "sources" && <SourcesStep {...props} startSizing={sizing.startSizing} hourly={sizing.hourly} />}
         {step.id === "size" && <SizeStep {...props} run={sizing.run} startSizing={sizing.startSizing} stopSizing={sizing.stopSizing} hourly={sizing.hourly} startDispatch15={sizing.startDispatch15} />}
@@ -211,6 +260,8 @@ export default function SeciTab({ initialScenario = null }) {
       )}
 
       <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} onDock={setDocked} />
+      {teamOpen && <TeamPanel team={teamCtx} state={state} bidName={linked?.name} onAccept={acceptAnswer} letterFor={letterFor} onClose={() => setTeamOpen(false)} focusId={teamFocus} />}
     </div>
+    </TeamContext.Provider>
   );
 }

@@ -1,0 +1,68 @@
+/* Team sharing (src/team): Assign buttons and status chips beside data points, the assign form,
+   and the Team panel docked on the right. */
+.team-assign { position: relative; display: inline-flex; gap: 6px; align-items: center; margin-left: 6px; vertical-align: middle; }
+.team-assign-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border: 1px dashed var(--line); border-radius: 999px;
+  background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.team-assign-btn.compact { padding: 2px 5px; }
+.team-assign-btn:hover { color: var(--accent); border-color: var(--muted); }
+.team-chip { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; padding: 2px 8px; border-radius: 999px; font-size: 11px;
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); color: var(--warn); background: transparent; cursor: pointer;
+  text-transform: none; letter-spacing: 0; text-decoration: none; white-space: nowrap; }
+.team-chip.submitted { color: #a98bff; border-color: color-mix(in srgb, #a98bff 50%, transparent); }
+.team-chip.returned { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+.team-chip.accepted { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); cursor: default; }
+a.team-chip.accepted { cursor: pointer; }
+.team-pop { position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; width: 320px; display: grid; gap: 8px; padding: 12px;
+  background: rgba(18, 18, 18, 0.96); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  text-transform: none; letter-spacing: 0; font-family: var(--font-sans, inherit); font-size: 13px; color: var(--accent); }
+.team-pop header { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+.team-pop label, .team-answer label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.team-pop select, .team-pop textarea, .team-pop input, .team-answer input, .team-answer textarea, .team-actions input, .team-actions select, .team-member input, .team-member select, .team-viewas select {
+  background: var(--surface); color: var(--accent); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font: inherit; }
+.has-assign { position: relative; }
+.has-assign > .team-assign { margin: 4px 0 0; flex-wrap: wrap; }
+.team-format-row { display: flex; gap: 8px; align-items: center; margin: 6px 0 10px; }
+.team-clarified { margin-top: 6px; padding: 6px 8px; border-left: 2px solid var(--good); font-size: 12.5px; color: var(--accent); }
+
+.seci.team-docked { margin-right: 440px; transition: margin-right 200ms ease; }
+.seci.team-docked .bid-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.team-panel { position: fixed; z-index: 50; top: 0; right: 0; bottom: 0; width: 430px; overflow-y: auto; padding: 16px 16px 24px;
+  background: rgba(14, 14, 14, 0.94); backdrop-filter: blur(8px); border-left: 1px solid var(--line); display: grid; align-content: start; gap: 10px; }
+.team-panel > header { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.team-panel > header small { display: flex; gap: 6px; align-items: center; color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.team-viewas { display: grid; gap: 4px; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.team-mail { display: block; }
+.team-tabs { display: flex; gap: 4px; }
+.team-tabs button { flex: 1; display: inline-flex; gap: 4px; align-items: center; justify-content: center; }
+.team-list { display: grid; gap: 10px; }
+.team-card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 6px; background: var(--surface); }
+.team-card.focus { border-color: var(--accent); }
+.team-card.submitted { border-left: 3px solid #a98bff; }
+.team-card.returned { border-left: 3px solid var(--bad); }
+.team-card.accepted { border-left: 3px solid var(--good); opacity: 0.85; }
+.team-card header { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.team-card header small { display: block; color: var(--muted); font-size: 11px; }
+.team-status { font-size: 11px; white-space: nowrap; color: var(--warn); }
+.team-status.submitted { color: #a98bff; }
+.team-status.accepted { color: var(--good); }
+.team-status.returned, .team-status.cancelled { color: var(--bad); }
+.team-request { margin: 0; font-size: 13px; }
+.team-request em { color: var(--muted); font-style: normal; font-size: 11.5px; }
+.team-given { display: grid; gap: 3px; padding: 6px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.04); font-size: 13px; }
+.team-given small { color: var(--muted); }
+.team-given a { color: var(--accent); display: inline-flex; gap: 4px; align-items: center; }
+.team-answer { display: grid; gap: 8px; }
+.team-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12.5px; }
+.team-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.team-actions input { flex: 1; min-width: 120px; }
+.team-events summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+.team-events ul { margin: 6px 0; padding-left: 16px; font-size: 12px; display: grid; gap: 3px; }
+.team-events em { color: var(--muted); font-style: normal; }
+.team-members { display: grid; gap: 6px; }
+.team-member { display: grid; grid-template-columns: 1.2fr 0.9fr 1.4fr auto; gap: 6px; align-items: center; font-size: 12.5px; }
+.team-member.inactive { opacity: 0.45; }
+.team-member b { display: inline-flex; gap: 4px; align-items: center; }
+.team-member.add { grid-template-columns: 1fr 1fr; padding-top: 8px; border-top: 1px solid var(--line); }
+.team-inline { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.team-open b { margin-left: 4px; padding: 0 6px; border-radius: 999px; background: #a98bff; color: #0e0e0e; font-size: 11px; }
+@media (max-width: 1100px) { .seci.team-docked { margin-right: 0; } .team-panel { width: min(100vw, 430px); } }

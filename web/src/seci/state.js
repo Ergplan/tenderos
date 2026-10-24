@@ -31,5 +31,7 @@ export function defaultSeciState() {
     forms: {}, // the particulars and every format's blanks
     formsReview: {}, // format id -> { at, print }: reviewed, and on which values
     letters: {}, // format id -> { block index: the bidder's wording of that paragraph }
+    signed: {}, // format id -> { fileId, name, by, at }: the signed copy accepted from the team
+    clarifications: {}, // condition id -> { text, fileId, by, at }: the team's accepted reading
   };
 }

@@ -215,6 +215,14 @@ docker compose -p tenderos up -d --build
 docker compose -p tenderos ps docling engine
 ```
 
+### Team sharing: email and files
+
+* **Email.** To email people about their assignments, set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
+  `SMTP_PASSWORD`, `MAIL_FROM` and `APP_URL` in `.env`, then rerun the update or install. Without
+  them the Team panel says email is off.
+* **Files.** Uploaded files (signed copies) live in the `team_files` Docker volume. The backup
+  script archives them beside the database. See `docs/TEAM.md`.
+
 ## 7. Removing it
 
 Delete the VM, the static IP and the firewall rules:

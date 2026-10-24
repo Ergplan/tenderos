@@ -56,6 +56,17 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_LIVE_BACKEND_MODEL: ${OPENAI_LIVE_BACKEND_MODEL:-}
       OPENAI_LIVE_VOICE: ${OPENAI_LIVE_VOICE:-}
+      # team sharing: files people upload (signed copies) and the email that tells them of work
+      FILES_DIR: /data/files
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      APP_URL: ${APP_URL:-}
+    volumes:
+      - team_files:/data/files
     ports:
       - "${WEB_PORT:-3000}:3000"
     restart: unless-stopped
@@ -63,3 +74,4 @@ services:
 volumes:
   db:
   extraction_jobs:
+  team_files:

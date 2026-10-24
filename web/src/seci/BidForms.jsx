@@ -10,6 +10,7 @@ import QuoteCheck from "../bid/QuoteCheck";
 import LetterView from "./LetterView";
 import { TEMPLATES, lettersForBid } from "./letters/index.js";
 import { downloadLetters } from "./letters/export.js";
+import AssignButton from "../team/AssignButton";
 
 export { formIssues };
 
@@ -70,7 +71,7 @@ function Particulars({ state, terms, setField, finance }) {
           <div className="seci-forms">
             {visibleFields(f).filter((x) => x.group === g).map((x) => (
               <label key={x.key} data-voice={`form.${x.key}`}>
-                <span>{x.label}{x.required ? " *" : ""}</span>
+                <span>{x.label}{x.required ? " *" : ""} <AssignButton compact target={{ kind: "field", key: `forms.${x.key}`, label: x.label, context: { type: x.type === "number" ? "number" : "text", unit: x.unit || null } }} /></span>
                 <ParticularInput x={x} value={f[x.key]} onChange={(v) => setField(x.key, v)} />
                 {x.key === "tariff" && finance && (
                   <button type="button" className="rtc-reset" onClick={() => setField("tariff", Math.ceil(finance.tariff * 100) / 100)} data-testid="seci-form-use-tariff">
@@ -120,7 +121,9 @@ function Blank({ state, format, field, setField, onFocusPage }) {
   return (
     <div className={`seci-blank ${empty ? "empty" : ""}`} data-voice={`form.${b.key}`} onFocus={() => onFocusPage(field.context.page)}>
       <div className="seci-blank-head">
-        <span>{field.label}</span>
+        <span>{field.label}{(b.source === "own" || b.source === "shared") && (
+          <AssignButton compact target={{ kind: "field", key: `forms.${b.key}`, label: `Format ${format.id}: ${field.label}`, context: { type: field.kind === "number" ? "number" : "text", quote: field.context.quote, page: field.context.page } }} />
+        )}</span>
         <em>{b.source === "na" ? "consortium only" : b.source === "model" ? "from your bid" : b.source === "shared" ? "your particulars" : field.kind === "table" ? "schedule, optional" : "this format"}</em>
       </div>
       {control}
@@ -156,6 +159,12 @@ function FormatView({ state, setState, format, setField, onPrev, onNext }) {
         </div>
         <span className={`seci-badge ${s.applies === "yes" ? "unchanged" : s.applies === "no" ? "removed" : "amended"}`} data-testid="seci-format-applies">{APPLIES[s.applies]}</span>
       </header>
+      <div className="team-format-row">
+        {state.signed?.[format.id]
+          ? <a className="team-chip accepted" href={`/api/team/files/${state.signed[format.id].fileId}`} data-testid="seci-format-signed"><CheckCircle2 size={11} /> Signed copy: {state.signed[format.id].name}{state.signed[format.id].by ? ` · ${state.signed[format.id].by}` : ""}</a>
+          : null}
+        <AssignButton target={{ kind: "document", key: `format.${format.id}`, label: `Format ${format.id.replace(/^Annexure-/, "Annexure ")}: ${format.title} (signed copy)`, context: { paper: format.paper, signer: format.submittedBy, page: format.pages[0] } }} />
+      </div>
       <dl className="seci-format-meta">
         <div><dt>Signed by</dt><dd>{format.submittedBy}</dd></div>
         <div><dt>On</dt><dd>{format.paper}</dd></div>

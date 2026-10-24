@@ -4,6 +4,7 @@ import "@/src/bid.css";
 import "@/src/cfd.css";
 import "@/src/meter.css";
 import "@/src/seci.css";
+import "@/src/team.css";
 
 export const metadata = {
   title: { default: "TenderOS", template: "%s · TenderOS" },

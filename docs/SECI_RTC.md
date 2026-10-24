@@ -157,6 +157,22 @@ time-block floors in every block and the shortfall priced at 1.5× the tariff. *
 (Excel)** downloads it as one workbook: a summary by year, the months, and every year hour by hour.
 The ZIP has the 15-minute rows. See `docs/TENDER_TO_BID.md`, "15-minute dispatch, every PPA year".
 
+## Team sharing
+
+The tender team shares the saved bid. Anyone on the team can **Assign** a data point to a team or
+a person:
+
+* a particular or a format's blank;
+* a source's cost (to procurement);
+* a financing input (to finance);
+* a format, for its signed copy (to finance);
+* a tender condition, for a clarification (to legal).
+
+The **Team** button (top of the tab) opens the panel: what is waiting for you, answers to accept,
+every assignment with its history, and the team. The super admin accepts an answer into the bid as
+a new saved version, or returns it with a note. Demo deployments switch between the team's seats
+with "View as". See `docs/TEAM.md`.
+
 ## Your quote against the target IRR
 
 `quotedReturns(state, terms, tariff)` (`web/src/bid/quote.js`) runs the financial model of the
