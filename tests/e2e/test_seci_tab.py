@@ -3,16 +3,15 @@
 * test_documents_and_conditions: the five documents (the RfS among them), how the bid goes, the
   amendment trail, SECI's clarifications, the points to raise with SECI and the bid conditions with
   their quotes and the RfS's original wording; a PDF link opens the page.
-* test_voice_guided_bid: the voice guide (muted, answers typed: a test browser has no microphone)
-  explains the conditions, takes the bid, the planning choices and the sources' inputs, sizes the
-  plant with HiGHS against every peak and off-peak block, and explains the result and the
-  financial model; a tariff quoted below the target IRR is warned with the equity and project IRR
-  it earns; the particulars and the RfS formats are filled and reviewed one by one; the bid pack
-  (Word) and the financial model (Excel, its Live model recalculated by LibreOffice when
+* test_bid_on_screen: the bid (200 MW, any 6 Peak Hours, pay the penalty, a PPA date and the
+  dates it sets), the benchmarks for the sources, HiGHS sizing against every peak and off-peak
+  block, the money at stake; a tariff quoted below the target IRR is warned with the equity and
+  project IRR it earns; the particulars and the RfS formats are filled and reviewed one by one; the
+  bid pack (Word) and the financial model (Excel, its Live model recalculated by LibreOffice when
   installed) download.
-* test_agent_panel: the GPT-Live bid agent is offered only when the server has a key; with one,
-  starting it sends the browser's WebRTC offer and shows the voice service's answer (a refusal,
-  against a stand-in for OpenAI).
+* test_agent_panel: the GPT-Live bid agent's panel; without a key on the server it says how to set
+  it up; with one, starting it sends the browser's WebRTC offer and shows the voice service's
+  answer (a refusal, against a stand-in for OpenAI).
 
 Needs the whole stack running; see tests/e2e/test_tender_to_bid.py for the environment.
 """
@@ -79,80 +78,45 @@ def test_documents_and_conditions():
         assert "INR 4,00,00,000/MW" in page.locator("[data-testid=seci-cond-liquidity]").inner_text()
 
 
-def _caption(page) -> str:
-    return re.sub(r"\s+", " ", page.locator("[data-testid=voice-caption]").inner_text())
-
-
-def _wait_caption(page, needle: str, timeout=60_000):
-    page.wait_for_function("(n) => (document.querySelector('[data-testid=voice-caption]')?.innerText || '').includes(n)", arg=needle, timeout=timeout)
-
-
-def _wait_log(page, needle: str, timeout=60_000) -> str:
-    """The guide's transcript once it holds needle (muted, the guide moves on from a caption at once)."""
-    page.wait_for_function("(n) => (document.querySelector('[data-testid=voice-log]')?.innerText || '').includes(n)", arg=needle, timeout=timeout)
-    return re.sub(r"\s+", " ", page.locator("[data-testid=voice-log]").inner_text())
-
-
-def _answer(page, text: str):
-    page.fill("[data-testid=voice-input]", text)
-    page.click("[data-testid=voice-send]")
-
-
-def test_voice_guided_bid(tmp_path):
+def test_bid_on_screen(tmp_path):
     with _session() as page:
         _open_tab(page)
-        page.click("[data-testid=voice-start]")
-        page.click("[data-testid=voice-mute]")
-        # the guide explains the key conditions, then asks
-        _wait_caption(page, "How many megawatts will you bid")
-        log = page.locator("[data-testid=voice-log]").inner_text()
-        assert "70 percent" in log and "6 in the evening and 10 the next morning" in log and "one and a half times the tariff" in log, log
-        assert page.locator("[data-testid=seci-step-bid]").get_attribute("aria-current") == "step", "the guide shows the step it asks about"
-        _answer(page, "two hundred")
-        _wait_caption(page, "any six of the sixteen")
-        assert page.locator("[data-testid=seci-bid-mw]").input_value() == "200"
-        _answer(page, "any")
-        _wait_caption(page, "pay the penalty when that is cheaper")
-        _answer(page, "penalty")
-        _wait_caption(page, "When do you expect the PPA")
-        _answer(page, "7 June 2026")
-        _wait_caption(page, "industry benchmarks first")
-        _answer(page, "yes")
-        _wait_caption(page, "sell its surplus")
-        _answer(page, "no")
-        # each source and financing input: keep the benchmark
-        for _ in range(40):
-            caption = _caption(page)
-            if "Shall I size the plant now" in caption:
-                break
-            assert "The benchmark is" in caption or "Now " in caption, caption
-            before = page.locator("[data-testid=voice-caption]").inner_text()
-            _answer(page, "next")
-            page.wait_for_function("(c) => (document.querySelector('[data-testid=voice-caption]')?.innerText || '') !== c", arg=before, timeout=30_000)
-        assert "Shall I size the plant now" in _caption(page)
-        _answer(page, "yes")
-        log = _wait_log(page, "megawatts of solar", timeout=1_800_000)
-        result = log[log.index("For 200 megawatts"):]
-        assert "For 200 megawatts" in result and "peak floor in" in result and "EMD is" in result and "7 June 2028" in result, result
-        _wait_log(page, "the bid forms")  # muted, the guide runs on to the forms; look back at the Size step
-        page.click("[data-testid=seci-step-size]")
-        sizes = page.locator("[data-testid=bid-sizes]").inner_text().upper()
-        solar = re.search(r"(\d[\d,]*) megawatts of solar", result).group(1).replace(",", "")
-        assert solar in sizes.replace(",", ""), (solar, sizes)
+        # what you bid
+        page.click("[data-testid=seci-step-bid]")
+        page.fill("[data-testid=seci-bid-mw]", "200")
+        page.click("[data-testid=seci-peak-any]")
+        page.click("[data-testid=seci-shortfall-penalty]")
+        page.fill("[data-testid=seci-ppa-date]", "2026-06-07")
+        dates = page.locator("[data-testid=seci-tab]").inner_text()
+        assert "07.06.2028" in dates and "07.12.2027" in dates, "SCSD 24 months after the PPA, Financial Closure 6 months before it"
+
+        # the sources: benchmarks in every empty input, then HiGHS
+        page.click("[data-testid=seci-step-sources]")
+        page.click("[data-testid=bid-fill]")
+        assert page.locator("[data-testid=bid-missing]").count() == 0
+        page.click("[data-testid=bid-size]")
+        sizes = page.wait_for_selector("[data-testid=bid-sizes]", timeout=1_800_000)
+        page.wait_for_timeout(1500)
+        size_text = sizes.inner_text().upper()
+        for label in ("SOLAR", "WIND", "BATTERY"):
+            assert label in size_text, size_text
         table = page.locator("[data-testid=bid-compliance]").inner_text()
         assert "of hours" in table and "Peak Hours floor" in table, table
-        log = _wait_log(page, "rupees per unit", timeout=120_000)
-        quoted = re.search(r"round it up: ([\d.]+) rupees", log).group(1)
-        _wait_log(page, "the bid forms")
-        page.click("[data-testid=voice-mute]")  # unmute: nothing should break
-        page.click("[aria-label='Close the guide']")
+        page.click("[data-testid=seci-step-bid]")
+        money = page.locator("[data-testid=seci-money]").inner_text()
+        assert "EMD" in money.upper() and "cr" in money, money
+
+        # the bid tariff for the target IRR
+        page.click("[data-testid=seci-step-finance]")
+        page.wait_for_selector("[data-testid=bid-finance]")
+        bid_tariff = float(re.search(r"BID TARIFF\s*₹([\d.]+)/kWh", page.locator("[data-testid=bid-finance]").inner_text()).group(1))
 
         # the tariff quoted: below the target IRR it is warned with the equity and project IRR it earns
         page.click("[data-testid=seci-step-finance]")
         page.wait_for_selector("[data-testid=quote-check]")
         finance_text = page.locator("[data-testid=bid-finance]").inner_text()
         assert "PROJECT IRR" in finance_text.upper(), finance_text
-        low = f"{float(quoted) - 0.5:.2f}"
+        low = f"{bid_tariff - 0.5:.2f}"
         page.fill("[data-testid=quote-check-input]", low)
         warning = page.locator("[data-testid=quote-check-warning]").inner_text()
         assert "below the" in warning and "equity IRR is" in warning and "project IRR" in warning, warning
@@ -169,6 +133,8 @@ def test_voice_guided_bid(tmp_path):
             page.fill(f"[data-testid=seci-form-{key}]", value)
         for key, value in {"bidderType": "company", "connectivity": "final", "bessWith": "solar", "emdForm": "bg", "commonShareholding": "no"}.items():
             page.select_option(f"[data-testid=seci-form-{key}]", value)
+        quoted = re.search(r"use ₹([\d.]+)/kwh", page.locator("[data-testid=seci-form-use-tariff]").inner_text(), re.I).group(1)
+        assert 0 <= float(quoted) - bid_tariff < 0.0151, (quoted, bid_tariff)
         page.click("[data-testid=seci-form-use-tariff]")
         assert page.locator("[data-testid=seci-form-tariff]").input_value() == quoted
         assert page.locator("[data-testid=seci-quote]").get_attribute("role") is None, "at the target tariff there is no warning"
@@ -185,7 +151,7 @@ def test_voice_guided_bid(tmp_path):
         assert "needed for this bid" in f71.locator("[data-testid=seci-format-applies]").inner_text().lower()
         assert page.locator("[data-testid=seci-rfs-frame]").get_attribute("src").endswith("RfS.pdf#page=68&view=FitH")
         assert page.locator("[data-testid=seci-blank-7\\.1-contractedMw]").inner_text() == "200"
-        assert page.locator("[data-testid=seci-blank-7\\.1-solarMw]").inner_text().replace(",", "") == solar
+        assert page.locator("[data-testid=seci-blank-7\\.1-solarMw]").inner_text() in size_text.replace(",", ""), "the installed solar from the sizing"
         assert page.locator("[data-testid=seci-blank-7\\.1-emdAmount]").inner_text().startswith("INR ")
         page.fill("[data-testid=seci-blank-7\\.1-refNo]", "ACME/SECI/2026/01")
         page.locator("[data-testid=seci-format-7\\.1] .seci-blank-ctx").nth(5).click()
@@ -230,12 +196,13 @@ def test_agent_panel():
     with _session(permissions=["microphone"]) as page:
         _open_tab(page)
         info = page.evaluate("fetch('/api/seci/live').then((r) => r.json())")
-        if not info["available"]:
-            assert page.locator("[data-testid=agent-open]").count() == 0, "no key on the server: the agent is not offered"
-            return
         assert info["model"] == "gpt-live-1"
         page.click("[data-testid=agent-open]")
         assert "GPT-LIVE" in page.locator("[data-testid=agent-panel]").inner_text().upper()
+        if not info["available"]:
+            assert "OPENAI_API_KEY" in page.locator("[data-testid=agent-unavailable]").inner_text(), "no key: the panel says how to set it up"
+            assert page.locator("[data-testid=agent-start]").is_disabled()
+            return
         page.click("[data-testid=agent-start]")
         page.wait_for_selector("[data-testid=agent-error], [data-testid=agent-stop]", timeout=30_000)
         if page.locator("[data-testid=agent-error]").count():

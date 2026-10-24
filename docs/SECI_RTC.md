@@ -4,10 +4,8 @@ The **SECI RTC tender** tab takes one tender from its documents to a priced, siz
 filled bid pack. The tender is SECI's RTC-TM-V: 1,000 MW of round-the-clock power from
 ISTS-connected RE projects with storage, RfS No. SECI/C&P/IPP/13/0020/25-26 dated 10.03.2026.
 
-Two voice helpers can walk the bidder through the tab from start to finish:
-
-* the **bid agent**, a GPT-Live voice conversation that works the bid on screen;
-* the **voice guide**, a fixed script with the browser's own speech.
+A **bid agent**, a GPT-Live voice conversation, can walk the bidder through the tab from start to
+finish and works the bid on screen.
 
 ## The documents
 
@@ -232,9 +230,8 @@ browser, against the same state the screen shows:
 * the backend's function calls, each answered with `response.item.create`;
 * `response.create` to continue.
 
-**Offered when, and what it needs.** The tab offers the agent only when `GET /api/seci/live` says
-the server has a key. The voice guide stays as the fallback. The microphone needs HTTPS or
-localhost.
+**What it needs.** `GET /api/seci/live` says whether the server has a key; without one, the agent's
+panel says how to set it up. The microphone needs HTTPS or localhost.
 
 **Tested here** with a stand-in for OpenAI:
 
@@ -243,49 +240,16 @@ localhost.
 
 **Not yet tested:** a conversation with the real service, because no OpenAI key was available here.
 
-## Voice guide
-
-The guide (`VoiceGuide.jsx`, `voice.js`) is the scripted fallback. It needs no key and runs
-entirely in the browser.
-
-**Order.** It runs in a fixed order:
-
-1. It explains six key conditions: what you bid, the floors, the Peak Hours, the penalty, the plant
-   and the money at stake.
-2. It asks the bid questions: MW, Peak Hours plan, shortfall plan and PPA date.
-3. It offers to fill in the industry benchmarks, then asks whether surplus power will be sold.
-4. It goes through each source's inputs and the financing inputs, reading out the benchmark for
-   each.
-5. It sizes the plant, then explains the result: the sizes, the floors met, the shortfall, EMD,
-   PBG, net worth and the dates.
-6. It explains the financial model (the tariff, rounded up to the paisa, and the IRR), then points
-   to the bid forms.
-
-**Speech.** It speaks with the browser's speech synthesis and listens with speech recognition
-(`en-IN`).
-
-**Answers.** It understands:
-
-* numbers in words;
-* dates;
-* option names;
-* yes or no.
-
-**Commands.** It accepts "next", "back", "repeat", "benchmark", "help" and "stop".
-
-**Typed answers.** Every answer can be typed into the guide's box, and the guide can be muted. On
-plain HTTP the microphone is unavailable, so answers are typed.
-
 ## Tests
 
 | Test | Command |
 | --- | --- |
 | The pack's quotes are on their pages, the gaps answered, the formats cover Section 7 | `make test` (`tests/test_seci_pack.py`) |
 | Block floors in the LP: hard (fast), penalty (slow) | `make test`, `make test-slow` (`tests/engine/test_block_rules.py`) |
-| Terms, LP payload, dates, money at stake, the quote against the target IRR, forms and formats, voice parsing and the guide's script | `make check-web` (`tools/check_seci.mjs`) |
+| Terms, LP payload, dates, money at stake, the quote against the target IRR, forms and formats, spoken numbers and dates, and the agent's script | `make check-web` (`tools/check_seci.mjs`) |
 | The bid agent's tools against a stand-in tab, the guided order, the tender lookup, the GPT-Live event loop | `make check-web` (`tools/check_seci_agent.mjs`) |
 | The block penalty in the Live model, recalculated by LibreOffice | `make check-web` (`tools/check_live_model.mjs`) |
-| In the browser: documents, the RfS, conditions with the RfS's wording, the guided voice run with typed answers through sizing, results and finance, a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the agent panel against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
+| In the browser: documents, the RfS, conditions with the RfS's wording, a bid through the tab's controls (bid, benchmarks, HiGHS sizing, money at stake, finance), a low quote warned with both IRRs, the particulars, a format filled and reviewed beside the RfS page, the Word pack, the Excel workbook; the agent panel without a key and against a stand-in for OpenAI | `make e2e` (`tests/e2e/test_seci_tab.py`) |
 
 ## Access and settings
 

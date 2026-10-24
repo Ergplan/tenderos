@@ -1,5 +1,5 @@
 // Checks for the SECI RTC tender tab (web/src/seci): the tender's terms and the HiGHS request they
-// make, the dates and money at stake, the bid-form checks, and the voice guide's script and its
+// make, the dates and money at stake, the bid-form checks, and the bid agent's script and its
 // understanding of spoken or typed answers. Run from the repository root:
 //   node tools/check_seci.mjs
 import assert from "node:assert/strict";
@@ -7,7 +7,7 @@ import * as E from "../web/src/rtc/engine.js";
 import { BENCHMARKS, SOURCE_FIELDS, fillBenchmarks, lpPayload, missingInputs, modelInputs, resourceProfiles } from "../web/src/bid/model.js";
 import { DEFAULT_SETTINGS, PACK, keyDates, moneyAtStake, prov, seciTerms } from "../web/src/seci/terms.js";
 import { bidChecks, bidPackRequest, experienceTest, formIssues, parseExperience } from "../web/src/seci/forms.js";
-import { buildScript, explainFinance, explainResults, financeOf, parseCommand, parseDate, parseNumber, parseYesNo, questionText } from "../web/src/seci/voice.js";
+import { buildScript, explainFinance, explainResults, financeOf, parseDate, parseNumber } from "../web/src/seci/voice.js";
 import { defaultBidState } from "../web/src/bid/model.js";
 import { quotedReturns } from "../web/src/bid/quote.js";
 import { applies, blankValue, formatGroups, formatStatus, formatsForPack, formatsSummary } from "../web/src/seci/formats.js";
@@ -76,16 +76,13 @@ assert.ok(Math.abs(pack.bid.emdCr - money.emdRs / 1e7) < 1e-9);
 assert.ok(pack.checks.every((c) => c.source && /p\. \d+/.test(c.source)), "every check names its page");
 assert.equal(pack.fields.find((f) => f.label === "Connectivity").value, "Another entity's connectivity");
 
-// ---- the voice guide: numbers, dates, commands, and every question reads and sets its input
+// ---- the agent's script: numbers and dates as spoken, and every question reads and sets its input
 const cases = [["three hundred", 300], ["300 MW", 300], ["four point two five", 4.25], ["1.2 crore", 1.2e7], ["fifty", 50], ["two thousand five hundred", 2500],
   ["seventy five percent", 75], ["one lakh", 1e5], ["₹4.10", 4.1], ["twenty one", 21], ["a hundred and fifty", 150], ["no idea", null]];
 for (const [text, want] of cases) assert.equal(parseNumber(text), want, text);
 for (const [text, want] of [["7 June 2026", "2026-06-07"], ["June 7th, 2026", "2026-06-07"], ["07.06.2026", "2026-06-07"], ["2026-06-07", "2026-06-07"], ["sometime soon", null]]) assert.equal(parseDate(text), want, text);
-for (const [text, want] of [["next", "skip"], ["Go back", "back"], ["repeat that", "repeat"], ["use the benchmark", "benchmark"], ["stop", "stop"], ["400", null]]) assert.equal(parseCommand(text), want, text);
-assert.equal(parseYesNo("yes please"), true);
-assert.equal(parseYesNo("not now"), false);
 {
-  // the guide's "fill" fills every empty input with the tender's terms (market sale answered too)
+  // the script's "fill" fills every empty input with benchmarks (market sale answered too)
   const blankState = { ...state0, seci: { ...DEFAULT_SETTINGS }, forms: {} };
   const fillItem = buildScript(blankState).find((i) => i.id === "fill");
   assert.deepEqual(missingInputs(fillItem.onYes(blankState, terms), terms), []);
@@ -103,7 +100,7 @@ const answers = { bidMw: "four hundred", peakPlan: "evening only", shortfall: "m
   "bess.duration": "two hours", "bess.rte": "88", "fin.targetEquityIrr": "fifteen percent", "fin.tenorYears": "eighteen", "costs.evacuationCr": "120" };
 for (const item of script) {
   if (!item.read) continue;
-  assert.ok(questionText(item, s).length > 10, item.id);
+  assert.ok(item.ask.length > 10, item.id);
   if (!(item.id in answers)) continue;
   const v = item.read(answers[item.id]);
   assert.notEqual(v, null, `${item.id}: ${answers[item.id]}`);
@@ -175,4 +172,4 @@ assert.ok(packFormats.find((f) => f.id === "7.10").fields.some((x) => x.value ==
 const words = explainFinance(sized, fin);
 assert.ok(/rupees per unit/.test(words) && /Penalties come to/.test(words), words);
 
-console.log(`SECI RTC tender checks passed (${PACK.conditions.length} conditions, ${script.length} guide steps; year-1 block penalty ₹${fin.rows[0].blockPenalty.toFixed(2)} cr)`);
+console.log(`SECI RTC tender checks passed (${PACK.conditions.length} conditions, ${script.length} script steps; year-1 block penalty ₹${fin.rows[0].blockPenalty.toFixed(2)} cr)`);

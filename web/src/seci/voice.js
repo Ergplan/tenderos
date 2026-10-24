@@ -1,11 +1,7 @@
-// The voice guide's script and its understanding of answers, for the SECI RTC tender tab. Plain
-// JavaScript with no browser APIs (the speaking and listening are in VoiceGuide.jsx), checked in
-// Node by tools/check_seci.mjs.
-//
-// The script: explain the tender and its key conditions, then ask for each input in turn (the bid,
-// the planning choices, each source's parameters and costs, the financing), then size the plant
-// and explain the results. Every answer can be spoken or typed; "next", "back", "repeat", "skip"
-// and "benchmark" work at any question.
+// What the bid agent asks and says, for the SECI RTC tender tab: the order of the inputs and how
+// each is asked (buildScript), reading spoken numbers and dates, and the sizing and the financial
+// model put into words. Plain JavaScript with no browser APIs, used by agent.js and checked in Node
+// by tools/check_seci.mjs and tools/check_seci_agent.mjs.
 import * as E from "../rtc/engine.js";
 import { BENCHMARKS, FINANCE_FIELDS, SOURCE_FIELDS, fillBenchmarks, modelInputs, opsFromLp } from "../bid/model.js";
 import { PACK, keyDates, moneyAtStake } from "./terms.js";
@@ -67,30 +63,6 @@ export function parseDate(text) {
 function iso(y, mo, d) {
   if (!(y > 2000 && mo >= 1 && mo <= 12 && d >= 1 && d <= 31)) return null;
   return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-}
-
-const COMMANDS = [
-  ["back", /^(go )?back$|^previous( one)?$/],
-  ["repeat", /^(say that )?again$|^repeat( that)?$|^pardon$|^sorry$/],
-  ["skip", /^skip( it| this)?$|^next$|^move on$|^keep( it)?$|^no change$/],
-  ["benchmark", /\b(benchmark|default|standard|typical|you choose|fill( it)?( up)?)\b/],
-  ["stop", /^(stop|pause|quit|exit|close)( the guide)?$/],
-  ["help", /^help$|^what can i say\??$/],
-];
-
-/** A command word, or null when the words are an answer. */
-export function parseCommand(text) {
-  const s = String(text || "").toLowerCase().replace(/[.!?]+$/, "").trim();
-  const hit = COMMANDS.find(([, re]) => re.test(s));
-  return hit ? hit[0] : null;
-}
-
-/** Yes or no (null if neither). */
-export function parseYesNo(text) {
-  const s = String(text || "").toLowerCase();
-  if (/\b(yes|yeah|yep|sure|ok|okay|go( ahead)?|do it|start|please|correct|right)\b/.test(s)) return true;
-  if (/\b(no|nope|not now|later|don't|do not)\b/.test(s)) return false;
-  return null;
 }
 
 // ---------------------------------------------------------------- speaking numbers
@@ -176,7 +148,7 @@ export function buildScript(state) {
   const amended = PACK.conditions.filter((c) => c.status === "amended").length;
   const items = [
     { id: "intro", step: "documents", kind: "say",
-      say: `Welcome. This is ${PACK.short}: ${PACK.issuer.replace(/ \(SECI\)/, "")} is buying ${say(PACK.tenderedMw)} megawatts of round-the-clock thermal mimic power from renewable projects. I have read the RfS, Amendment 1, Amendment 2, the clarifications and the power sale agreement. ${amended} conditions were changed by the amendments. I will explain the key conditions, take your inputs one by one, size the plant and explain the results. Say next, back, repeat, skip or benchmark at any time.` },
+      say: `Welcome. This is ${PACK.short}: ${PACK.issuer.replace(/ \(SECI\)/, "")} is buying ${say(PACK.tenderedMw)} megawatts of round-the-clock thermal mimic power from renewable projects. I have read the RfS, Amendment 1, Amendment 2, the clarifications and the power sale agreement. ${amended} conditions were changed by the amendments. I will explain the key conditions, take your inputs one by one, size the plant and explain the results.` },
     { id: "c.size", step: "conditions", kind: "say",
       say: `What you bid: between ${m.minBidMw} and ${m.maxBidMw} megawatts of contracted capacity, one tariff fixed for the whole term. Amendment 1 lowered the minimum from 100 to 50 megawatts. Bidders within two percent of the lowest tariff win.` },
     { id: "c.dfr", step: "conditions", kind: "say",
@@ -237,13 +209,6 @@ export function buildScript(state) {
   return items;
 }
 
-/** What to say when a question is reached: the question, the current value and the benchmark. */
-export function questionText(item, state) {
-  const now = item.current ? item.current(state) : null;
-  const bench = item.benchmarkText ? ` The benchmark is ${item.benchmarkText}.` : "";
-  return `${item.ask}${now ? ` Now ${now}.` : ""}${bench}`;
-}
-
 // ---------------------------------------------------------------- explaining results
 
 /** The financial model of the sized plant, as on Financials. */
@@ -291,4 +256,3 @@ export function explainFinance(state, finance) {
   ].filter(Boolean).join(" ");
 }
 
-export const HELP = "You can answer with a number or a choice, or say: next to keep the value, back, repeat, benchmark to use the industry value, or stop.";

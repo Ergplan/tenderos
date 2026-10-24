@@ -13,7 +13,6 @@ import BidStep from "./BidStep";
 import BidForms from "./BidForms";
 import { formIssues } from "./forms";
 import { formatsSummary } from "./formats";
-import VoiceGuide from "./VoiceGuide";
 import LiveAgent from "./LiveAgent";
 import { TENDER, defaultSeciState } from "./state";
 
@@ -55,8 +54,8 @@ const sizingSession = { hourly: null, run: null };
 /**
  * SECI RTC-TM-V: the tender and its amendments, the bid conditions in force, what the bidder
  * offers, the supply sources and the HiGHS sizing against the time-block floors (the Tender to Bid
- * steps), the financial model with its formula workbook, the bid forms, and a voice guide that
- * walks through it all.
+ * steps), the financial model with its formula workbook, the bid forms, and a voice bid agent
+ * (GPT-Live) that works through it all on screen.
  */
 export default function SeciTab() {
   const [state, setState] = useState(() => sessionState || loadState());
@@ -123,7 +122,7 @@ export default function SeciTab() {
         <div>
           <div className="eyebrow"><Gavel size={13} /> {PACK.short} · RfS No. {PACK.rfsNo}</div>
           <h1>RTC tender · SECI</h1>
-          <p>{PACK.title}. The tender and its amendments, the conditions in force, what you bid, your supply sources sized against every peak and off-peak block, the financial model, and the RfS's bid formats to fill and review. Talk to the bid agent, or let the voice guide walk you through it.</p>
+          <p>{PACK.title}. The tender and its amendments, the conditions in force, what you bid, your supply sources sized against every peak and off-peak block, the financial model, and the RfS's bid formats to fill and review. Talk to the bid agent to go through it by voice.</p>
         </div>
         <div className="story-hero-tools">
           <button type="button" className="rtc-reset" onClick={resetAll}><RotateCcw size={13} /> Reset inputs</button>
@@ -163,7 +162,6 @@ export default function SeciTab() {
       </footer>
 
       <LiveAgent state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} info={agent} />
-      <VoiceGuide state={state} setState={setState} terms={terms} goto={goto} sizing={sizing} />
     </div>
   );
 }

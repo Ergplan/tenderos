@@ -24,7 +24,7 @@ the web app and is the only published service (`docs/DEPLOY.md`).
 | Tab | Engine route families | Purpose |
 | --- | --- | --- |
 | Tender to Bid | `bid`, `rtc` | Takes a tender to a sized plant and a priced bid in six steps (`docs/TENDER_TO_BID.md`) |
-| SECI RTC tender | `rtc`, `bid` | SECI RTC-TM-V: the RfS, its amendments and clarifications, the bid conditions, what to bid, sizing against the time-block floors, the financial model with the quoted tariff checked against the target IRR, the RfS's bid formats filled and reviewed, a GPT-Live bid agent and a voice guide (`docs/SECI_RTC.md`) |
+| SECI RTC tender | `rtc`, `bid` | SECI RTC-TM-V: the RfS, its amendments and clarifications, the bid conditions, what to bid, sizing against the time-block floors, the financial model with the quoted tariff checked against the target IRR, the RfS's bid formats filled and reviewed, and a GPT-Live voice bid agent (`docs/SECI_RTC.md`) |
 | Round the clock | `rtc` | RTC and FDRE sizing and finance with your own inputs |
 | BESS tender | `bess` | Standalone battery tenders: reads the tender, sizes the battery and computes the finance |
 | CfD bid | none | SECI CfD-I strike price, computed in the browser (`docs/CFD.md`) |
@@ -61,8 +61,7 @@ floors (`basis: "block"`, peak 90% and off-peak 70%, a shortfall priced at 1.5 Ã
 which `rtc_lp.py` models with a shortfall column per hour. The sizing is shared with Tender to Bid
 through `web/src/bid/useSizing.js`. The bid forms go to `POST /api/seci/forms` (a Next route that
 writes a Word file with `web/lib/docx.js`), with every RfS format this bid needs as filled
-(`web/src/seci/formats.js`). The voice guide runs in the browser only
-(`web/src/seci/voice.js`, `VoiceGuide.jsx`).
+(`web/src/seci/formats.js`).
 
 The bid agent works as follows:
 
@@ -83,7 +82,7 @@ tabs, the bid forms and the agent.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`), the SECI tender pack's quotes (`tests/test_seci_pack.py`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab with its guided voice run (`tests/e2e/test_seci_tab.py`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack, with the agent panel (`tests/e2e/test_seci_tab.py`) |
 
 ## What is not here
 
@@ -93,7 +92,7 @@ These parts of the FDRE repository were deliberately not carried over:
 * the product page;
 * the Day 1 to 7 platform work on the FDRE `claude/laughing-pascal-7akw12` branch: projects,
   immutable runs, the audit chain, the assistant, the RealTalk voice session and the post-award DPR.
-  (The SECI RTC tab's voice guide and its GPT-Live bid agent are new.)
+  (The SECI RTC tab's GPT-Live bid agent is new.)
 
 tender_engine's review workflow (approvals, canonical facts, corrigendum versions) also stays in
 tender_engine. This app uses only its extraction engine.

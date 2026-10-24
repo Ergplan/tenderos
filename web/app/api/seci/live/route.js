@@ -26,7 +26,7 @@ async function allowed() {
   return user;
 }
 
-/** Whether the agent can run here, so the tab offers it or the browser-voice guide. */
+/** Whether the agent can run here (a key on the server), so the tab says how to set it up if not. */
 export const GET = handler(async () => {
   await allowed();
   return NextResponse.json({ available: Boolean(process.env.OPENAI_API_KEY), model: LIVE_MODEL, backendModel: BACKEND(), voice: VOICE() });

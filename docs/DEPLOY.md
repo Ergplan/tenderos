@@ -128,7 +128,7 @@ not touched. `deploy/shared-vm/install.sh` puts TenderOS beside the old app:
 * The SECI RTC tab's voice bid agent (GPT-Live) needs `OPENAI_API_KEY` in TenderOS's `.env`.
   * Add the key there, then re-run the install to restart the web service.
   * The key stays on the server.
-  * Without the key, the tab offers only the browser-voice guide.
+  * Without the key, the agent's panel says it is not set up.
 * Browsers allow the microphone only on HTTPS or localhost, and the 8081 address is plain HTTP.
   To talk to the agent there, open an SSH tunnel and browse to `http://localhost:8081`:
   `gcloud compute ssh <vm> -- -L 8081:localhost:8081`.

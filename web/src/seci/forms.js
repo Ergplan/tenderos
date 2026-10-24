@@ -4,7 +4,7 @@
 import { PACK, condition, keyDates, moneyAtStake, seciTerms } from "./terms.js";
 import { quotedReturns } from "../bid/quote.js";
 
-/** The fields of the bid forms, in the order they are filled (the voice guide follows it too). */
+/** The particulars of the bid forms, in the order they are filled. */
 export const FORM_FIELDS = [
   { key: "bidder", group: "Bidder", label: "Bidder's name", type: "text", required: true },
   { key: "bidderType", group: "Bidder", label: "Bidding as", type: "select", options: [["company", "Single company"], ["consortium", "Consortium"]], required: true },
