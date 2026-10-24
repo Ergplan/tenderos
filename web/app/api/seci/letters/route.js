@@ -16,6 +16,8 @@ function runsOf(runs, extra = {}) {
   return (Array.isArray(runs) ? runs : []).slice(0, 400).map((r) => [str(r.text, 8000), { font: FONT, size: 22, strike: Boolean(r.struck || extra.strike), ...extra.opts }]);
 }
 
+const lines = (b) => (Array.isArray(b.runs) ? b.runs : []).some((r) => String(r.text ?? "").includes("\n"));
+
 function letterXml(letter) {
   const out = [];
   if (letter.letterhead && letter.bidder) {
@@ -39,8 +41,9 @@ function letterXml(letter) {
     }
     if (b.type === "heading") out.push(runsPara(runsOf(b.runs, { opts: { bold: true, size: 24 } }), { align: "center", after: 40 }));
     else if (b.type === "subheading") out.push(runsPara(runsOf(b.runs, { opts: { bold: true } }), { before: 160, after: 60 }));
-    else if (b.type === "note") out.push(runsPara(runsOf(b.runs, { opts: { italic: true, color: "444444", size: 20 } }), { after: 120, align: "both" }));
-    else out.push(runsPara(runsOf(b.runs, { strike: b.struck }), { after: 140, align: "both" }));
+    else if (b.type === "note") out.push(runsPara(runsOf(b.runs, { opts: { italic: true, color: "444444", size: 20 } }), { after: 120, align: lines(b) ? null : "both" }));
+    // justified, except a block of lines (an address, a signature): Word would stretch each line
+    else out.push(runsPara(runsOf(b.runs, { strike: b.struck }), { after: 140, align: lines(b) ? null : "both" }));
   }
   return out.join("");
 }

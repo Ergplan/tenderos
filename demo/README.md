@@ -16,6 +16,7 @@ for one bidder and one tender:
 | --- | --- |
 | `TenderOS-demo-report.pdf` | The report of the run: the bid at a glance, the HiGHS scenarios side by side, the tender set as read, one page per scenario, the bid agent's charts, every bid format filled and reviewed, the other tabs, every click with its result, and what the run does not show |
 | `bid-pack/*.docx` | The bid pack the SECI tab writes: the particulars, the checks, every format this bid needs with every blank filled |
+| `letters/` | Every format this bid needs as its full letter in the RfS wording, blanks filled and the alternatives not chosen struck out: one Word file and one PDF with all the letters, and each letter on its own in `letters/word/` and `letters/pdf/` |
 | `models/*.xlsx` | The financial model of each scenario (formula workbooks with the Live model tab), of Tender to Bid's sizing, of the Round the Clock tab and of the CfD tab |
 | `run.json` | Every step: section, name, result, seconds, note, screenshot; plus the scenarios' sizes, compliance, money at stake and financials, the tender set as read, and the filled forms |
 | `screens/*.jpg` | A screenshot of each step |
@@ -47,6 +48,9 @@ for one bidder and one tender:
    * Every particular, and every blank of every format this bid needs (7.1, 7.3A, 7.4, 7.6,
      7.7, 7.8, the 7.8 annexure, 7.9, 7.10, 7.11 and Annexure-B).
    * Each format reviewed beside its RfS page, the checks, and the bid pack.
+   * Each format as its letter: viewed, downloaded as Word and PDF; in Format 7.1 a paragraph
+     changed in place (marked as the bidder's wording, the review reopened) and reverted; all
+     letters as one Word file and one PDF; the bid saved to the scenario library.
 4. **Round the Clock, BESS Tender, CfD Bid.** Every chapter or step opened, and their workbooks.
 
 ## Run it again

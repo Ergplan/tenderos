@@ -313,6 +313,29 @@ def build(run_dir: Path) -> Path:
 {('<h3>Enclosed</h3><ul>' + atts + '</ul>') if atts else ''}
 {img(run_dir, shot_of(steps, "seci-forms-" + f["id"]), "shot mid")}</section>''')
 
+    # ------------------------------------------------------------------ letters
+    letters = run.get("letters") or {}
+    if letters.get("letters"):
+        lrow = "".join(f"<tr><td>{esc(x['id'])}</td><td>{esc(x['title'])}</td><td class=n>{esc(x.get('words'))}</td><td class=n>{esc(x.get('struck'))}</td>"
+                       f"<td class=mono>{esc(x.get('word'))}<br>{esc(x.get('pdf'))}</td></tr>" for x in letters["letters"])
+        edit = letters.get("edit") or {}
+        parts.append(f"""
+<section class="page">
+  <h2>The letters: every format in the RfS wording, filled</h2>
+  <p>Each format this bid needs, as the full letter SECI prints in the RfS: the blanks filled from the bid and the particulars, the
+  alternatives not chosen struck out (as the RfS asks), each paragraph editable in place. Each letter was downloaded as Word and PDF,
+  then all of them together: <span class="mono">{esc(letters.get('all_word'))}</span> and <span class="mono">{esc(letters.get('all_pdf'))}</span>.</p>
+  <table><tr><th>Format</th><th>Title</th><th class=n>Words</th><th class=n>Struck</th><th>Files</th></tr>{lrow}</table>
+  <h3>A change in place</h3>
+  <p class="small">In Format {esc(edit.get('format'))}, paragraph {esc(edit.get('block'))} was extended with: <i>{esc(edit.get('added'))}</i>
+  The paragraph was marked as the bidder's wording and the format's review asked to be redone ({esc(edit.get('review'))}); it was then
+  reverted to the RfS wording, so the files above carry the RfS text. Saved to the scenario library: {esc(letters.get('saved'))}.</p>
+  <div class="half">{img(run_dir, shot_of(steps, 'seci-letter-edit'))}{img(run_dir, shot_of(steps, 'seci-letter-revert'))}</div>
+</section>""")
+        for x in letters["letters"]:
+            parts.append(f'<section class="page"><div class="eyebrow">The letters · as shown in TenderOS</div><h2>Format {esc(x["id"])}: {esc(x["title"])}</h2>'
+                         f'{img(run_dir, shot_of(steps, "seci-letter-" + x["id"]))}</section>')
+
     # ------------------------------------------------------------------ other tabs
     rtc = run.get("rtc") or {}
     parts.append(f"""
@@ -349,7 +372,7 @@ def build(run_dir: Path) -> Path:
     <li>Costs, CUFs and financing are the app's benchmarks, not quotes; the tariffs follow from them.</li>
     <li>Tender reading ran in {esc(reading_mode)}. The model reading (Claude) is not part of this run.</li>
     <li>The GPT-Live voice agent was {'not configured on this server; its panel and charts were opened by click' if not any('voice available' in (s.get('note') or '') for s in steps) else 'available'}.</li>
-    <li>The bid pack is a Word draft for the bidder to print on letterhead or stamp paper, sign and stamp; the EMD instrument and enclosures are the bidder's to obtain.</li>
+    <li>The bid pack and the letters are drafts for the bidder to print on letterhead or stamp paper, sign and stamp; the EMD instrument and enclosures are the bidder's to obtain. The letters follow the RfS wording as extracted from the RfS PDF; check them against the RfS before signing.</li>
   </ul>
 </section>""")
 

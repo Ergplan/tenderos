@@ -467,6 +467,61 @@ def seci_forms(page, run: Run, bid: dict) -> dict:
     return out
 
 
+def seci_letters(page, run: Run, forms: dict) -> dict:
+    """Every needed format as its full letter: viewed, one paragraph changed in place and reverted,
+    each letter downloaded as Word and PDF, then all letters in one Word file and one PDF."""
+    S = "SECI RTC tender: the letters"
+    out: dict = {"letters": [], "edit": {}}
+    for entry in forms.get("formats") or []:
+        fid = entry["id"]
+        letter = {"id": fid, "title": entry["title"]}
+        with run.step(S, f"Letter {fid}: {entry['title']}", f"seci-letter-{fid}") as e:
+            page.click(f'[data-testid="seci-formsnav-{fid}"]')
+            page.click("[data-testid=seci-format-mode-letter]")
+            view = page.wait_for_selector("[data-testid=seci-letter]", timeout=10_000)
+            assert page.locator("[data-testid=seci-letter-missing]").count() == 0, page.locator("[data-testid=seci-letter-missing]").inner_text()
+            letter["struck"] = page.locator("[data-testid=seci-letter] .letter-paper s, [data-testid=seci-letter] .letter-alt.struck").count()
+            letter["words"] = len(view.inner_text().split())
+            page.evaluate("() => document.querySelector('[data-testid=seci-letter]').scrollIntoView({block: 'start'})")
+            letter["word"] = download(page, run, "[data-testid=seci-letter-word]", "letters/word")
+            letter["pdf"] = download(page, run, "[data-testid=seci-letter-pdf]", "letters/pdf")
+            e["note"] = f"{letter['words']} words, every blank filled; {letter['word']}, {letter['pdf']}"
+        out["letters"].append(letter)
+        if fid == "7.1":
+            with run.step(S, "Change a paragraph's wording in place (Format 7.1)", "seci-letter-edit", "[data-testid=seci-letter]") as e:
+                para = page.locator("[data-testid=seci-letter] .letter-para:not(.struck) .letter-text").nth(2)
+                block = para.get_attribute("data-testid").rsplit("-", 1)[1]
+                sentence = " We also confirm that the Project shall be developed by Arkaja Renewables Private Limited itself."
+                para.click()
+                page.keyboard.press("End")
+                page.keyboard.type(sentence)
+                page.locator("[data-testid=seci-letter] .letter-heading").first.click()
+                assert "changed from the RfS" in page.locator(f"[data-testid=letter-block-{block}]").inner_text()
+                page.evaluate("(sel) => document.querySelector(sel).scrollIntoView({block: 'center'})", f"[data-testid=letter-block-{block}]")
+                out["edit"] = {"format": "7.1", "block": block, "added": sentence.strip(), "review": _flat(page.locator("[data-testid=seci-format-review]").inner_text())}
+                run.snap("seci-letter-edit-block", f"[data-testid=letter-block-{block}]")
+                e["note"] = f"paragraph {block}: marked as your wording; the format's review asks to be redone ({out['edit']['review']})"
+            with run.step(S, "Revert the paragraph to the RfS wording", "seci-letter-revert", f"[data-testid=letter-block-{block}]") as e:
+                page.click(f"[data-testid=letter-revert-{block}]")
+                assert sentence.strip() not in page.locator(f"[data-testid=letter-text-{block}]").inner_text()
+                out["edit"]["reverted"] = True
+                # back to the reviewed wording, the review stands again: the badge replaces the button
+                assert page.locator("[data-testid=seci-format-reviewed]").count() == 1, "the review did not come back with the RfS wording"
+                e["note"] = "back to the RfS wording; the review stands again: " + _flat(page.locator("[data-testid=seci-format-reviewed]").inner_text())
+    with run.step(S, "All letters in one Word file") as e:
+        e["note"] = out["all_word"] = download(page, run, "[data-testid=seci-letters-word]", "letters")
+    with run.step(S, "All letters in one PDF") as e:
+        e["note"] = out["all_pdf"] = download(page, run, "[data-testid=seci-letters-pdf]", "letters")
+    with run.step(S, "Save the bid to the scenario library (forms, reviews and letters)", "seci-saved", "[data-testid=seci-saved]") as e:
+        page.click("[data-testid=seci-format-mode-blanks]")
+        page.click("[data-testid=seci-save]")
+        page.fill(".modal input[required]", f"{COMPANY['name']}: SECI RTC-TM-V bid")
+        page.click(".modal button[type=submit]")
+        page.wait_for_selector("[data-testid=seci-saved]", timeout=30_000)
+        e["note"] = out["saved"] = _flat(page.locator("[data-testid=seci-saved]").inner_text())
+    return out
+
+
 # ----------------------------------------------------------------------------- the other tabs
 
 
@@ -571,6 +626,8 @@ def main() -> int:
         bid = scenarios[-1]
         run.data["charts"] = seci_charts(page, run)
         run.data["forms"] = seci_forms(page, run, bid)
+        run.save()
+        run.data["letters"] = seci_letters(page, run, run.data["forms"])
         run.save()
         other_tabs(page, run)
         run.data["page_errors"] = page_errors
