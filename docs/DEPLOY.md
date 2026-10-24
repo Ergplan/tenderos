@@ -130,8 +130,51 @@ not touched. `deploy/shared-vm/install.sh` puts TenderOS beside the old app:
   * The key stays on the server.
   * Without the key, the agent's panel says it is not set up.
 * Browsers allow the microphone only on HTTPS or localhost, and the 8081 address is plain HTTP.
-  To talk to the agent there, open an SSH tunnel and browse to `http://localhost:8081`:
-  `gcloud compute ssh <vm> -- -L 8081:localhost:8081`.
+  To talk to the agent there, either open an SSH tunnel and browse to `http://localhost:8081`
+  (`gcloud compute ssh <vm> -- -L 8081:localhost:8081`), or serve the router over HTTPS (below).
+
+### HTTPS on the shared VM
+
+`deploy/shared-vm/docker-compose.https.yml` makes the router serve the same chooser and apps on
+`https://$SITE_ADDRESS`:
+
+* Caddy gets the certificate from Let's Encrypt (ZeroSSL as fallback) and renews it.
+* Port 80 redirects to HTTPS.
+* Port 8081 stays as it was.
+
+Ports 80 and 443 must be free, and port 80 or 443 must be open to the internet for the certificate
+check. On the tariff-order VM those ports were ekbill's Caddy, which is stopped for this.
+
+```
+cd <tenderos folder>
+docker stop ekbill-caddy-1 ekbill-app-1 ekbill-docling-1 ekbill-db-1
+sed -i '/^COMPOSE_FILE=/d;/^SITE_ADDRESS=/d' .env
+echo 'COMPOSE_FILE=docker-compose.yml:deploy/shared-vm/docker-compose.shared.yml:deploy/shared-vm/docker-compose.https.yml' >> .env
+echo 'SITE_ADDRESS=34-131-67-235.sslip.io' >> .env
+docker compose -p tenderos up -d router
+docker logs tenderos-router-1 2>&1 | grep -iE "certificate obtained|error" | tail -5
+```
+
+For your own domain, point its DNS A record at the VM and use it as `SITE_ADDRESS`.
+
+**Undo:**
+
+```
+sed -i 's#:deploy/shared-vm/docker-compose.https.yml##' .env && docker compose -p tenderos up -d router
+docker start ekbill-db-1 ekbill-docling-1 ekbill-app-1 ekbill-caddy-1
+```
+
+The first command puts the router back on 8081 only. The second brings ekbill back on ports 80
+and 443.
+
+Tested here with Caddy 2.8.4 and `SITE_ADDRESS=localhost` (a locally signed certificate):
+
+* the chooser and both apps over HTTPS;
+* the redirect from port 80;
+* port 8081 unchanged;
+* in Chromium, the page is a secure context and the agent's microphone start goes through.
+
+A Let's Encrypt certificate for the VM's address has not been issued here.
 
 ```
 curl -fsSL https://raw.githubusercontent.com/Ergplan/tenderos/main/deploy/shared-vm/install.sh -o install.sh

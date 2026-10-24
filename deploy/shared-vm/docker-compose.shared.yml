@@ -17,6 +17,7 @@ services:
       - "${ROUTER_PORT:-8081}:8081"
     volumes:
       - ./deploy/shared-vm/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/shared-vm/apps.caddy:/etc/caddy/apps.caddy:ro
       - ./deploy/shared-vm/chooser:/srv/chooser:ro
       - ./web/public/brand:/srv/chooser-assets:ro
     networks:
