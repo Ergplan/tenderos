@@ -83,8 +83,8 @@
   }
  },
  "url": "http://127.0.0.1:3000",
- "started": "2026-10-24T16:46:16+00:00",
- "commit": "ab1c29f",
+ "started": "2026-10-24T19:10:29+00:00",
+ "commit": "20e2b1d",
  "tender": "Supply of 1000 MW Round-the-Clock Thermal Mimic (RTC-TM) power from ISTS-connected RE projects",
  "rfs_no": "SECI/C&P/IPP/13/0020/25-26",
  "engine": {
@@ -125,42 +125,42 @@
     "Scheduled commissioning APPLIED RFS 18 months → NOW 24 months Amendment-01 9.2.a · Amendment-02 9.2.a (same value) “The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 24 months from the Effective Date of the PPA (for e.g., if Effective Date of the PPA is 07.06.2026,” p. 2 · Amendment-02",
     "Commissioning counted from APPLIED RFS effective date → NOW effective date Amendment-01 9.2.a (same value) · Amendment-02 9.2.a (same value) “The Scheduled Commencement of Supply Date (SCSD) for supplying power from the full Project capacity shall be the date as on 24 months from the Effective Date of the PPA (for e.g., if Effective Date of the PPA is 07.06.2026,” p. 2 · Amendment-02",
     "Demand profile APPLIED RFS The RPD shall supply RE power in Round-the-Clock manner by maintaining the following Demand Fulfilment Ratios (DFR): (i) a minimum DFR of 90% in each time-block during the Peak Hours; → NOW The RPD shall supply RE power in Round-the-Clock manner by maintaining the following Demand Fulfilment Ratios (DFR): (i) a minimum DFR of 90% in each time-block during the Peak Hours;",
-    "Peak window APPLIED RFS 6 hours within 00:00–10:00 → NOW 6 hours within 18:00–10:00 Amendment-01 8.1.c (not re-read) · Amendment-01 42.41 “… The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day, which shall be the ‘Peak Hours’ for that” p. 5 · Amendment-01",
+    "Peak window APPLIED RFS 6 hours within 00:00–10:00 → NOW 6 hours within 18:00–10:00 Amendment-01 8.1.c (not re-read) · Amendment-01 42.41 “… The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day, which shall be the 'Peak Hours' for that” p. 5 · Amendment-01",
     "Assured availability APPLIED RFS 90% → NOW 90% Amendment-01 8.1.a (same value) “The RPD shall supply RE power in Round-the-Clock manner by maintaining the following Demand Fulfilment Ratios (DFR): (i) a minimum DFR of 90% in each time-block during the Peak Hours;” p. 2 · Amendment-01",
     "Demand profile, structured APPLIED RFS basis: availability percent; peak_availability_pct: 90% of contracted capacity; peak_blocks: (window_start: 00:00, window_end: 10:00, hours: 6 hours) → NOW peak_blocks: (window_start: 18:00, window_end: 10:00, hours: 6 hours) Amendment-01 8.1.a (same value) · Amendment-01 8.1.c (not re-read) · Amendment-01 42.41 “… The Buying Entity shall choose any 6 hours, ",
     "Minimum peak-hour supply APPLIED RFS 90% → NOW 90% Amendment-01 8.1.a (same value) “The RPD shall supply RE power in Round-the-Clock manner by maintaining the following Demand Fulfilment Ratios (DFR): (i) a minimum DFR of 90% in each time-block during the Peak Hours;” p. 2 · Amendment-01",
-    "Peak hours set by APPLIED RFS tender → NOW tender Amendment-01 8.1.c (not re-read) · Amendment-01 42.41 (same value) “… The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day, which shall be the ‘Peak Hours’ for that” p. 5 · Amendment-01"
+    "Peak hours set by APPLIED RFS tender → NOW tender Amendment-01 8.1.c (not re-read) · Amendment-01 42.41 (same value) “… The Buying Entity shall choose any 6 hours, on a daily basis, between 18:00 Hrs. in the evening of a day and 10:00 Hrs. in the morning of the subsequent day, which shall be the 'Peak Hours' for that” p. 5 · Amendment-01"
    ],
    "documents": [
     "RfS RfS.pdf RFS SECI/C&P/IPP/13/0020/25-26 2026-03-10 139 –",
-    "Amendment-01 Amendment-01.pdf AMENDMENT SECI/C&P/IPP/13/0020/25-26/Amendment-01 2026-04-02 18 PyMuPDF tables",
-    "Amendment-02 Amendment-02.pdf AMENDMENT SECI/C&P/IPP/13/0020/25-26/Amendment-02 2026-04-27 5 PyMuPDF tables",
-    "Clarifications-01 Clarifications-01.pdf CLARIFICATIONS – 2026-04-27 2 PyMuPDF tables",
+    "Amendment-01 Amendment-01.pdf AMENDMENT SECI/C&P/IPP/13/0020/25-26/Amendment-01 2026-04-02 18 Docling",
+    "Amendment-02 Amendment-02.pdf AMENDMENT SECI/C&P/IPP/13/0020/25-26/Amendment-02 2026-04-27 5 Docling",
+    "Clarifications-01 Clarifications-01.pdf CLARIFICATIONS – 2026-04-27 2 Docling",
     "Draft PSA Standard-PSA.pdf AGREEMENT · PSA – 2023-06-09 29 –"
    ],
-   "changes": 50,
-   "first_change": "A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 10050MW and a maximum quantum of 500 MW, … WAS A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 100 MW and a maximum quantum of 500 MW, … p. 1 · Amendment-01 NOW A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 50 MW and a maximum quantum of 500 MW, … p. 1 · Amendment-01",
+   "changes": 51,
+   "first_change": "A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 10050MW and a maximum quantum of 500 MW, … WAS A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 100 MW and a maximum quantum of 500 MW, p. 1 · Amendment-01 NOW A Bidder, including its Parent, Affiliate or Ultimate Parent or any Group Company shall submit a single bid offering a minimum quantum of cumulative Contracted Capacity of 50 MW and a maximum quantum of 500 MW, … p. 1 · Amendment-01",
    "clarifications": 19,
    "clarification_rows": [
-    "Clarifications-01 · 1. RfS Clause 8.1(c) AMENDED ASKEDAllow Peak Hours to be declared on a monthly basis instead of daily basis. RESPONSEClause has been suitably modified. Kindly refer amendments-01. p. 1 · Clarifications-01 Same clause amended: Amendment-01 (RfS 8.1.c)",
+    "Clarifications-01 · 1. RfS Clause 8.1(c) AMENDED ASKEDAllow Peak Hours to be declared on a monthly basis instead of daily RESPONSEClause has been suitably modified. Kindly refer amendments-01. p. 1 · Clarifications-01 Same clause amended: Amendment-01 (RfS 8.1.c)",
     "Clarifications-01 · 2. RfS Clause 8.1(j) UNCHANGED ASKEDIncrease permissible green market sourcing from 5% to 15% on annual energy basis. RESPONSETender conditions remain unchanged. p. 1 · Clarifications-01",
-    "Clarifications-01 · 3. RfS Clause 8.1 (c) UNCHANGED ASKEDIt is requested that Peak Hours be fixed in advance (e.g., on a monthly or pre‑defined basis for the contract period) instead of being declared on a day‑ahead basis. RESPONSETender conditions remain unchanged. p. 1 · Clarifications-01 Same cla",
+    "Clarifications-01 · 3. RfS Clause 8.1 ( UNCHANGED ASKEDIt is requested that Peak Hours be fixed in advance (e.g., on a monthly or pre-defined basis for the contract period) instead of being declared on a day-ahead basis. RESPONSETender conditions remain unchanged. p. 1 · Clarifications-01 Same claus",
     "Clarifications-01 · 4. RfS 34.3 AMENDED ASKEDBidder should be allowed to showcase projects under execution or from Divested projects. RESPONSEClause has been suitably modified. Kindly refer amendments-02. p. 1 · Clarifications-01 Same clause amended: Amendment-01 (RfS 34.3), Amendment-02 (RfS 34.3)",
     "Clarifications-01 · 5. RfS 16.1 UNCHANGED ASKEDBidder requests the EMD amount to be INR 10 Lakhs per MW of Bid Capacity (Contracted Capacity) with maximum Cap of INR 35 Crores. RESPONSETender conditions remain unchanged. p. 1 · Clarifications-01 Same clause amended: Amendment-02 (RfS 16.1)",
     "Clarifications-01 · 6. RfS 17.1 UNCHANGED ASKEDBidder requests the PBG amount to be INR 30 Lakhs per MW of Contracted Capacity RESPONSETender conditions remain unchanged. p. 1 · Clarifications-01 Same clause amended: Amendment-02 (RfS 17.1)",
     "Clarifications-01 · 7. RfS 10 UNCHANGED ASKEDThe above shall be treated as delays beyond the control of the RPD and SCSD for such Projects shall be revised as the date as on 120 days subsequent to the readiness of the Delivery Point and power evacuation infrastructure and/or Start Date of Connectivi",
-    "Clarifications-01 · 8. RfS 40.2 UNCHANGED ASKEDThe Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 5% of the L1 tariff—hereinafter referred to as \"the range\"— will be declared as Successful Bidders. RESPONSETender conditions remain unchanged. p. 1 · Clarification",
+    "Clarifications-01 · 8. RfS 40.2 UNCHANGED ASKEDThe Bidders who fall within the range of (and including) the lowest tariff (L1 tariff) + 5% of the L1 tariff-hereinafter referred to as \"the range\"- will be declared as Successful Bidders. RESPONSETender conditions remain unchanged. p. 1 · Clarification",
     "Clarifications-01 · 9. PPA 10.2 (Monthly Bills) UNCHANGED ASKEDRPD may raise Monthly bill based on the provisional REA published at RPC of the RPD for energy recorded at the Delivery Point/Interconnection Point, the final adjustments in bill, if any, may be done on the basis of the final REA along w",
     "Clarifications-01 · 10. RfS 11.2 UNCHANGED ASKEDIn case of multiple Project components, and if one or more such component (wind, solar PV or any other RE source) is/are ready for injection of power into the grid, but the remaining component(s) is/are unable to commence supply of power, the RPD will ",
-    "Clarifications-01 · 11. RfS 34.3 AMENDED ASKEDA Bidder quoting for ‘X’ MW Contracted Capacity shall be required to submit credentials either of the following: i. The Bidder should have successfully commissioned a single RE Project, as defined under the Guidelines, of Contracted Capacity not less tha",
-    "Clarifications-01 · 12. RfS 1.8 UNCHANGED ASKEDIn case of existing or under-construction RE projects gets selected in this tender then such bidders/ developers should ensure that any non- compliant RE plant equipment, if identified, is replaced or aligned with ALMM(Wind) / ALMM(Solar) requirements p",
+    "Clarifications-01 · 11. RfS 34.3 AMENDED ASKEDA Bidder quoting for 'X' MW Contracted Capacity shall be required to submit credentials either of the following: i. The Bidder should have successfully commissioned a single RE Project, as defined under the Guidelines, of Contracted Capacity not less tha",
+    "Clarifications-01 · 12. RfS 1.8 UNCHANGED ASKEDIn case of existing or under-construction RE projects gets selected in tender then such bidders/ developers should ensure that any non- compliant RE plant equipment, if identified, is replaced or aligned with ALMM(Wind) / ALMM(Solar) requirements prior ",
     "Clarifications-01 · 13. RfS 4.2 (iii) UNCHANGED ASKEDEnergy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power. For avoidance of any doubt, it is hereby clarified that ESS may be ow",
     "Clarifications-01 · 14. RfS 4.2(iii) REFERS TO A CLAUSE ASKEDiii. Energy Storage Systems (ESS) shall mandatorily constitute part of the Project. It is clarified that ESS charged using a source other than RE power would not qualify as RE power. For avoidance of any doubt, it is hereby clarified that ",
     "Clarifications-01 · 15. RfS 8.1 a AMENDED ASKEDDemand Fulfilment Ratio: The procurement shall be in power (MW) terms. The RPD shall supply RE power in Round-the-Clock manner by maintaining the following Demand Fulfilment Ratios (DFR): (i) a minimum DFR of 90% in each time-block during the Peak Hours",
     "Clarifications-01 · 16. RfS 9.2 a AMENDED ASKEDSince BESS can be co-located with both solar and wind. We suggest amendment that BESS collocated with solar shall commence supply within 18 months under Clause (i). Seperately wind component of the project shall commence supply within 24 months from Eff",
     "Clarifications-01 · 17. RfS Clause 8.1(c) UNCHANGED ASKEDAllow Peak Hours to be declared on a monthly basis instead of daily basis. RESPONSETender conditions remain unchanged. p. 2 · Clarifications-01 Same clause amended: Amendment-01 (RfS 8.1.c)",
-    "Clarifications-01 · 18. RfS Clause 16.1 UNCHANGED ASKEDIt is requested to kindly consider linking certain charges and financial obligations under the RfS (including, but not limited to, EMD, transmission‑related charges, and other capacity‑linked levies) to the contracted capacity instead of the ins",
-    "Clarifications-01 · 19. RfS UNCHANGED ASKEDConsidering that EMD/PBG requirements are linked to the installed capacity, and that RTC projects under this RfS necessitate significantly higher installed capacity relative to the contracted capacity, the associated capital investment is substantial. Conse"
+    "Clarifications-01 · 18. RfS Clause 16.1 UNCHANGED ASKEDIt is requested to kindly consider linking certain charges and financial obligations under the RfS (including, but not limited to, EMD, transmission-related charges, and other capacity-linked levies) to the contracted capacity instead of the ins",
+    "Clarifications-01 · 19. RfS received from various UNCHANGED ASKEDConsidering that EMD/PBG requirements are linked to the installed capacity, and that RTC projects under this RfS necessitate significantly higher installed capacity relative to the contracted capacity, the associated capital investment"
    ],
    "formats": 27,
    "process": 11,
@@ -176,8 +176,8 @@
    }
   },
   "sizing": {
-   "seconds": 150.2,
-   "sizes_text": "SOLAR 1,484 MW 2.97 × contracted BIOMASS 170 MW 0.34 × contracted · 1,192 MU in year 1 · largest hourly change 35% · daily swing 27% BATTERY 1,206 MW / 4,823 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.523/kWh no design below ₹7.523",
+   "seconds": 149.6,
+   "sizes_text": "SOLAR 1,484 MWac 2,078 MWp (DC:AC 1.40) · 2.97 × contracted BIOMASS 170 MW 0.34 × contracted · 1,192 MU in year 1 · largest hourly change 35% · daily swing 27% BATTERY 1,206 MW / 4,823 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.523/kWh no design below ₹7.523",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak-hour supply floor 90.0% 90.0% 90.0%",
    "finance": {
     "bid_tariff": 7.523,
@@ -199,66 +199,66 @@
    "shortfall": "hard",
    "wind": true,
    "why": "No shortfall in any 15-minute block of any modelled year: the price of never paying the penalty.",
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from th",
-   "seconds": 34.1,
-   "sizes_text": "SOLAR 733 MW 3.67 × contracted WIND 296 MW 1.48 × contracted BATTERY 727 MW / 2,908 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.894/kWh no design below ₹7.894",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
+   "seconds": 36.6,
+   "sizes_text": "SOLAR 762 MWac 1,067 MWp (DC:AC 1.40) · 3.81 × contracted WIND 302 MW 1.51 × contracted BATTERY 741 MW / 2,965 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹8.101/kWh no design below ₹8.101",
    "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 100.0% of hours 100.0% of hours Off-peak floor (every block) 70.0% 100.0% of hours 100.0% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 733.053371508033,
-     "windMw": 295.70485949607377,
-     "bessMw": 727.0328512789135,
-     "bessMwh": 2908.131405115654
+     "solarMw": 762.0884333237328,
+     "windMw": 301.6364624688006,
+     "bessMw": 741.2306931870089,
+     "bessMwh": 2964.9227727480356
     },
-    "tariff": 7.894047640160923,
-    "lowerBound": 7.893978634267479,
+    "tariff": 8.101141854537175,
+    "lowerBound": 8.101071859399024,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 7.236532823079936,
-      "lowerBound": 7.221177870717801,
+      "tariff": 7.42597453941186,
+      "lowerBound": 7.409126644043465,
       "simplexIterations": 0,
       "ipmIterations": 32,
-      "seconds": 31.94,
+      "seconds": 34.53,
       "sizes": {
-       "solarMw": 733.053371508033,
-       "windMw": 295.70485949607377,
-       "bessMw": 727.0328512789135,
-       "bessMwh": 2908.131405115654
+       "solarMw": 762.0884333237328,
+       "windMw": 301.6364624688006,
+       "bessMw": 741.2306931870089,
+       "bessMwh": 2964.9227727480356
       }
      },
      {
       "iteration": 2,
-      "lambda": 7.236532823079936,
-      "tariff": 7.88605805067424,
-      "lowerBound": 7.880451863501827,
+      "lambda": 7.42597453941186,
+      "tariff": 8.09294896973928,
+      "lowerBound": 8.087254565067086,
       "simplexIterations": 0,
       "ipmIterations": 0,
       "seconds": 0.03,
       "sizes": {
-       "solarMw": 733.053371508033,
-       "windMw": 295.70485949607377,
-       "bessMw": 727.0328512789135,
-       "bessMwh": 2908.131405115654
+       "solarMw": 762.0884333237328,
+       "windMw": 301.6364624688006,
+       "bessMw": 741.2306931870089,
+       "bessMwh": 2964.9227727480356
       }
      },
      {
       "iteration": 3,
-      "lambda": 7.88605805067424,
-      "tariff": 7.894047640160923,
-      "lowerBound": 7.893978634267479,
+      "lambda": 8.09294896973928,
+      "tariff": 8.101141854537175,
+      "lowerBound": 8.101071859399024,
       "simplexIterations": 0,
       "ipmIterations": 0,
-      "seconds": 0.03,
+      "seconds": 0.05,
       "sizes": {
-       "solarMw": 733.053371508033,
-       "windMw": 295.70485949607377,
-       "bessMw": 727.0328512789135,
-       "bessMwh": 2908.131405115654
+       "solarMw": 762.0884333237328,
+       "windMw": 301.6364624688006,
+       "bessMw": 741.2306931870089,
+       "bessMwh": 2964.9227727480356
       }
      }
     ],
@@ -269,9 +269,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.9939892906707732,
-      "minMonthlyDfr": 0.9850976352380038,
-      "deliveredMu": 1741.4692372551947,
+      "dfr": 0.9940699505910563,
+      "minMonthlyDfr": 0.9852847287797039,
+      "deliveredMu": 1741.6105534355304,
       "exportMu": 0,
       "rules": [
        {
@@ -279,9 +279,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.9,
+        "achieved": 0.8999999999999998,
         "hoursMet": 1,
-        "shortfallMu": 0,
+        "shortfallMu": 3.9433075471606574e-16,
         "met": true,
         "penaltyMultiple": null
        },
@@ -297,13 +297,13 @@
         "penaltyMultiple": null
        }
       ],
-      "blockShortfallMu": 0
+      "blockShortfallMu": 3.9433075471606574e-16
      },
      {
       "year": 25,
-      "dfr": 0.9829625139175161,
-      "minMonthlyDfr": 0.9464509666612096,
-      "deliveredMu": 1722.1503243834882,
+      "dfr": 0.9830973807027774,
+      "minMonthlyDfr": 0.9470200989262393,
+      "deliveredMu": 1722.3866109912658,
       "exportMu": 0,
       "rules": [
        {
@@ -311,9 +311,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.9,
+        "achieved": 0.8999999999999998,
         "hoursMet": 1,
-        "shortfallMu": 0,
+        "shortfallMu": 1.126659299188759e-15,
         "met": true,
         "penaltyMultiple": null
        },
@@ -329,7 +329,7 @@
         "penaltyMultiple": null
        }
       ],
-      "blockShortfallMu": 0
+      "blockShortfallMu": 1.126659299188759e-15
      }
     ],
     "dfrPricePerPoint": 0,
@@ -343,247 +343,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 32.07,
+    "seconds": 34.7,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 1752000,
-      "deliveredMwh": 1741469.237255195,
+      "deliveredMwh": 1741610.5534355303,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 3.9433075471606573e-13
      },
      {
       "year": 2,
       "demandMwh": 1752000,
-      "deliveredMwh": 1740664.2825522071,
+      "deliveredMwh": 1740809.555833686,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 4.2484444406909464e-13
      },
      {
       "year": 3,
       "demandMwh": 1752000,
-      "deliveredMwh": 1739859.3278492193,
+      "deliveredMwh": 1740008.5582318415,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 4.553581334221235e-13
      },
      {
       "year": 4,
       "demandMwh": 1752000,
-      "deliveredMwh": 1739054.3731462315,
+      "deliveredMwh": 1739207.5606299972,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 4.858718227751524e-13
      },
      {
       "year": 5,
       "demandMwh": 1752000,
-      "deliveredMwh": 1738249.418443244,
+      "deliveredMwh": 1738406.563028153,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 5.163855121281813e-13
      },
      {
       "year": 6,
       "demandMwh": 1752000,
-      "deliveredMwh": 1737444.463740256,
+      "deliveredMwh": 1737605.5654263087,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 5.468992014812101e-13
      },
      {
       "year": 7,
       "demandMwh": 1752000,
-      "deliveredMwh": 1736639.5090372683,
+      "deliveredMwh": 1736804.5678244643,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 5.77412890834239e-13
      },
      {
       "year": 8,
       "demandMwh": 1752000,
-      "deliveredMwh": 1735834.5543342803,
+      "deliveredMwh": 1736003.5702226197,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 6.07926580187268e-13
      },
      {
       "year": 9,
       "demandMwh": 1752000,
-      "deliveredMwh": 1735029.5996312927,
+      "deliveredMwh": 1735202.5726207756,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 6.384402695402969e-13
      },
      {
       "year": 10,
       "demandMwh": 1752000,
-      "deliveredMwh": 1734224.644928305,
+      "deliveredMwh": 1734401.5750189312,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 6.689539588933258e-13
      },
      {
       "year": 11,
       "demandMwh": 1752000,
-      "deliveredMwh": 1733419.6902253171,
+      "deliveredMwh": 1733600.5774170868,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 6.994676482463546e-13
      },
      {
       "year": 12,
       "demandMwh": 1752000,
-      "deliveredMwh": 1732614.7355223293,
+      "deliveredMwh": 1732799.5798152427,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 7.299813375993835e-13
      },
      {
       "year": 13,
       "demandMwh": 1752000,
-      "deliveredMwh": 1731809.7808193415,
+      "deliveredMwh": 1731998.582213398,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 7.604950269524124e-13
      },
      {
       "year": 14,
       "demandMwh": 1752000,
-      "deliveredMwh": 1731004.8261163537,
+      "deliveredMwh": 1731197.5846115537,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 7.910087163054413e-13
      },
      {
       "year": 15,
       "demandMwh": 1752000,
-      "deliveredMwh": 1730199.871413366,
+      "deliveredMwh": 1730396.5870097096,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 8.215224056584702e-13
      },
      {
       "year": 16,
       "demandMwh": 1752000,
-      "deliveredMwh": 1729394.9167103784,
+      "deliveredMwh": 1729595.5894078652,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 8.520360950114991e-13
      },
      {
       "year": 17,
       "demandMwh": 1752000,
-      "deliveredMwh": 1728589.9620073906,
+      "deliveredMwh": 1728794.5918060208,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 8.825497843645281e-13
      },
      {
       "year": 18,
       "demandMwh": 1752000,
-      "deliveredMwh": 1727785.0073044028,
+      "deliveredMwh": 1727993.5942041765,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 9.13063473717557e-13
      },
      {
       "year": 19,
       "demandMwh": 1752000,
-      "deliveredMwh": 1726980.052601415,
+      "deliveredMwh": 1727192.5966023323,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 9.435771630705859e-13
      },
      {
       "year": 20,
       "demandMwh": 1752000,
-      "deliveredMwh": 1726175.0978984272,
+      "deliveredMwh": 1726391.599000488,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 9.740908524236146e-13
      },
      {
       "year": 21,
       "demandMwh": 1752000,
-      "deliveredMwh": 1725370.1431954394,
+      "deliveredMwh": 1725590.6013986436,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 1.0046045417766435e-12
      },
      {
       "year": 22,
       "demandMwh": 1752000,
-      "deliveredMwh": 1724565.1884924516,
+      "deliveredMwh": 1724789.6037967992,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 1.0351182311296724e-12
      },
      {
       "year": 23,
       "demandMwh": 1752000,
-      "deliveredMwh": 1723760.2337894638,
+      "deliveredMwh": 1723988.6061949548,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 1.0656319204827013e-12
      },
      {
       "year": 24,
       "demandMwh": 1752000,
-      "deliveredMwh": 1722955.279086476,
+      "deliveredMwh": 1723187.6085931105,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 1.0961456098357302e-12
      },
      {
       "year": 25,
       "demandMwh": 1752000,
-      "deliveredMwh": 1722150.3243834882,
+      "deliveredMwh": 1722386.610991266,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 0
+      "blockShortfallMwh": 1.1266592991887591e-12
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹181.21 cr ₹9.68 lakh × 733 MW solar + ₹13.68 lakh × 296 MW wind + ₹2.40 lakh × 2,908 MWh PERFORMANCE BANK GUARANTEE ₹453.02 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,812.07 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹186.19 cr ₹9.68 lakh × 762 MW solar + ₹13.68 lakh × 302 MW wind + ₹2.40 lakh × 2,965 MWh PERFORMANCE BANK GUARANTEE ₹465.48 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,861.92 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 7.894,
+    "bid_tariff": 8.101,
     "equity_irr": 14.0,
     "project_irr": 9.99,
-    "text": "BID TARIFF ₹7.894/kWh HiGHS screening ₹7.894 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.99% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹8,761 cr ₹43.81 cr per contracted MW · LCOE ₹6.861/kWh at 10.0% YEAR-1 SUPPLY 1,741 MU 99.4% of contracted YEAR-1 OPERATING COST ₹116 cr O&M and insurance"
+    "text": "BID TARIFF ₹8.101/kWh HiGHS screening ₹8.101 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.99% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹8,995 cr ₹44.98 cr per contracted MW · LCOE ₹7.040/kWh at 10.0% YEAR-1 SUPPLY 1,742 MU 99.4% of contracted YEAR-1 OPERATING COST ₹119 cr O&M and insurance"
    },
    "workbook": "models/SECI_S2_financial_model.xlsx"
   },
@@ -596,96 +596,96 @@
    "shortfall": "penalty",
    "wind": true,
    "why": "Plans the 90% floor for 18:00-24:00 only; a morning pick by the Buying Entity would fall short and pay.",
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from th",
-   "seconds": 47.7,
-   "sizes_text": "SOLAR 413 MW 2.07 × contracted WIND 306 MW 1.53 × contracted BATTERY 290 MW / 1,161 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.360/kWh no design below ₹6.360",
-   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 81.2% of hours 79.9% of hours Off-peak floor (every block) 70.0% 89.6% of hours 88.4% of hours",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
+   "seconds": 54.7,
+   "sizes_text": "SOLAR 424 MWac 594 MWp (DC:AC 1.40) · 2.12 × contracted WIND 316 MW 1.58 × contracted BATTERY 292 MW / 1,167 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.525/kWh no design below ₹6.525",
+   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 83.8% of hours 82.9% of hours Off-peak floor (every block) 70.0% 88.4% of hours 87.1% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 413.102342378588,
-     "windMw": 305.76709938749815,
-     "bessMw": 290.30263302317496,
-     "bessMwh": 1161.2105320926999
+     "solarMw": 424.2244085840473,
+     "windMw": 315.69620893894404,
+     "bessMw": 291.6737706710471,
+     "bessMwh": 1166.6950826841885
     },
-    "tariff": 6.360371009553078,
-    "lowerBound": 6.360367661332966,
+    "tariff": 6.524886118819515,
+    "lowerBound": 6.524876863097482,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 5.843591169997016,
-      "lowerBound": 5.730501170207876,
+      "tariff": 6.014174546561066,
+      "lowerBound": 5.828366390246602,
       "simplexIterations": 0,
-      "ipmIterations": 42,
-      "seconds": 31.59,
+      "ipmIterations": 48,
+      "seconds": 36.87,
       "sizes": {
-       "solarMw": 366.4243700558297,
-       "windMw": 321.9779743864543,
-       "bessMw": 223.34932537978054,
-       "bessMwh": 893.3973015191222
+       "solarMw": 354.1547290179143,
+       "windMw": 336.28934219498956,
+       "bessMw": 196.5124464131083,
+       "bessMwh": 786.0497856524332
       }
      },
      {
       "iteration": 2,
-      "lambda": 5.843591169997016,
-      "tariff": 6.396189134198407,
-      "lowerBound": 6.201774563603764,
-      "simplexIterations": 1549,
+      "lambda": 6.014174546561066,
+      "tariff": 6.5589539920668924,
+      "lowerBound": 6.367480830199722,
+      "simplexIterations": 1542,
       "ipmIterations": 0,
-      "seconds": 3.29,
+      "seconds": 3.31,
       "sizes": {
-       "solarMw": 351.43304873764976,
-       "windMw": 322.8156906872285,
-       "bessMw": 204.65613784306322,
-       "bessMwh": 818.6245513722529
+       "solarMw": 360.64457153049295,
+       "windMw": 333.01357814548766,
+       "bessMw": 207.6545218633996,
+       "bessMwh": 830.6180874535984
       }
      },
      {
       "iteration": 3,
-      "lambda": 6.396189134198407,
-      "tariff": 6.347486862501373,
-      "lowerBound": 6.3274455352445695,
-      "simplexIterations": 4630,
+      "lambda": 6.5589539920668924,
+      "tariff": 6.511386310951281,
+      "lowerBound": 6.492332761856768,
+      "simplexIterations": 5300,
       "ipmIterations": 0,
-      "seconds": 9.24,
+      "seconds": 10.94,
       "sizes": {
-       "solarMw": 418.0284044905949,
-       "windMw": 305.1228755028872,
-       "bessMw": 296.6983825253888,
-       "bessMwh": 1186.7935301015552
+       "solarMw": 427.0863113598393,
+       "windMw": 314.8435183749991,
+       "bessMw": 295.44547801226054,
+       "bessMwh": 1181.7819120490421
       }
      },
      {
       "iteration": 4,
-      "lambda": 6.347486862501373,
-      "tariff": 6.360379412288897,
-      "lowerBound": 6.3569322054739645,
-      "simplexIterations": 463,
+      "lambda": 6.511386310951281,
+      "tariff": 6.524909614585276,
+      "lowerBound": 6.521231584598055,
+      "simplexIterations": 576,
       "ipmIterations": 0,
-      "seconds": 1.11,
+      "seconds": 1.25,
       "sizes": {
-       "solarMw": 412.4806726456072,
-       "windMw": 305.849850169976,
-       "bessMw": 288.5546220700218,
-       "bessMwh": 1154.2184882800873
+       "solarMw": 421.3500236414232,
+       "windMw": 316.3644764271128,
+       "bessMw": 287.77686986641146,
+       "bessMwh": 1151.1074794656458
       }
      },
      {
       "iteration": 5,
-      "lambda": 6.360379412288897,
-      "tariff": 6.360371009553078,
-      "lowerBound": 6.360367661332966,
-      "simplexIterations": 82,
+      "lambda": 6.524909614585276,
+      "tariff": 6.524886118819515,
+      "lowerBound": 6.524876863097482,
+      "simplexIterations": 157,
       "ipmIterations": 0,
-      "seconds": 0.25,
+      "seconds": 0.36,
       "sizes": {
-       "solarMw": 413.102342378588,
-       "windMw": 305.76709938749815,
-       "bessMw": 290.30263302317496,
-       "bessMwh": 1161.2105320926999
+       "solarMw": 424.2244085840473,
+       "windMw": 315.69620893894404,
+       "bessMw": 291.6737706710471,
+       "bessMwh": 1166.6950826841885
       }
      }
     ],
@@ -696,9 +696,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.8339167578517576,
-      "minMonthlyDfr": 0.6861734737268873,
-      "deliveredMu": 1461.0221597562793,
+      "dfr": 0.8329954282229948,
+      "minMonthlyDfr": 0.6848166771688772,
+      "deliveredMu": 1459.4079902466867,
       "exportMu": 0,
       "rules": [
        {
@@ -706,9 +706,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.015588006726774658,
-        "hoursMet": 0.8118721461187215,
-        "shortfallMu": 44.29135278996721,
+        "achieved": 0.019506899372869622,
+        "hoursMet": 0.8383561643835616,
+        "shortfallMu": 38.188446065707865,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -717,20 +717,20 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.009871690803725379,
-        "hoursMet": 0.8961948249619482,
-        "shortfallMu": 63.56533779214764,
+        "achieved": 0.01198727906129109,
+        "hoursMet": 0.8837138508371385,
+        "shortfallMu": 71.4311215117393,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 107.85669058211484
+      "blockShortfallMu": 109.61956757744719
      },
      {
       "year": 25,
-      "dfr": 0.8101234233320125,
-      "minMonthlyDfr": 0.6317325921229957,
-      "deliveredMu": 1419.3362376776859,
+      "dfr": 0.8093176264577806,
+      "minMonthlyDfr": 0.6296695275211572,
+      "deliveredMu": 1417.9244815540314,
       "exportMu": 0,
       "rules": [
        {
@@ -738,9 +738,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.015588006726774658,
-        "hoursMet": 0.7986301369863014,
-        "shortfallMu": 48.0109346245312,
+        "achieved": 0.019506899372869622,
+        "hoursMet": 0.8292237442922374,
+        "shortfallMu": 39.97990405106207,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -749,14 +749,14 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.007261968610453081,
-        "hoursMet": 0.8843226788432268,
-        "shortfallMu": 68.12463128359089,
+        "achieved": 0.007319389107109619,
+        "hoursMet": 0.8707762557077625,
+        "shortfallMu": 77.81368254753825,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 116.13556590812209
+      "blockShortfallMu": 117.7935865986003
      }
     ],
     "dfrPricePerPoint": 0,
@@ -770,247 +770,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 45.59,
+    "seconds": 52.82,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 1752000,
-      "deliveredMwh": 1461022.1597562793,
+      "deliveredMwh": 1459407.9902466866,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 107856.69058211484
+      "blockShortfallMwh": 109619.56757744719
      },
      {
       "year": 2,
       "demandMwh": 1752000,
-      "deliveredMwh": 1459285.2463363379,
+      "deliveredMwh": 1457679.510717826,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 108201.64372069848
+      "blockShortfallMwh": 109960.15170332858
      },
      {
       "year": 3,
       "demandMwh": 1752000,
-      "deliveredMwh": 1457548.3329163964,
+      "deliveredMwh": 1455951.0311889653,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 108546.5968592821
+      "blockShortfallMwh": 110300.73582920994
      },
      {
       "year": 4,
       "demandMwh": 1752000,
-      "deliveredMwh": 1455811.4194964552,
+      "deliveredMwh": 1454222.5516601047,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 108891.54999786575
+      "blockShortfallMwh": 110641.31995509133
      },
      {
       "year": 5,
       "demandMwh": 1752000,
-      "deliveredMwh": 1454074.5060765138,
+      "deliveredMwh": 1452494.072131244,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 109236.50313644939
+      "blockShortfallMwh": 110981.90408097272
      },
      {
       "year": 6,
       "demandMwh": 1752000,
-      "deliveredMwh": 1452337.5926565723,
+      "deliveredMwh": 1450765.5926023833,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 109581.45627503302
+      "blockShortfallMwh": 111322.48820685409
      },
      {
       "year": 7,
       "demandMwh": 1752000,
-      "deliveredMwh": 1450600.679236631,
+      "deliveredMwh": 1449037.1130735227,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 109926.40941361665
+      "blockShortfallMwh": 111663.07233273546
      },
      {
       "year": 8,
       "demandMwh": 1752000,
-      "deliveredMwh": 1448863.7658166895,
+      "deliveredMwh": 1447308.633544662,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 110271.36255220028
+      "blockShortfallMwh": 112003.65645861684
      },
      {
       "year": 9,
       "demandMwh": 1752000,
-      "deliveredMwh": 1447126.8523967483,
+      "deliveredMwh": 1445580.1540158016,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 110616.31569078393
+      "blockShortfallMwh": 112344.24058449823
      },
      {
       "year": 10,
       "demandMwh": 1752000,
-      "deliveredMwh": 1445389.9389768068,
+      "deliveredMwh": 1443851.6744869407,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 110961.26882936756
+      "blockShortfallMwh": 112684.8247103796
      },
      {
       "year": 11,
       "demandMwh": 1752000,
-      "deliveredMwh": 1443653.0255568654,
+      "deliveredMwh": 1442123.19495808,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 111306.22196795119
+      "blockShortfallMwh": 113025.40883626098
      },
      {
       "year": 12,
       "demandMwh": 1752000,
-      "deliveredMwh": 1441916.112136924,
+      "deliveredMwh": 1440394.7154292197,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 111651.17510653484
+      "blockShortfallMwh": 113365.99296214237
      },
      {
       "year": 13,
       "demandMwh": 1752000,
-      "deliveredMwh": 1440179.1987169827,
+      "deliveredMwh": 1438666.2359003588,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 111996.12824511847
+      "blockShortfallMwh": 113706.57708802374
      },
      {
       "year": 14,
       "demandMwh": 1752000,
-      "deliveredMwh": 1438442.2852970413,
+      "deliveredMwh": 1436937.756371498,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 112341.0813837021
+      "blockShortfallMwh": 114047.16121390513
      },
      {
       "year": 15,
       "demandMwh": 1752000,
-      "deliveredMwh": 1436705.3718770999,
+      "deliveredMwh": 1435209.2768426377,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 112686.03452228574
+      "blockShortfallMwh": 114387.7453397865
      },
      {
       "year": 16,
       "demandMwh": 1752000,
-      "deliveredMwh": 1434968.4584571584,
+      "deliveredMwh": 1433480.797313777,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 113030.98766086937
+      "blockShortfallMwh": 114728.32946566789
      },
      {
       "year": 17,
       "demandMwh": 1752000,
-      "deliveredMwh": 1433231.545037217,
+      "deliveredMwh": 1431752.3177849164,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 113375.94079945302
+      "blockShortfallMwh": 115068.91359154927
      },
      {
       "year": 18,
       "demandMwh": 1752000,
-      "deliveredMwh": 1431494.6316172755,
+      "deliveredMwh": 1430023.8382560557,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 113720.89393803665
+      "blockShortfallMwh": 115409.49771743066
      },
      {
       "year": 19,
       "demandMwh": 1752000,
-      "deliveredMwh": 1429757.7181973343,
+      "deliveredMwh": 1428295.3587271948,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 114065.84707662028
+      "blockShortfallMwh": 115750.08184331201
      },
      {
       "year": 20,
       "demandMwh": 1752000,
-      "deliveredMwh": 1428020.804777393,
+      "deliveredMwh": 1426566.8791983342,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 114410.80021520393
+      "blockShortfallMwh": 116090.6659691934
      },
      {
       "year": 21,
       "demandMwh": 1752000,
-      "deliveredMwh": 1426283.8913574517,
+      "deliveredMwh": 1424838.3996694738,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 114755.75335378756
+      "blockShortfallMwh": 116431.25009507478
      },
      {
       "year": 22,
       "demandMwh": 1752000,
-      "deliveredMwh": 1424546.97793751,
+      "deliveredMwh": 1423109.920140613,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 115100.70649237119
+      "blockShortfallMwh": 116771.83422095617
      },
      {
       "year": 23,
       "demandMwh": 1752000,
-      "deliveredMwh": 1422810.0645175686,
+      "deliveredMwh": 1421381.4406117524,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 115445.65963095482
+      "blockShortfallMwh": 117112.41834683754
      },
      {
       "year": 24,
       "demandMwh": 1752000,
-      "deliveredMwh": 1421073.1510976274,
+      "deliveredMwh": 1419652.9610828918,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 115790.61276953846
+      "blockShortfallMwh": 117453.00247271893
      },
      {
       "year": 25,
       "demandMwh": 1752000,
-      "deliveredMwh": 1419336.237677686,
+      "deliveredMwh": 1417924.4815540311,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 116135.5659081221
+      "blockShortfallMwh": 117793.5865986003
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹109.69 cr ₹9.68 lakh × 413 MW solar + ₹13.68 lakh × 306 MW wind + ₹2.40 lakh × 1,161 MWh PERFORMANCE BANK GUARANTEE ₹274.22 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,096.86 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹112.25 cr ₹9.68 lakh × 424 MW solar + ₹13.68 lakh × 316 MW wind + ₹2.40 lakh × 1,167 MWh PERFORMANCE BANK GUARANTEE ₹280.63 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,122.53 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 6.366,
+    "bid_tariff": 6.53,
     "equity_irr": 14.0,
     "project_irr": 9.96,
-    "text": "BID TARIFF ₹6.366/kWh HiGHS screening ₹6.360 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.12 average 1.56 PROJECT COST ₹5,285 cr ₹26.43 cr per contracted MW · LCOE ₹4.905/kWh at 10.0% YEAR-1 SUPPLY 1,461 MU 83.4% of contracted YEAR-1 OPERATING COST ₹73 cr O&M and insurance"
+    "text": "BID TARIFF ₹6.530/kWh HiGHS screening ₹6.525 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.12 average 1.56 PROJECT COST ₹5,406 cr ₹27.03 cr per contracted MW · LCOE ₹5.020/kWh at 10.0% YEAR-1 SUPPLY 1,459 MU 83.3% of contracted YEAR-1 OPERATING COST ₹75 cr O&M and insurance"
    },
    "workbook": "models/SECI_S3_financial_model.xlsx"
   },
@@ -1023,81 +1023,81 @@
    "shortfall": "penalty",
    "wind": false,
    "why": "The same bid without wind: how much more solar and storage the floors need.",
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from th",
-   "seconds": 22.6,
-   "sizes_text": "SOLAR 911 MW 4.55 × contracted BATTERY 743 MW / 2,973 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.995/kWh no design below ₹7.995",
-   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 94.1% of hours 91.4% of hours Off-peak floor (every block) 70.0% 98.9% of hours 98.0% of hours",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
+   "seconds": 21.0,
+   "sizes_text": "SOLAR 940 MWac 1,316 MWp (DC:AC 1.40) · 4.70 × contracted BATTERY 759 MW / 3,034 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹8.216/kWh no design below ₹8.216",
+   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 94.1% of hours 91.3% of hours Off-peak floor (every block) 70.0% 98.7% of hours 98.0% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 910.820964588417,
+     "solarMw": 939.8922937829752,
      "windMw": 0,
-     "bessMw": 743.338070136755,
-     "bessMwh": 2973.35228054702
+     "bessMw": 758.624983864915,
+     "bessMwh": 3034.49993545966
     },
-    "tariff": 7.994826073233666,
-    "lowerBound": 7.994826045480162,
+    "tariff": 8.215720029159733,
+    "lowerBound": 8.215719355512306,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 7.391690192338892,
-      "lowerBound": 7.0238685692148035,
+      "tariff": 7.608324443092639,
+      "lowerBound": 7.186571645365642,
       "simplexIterations": 0,
-      "ipmIterations": 24,
-      "seconds": 13.44,
+      "ipmIterations": 25,
+      "seconds": 12.59,
       "sizes": {
-       "solarMw": 854.3934201920644,
+       "solarMw": 879.4044027944865,
        "windMw": 0,
-       "bessMw": 727.6595408537853,
-       "bessMwh": 2910.638163415141
+       "bessMw": 739.3012886870504,
+       "bessMwh": 2957.2051547482015
       }
      },
      {
       "iteration": 2,
-      "lambda": 7.391690192338892,
-      "tariff": 8.00471192297422,
-      "lowerBound": 7.9032369787579855,
-      "simplexIterations": 2194,
+      "lambda": 7.608324443092639,
+      "tariff": 8.225646368811859,
+      "lowerBound": 8.122942162467822,
+      "simplexIterations": 2516,
       "ipmIterations": 0,
-      "seconds": 3.81,
+      "seconds": 4.33,
       "sizes": {
-       "solarMw": 890.9754183535231,
+       "solarMw": 921.3025184407203,
        "windMw": 0,
-       "bessMw": 739.4780634327207,
-       "bessMwh": 2957.9122537308826
+       "bessMw": 754.1487308108723,
+       "bessMwh": 3016.594923243489
       }
      },
      {
       "iteration": 3,
-      "lambda": 8.00471192297422,
-      "tariff": 7.994826140948773,
-      "lowerBound": 7.990774177018745,
-      "simplexIterations": 1775,
+      "lambda": 8.225646368811859,
+      "tariff": 8.215721681835012,
+      "lowerBound": 8.21166893188965,
+      "simplexIterations": 1090,
       "ipmIterations": 0,
-      "seconds": 3.23,
+      "seconds": 1.99,
       "sizes": {
-       "solarMw": 910.8209645884172,
+       "solarMw": 940.2672447538904,
        "windMw": 0,
-       "bessMw": 743.3593285134187,
-       "bessMwh": 2973.437314053675
+       "bessMw": 759.1132956370976,
+       "bessMwh": 3036.4531825483905
       }
      },
      {
       "iteration": 4,
-      "lambda": 7.994826140948773,
-      "tariff": 7.994826073233666,
-      "lowerBound": 7.994826045480162,
-      "simplexIterations": 7,
+      "lambda": 8.215721681835012,
+      "tariff": 8.215720029159733,
+      "lowerBound": 8.215719355512306,
+      "simplexIterations": 49,
       "ipmIterations": 0,
-      "seconds": 0.09,
+      "seconds": 0.17,
       "sizes": {
-       "solarMw": 910.820964588417,
+       "solarMw": 939.8922937829752,
        "windMw": 0,
-       "bessMw": 743.338070136755,
-       "bessMwh": 2973.35228054702
+       "bessMw": 758.624983864915,
+       "bessMwh": 3034.49993545966
       }
      }
     ],
@@ -1108,9 +1108,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.9026960725972855,
-      "minMonthlyDfr": 0.7357117096694631,
-      "deliveredMu": 1581.5235191904442,
+      "dfr": 0.9022286286911211,
+      "minMonthlyDfr": 0.7338766995414113,
+      "deliveredMu": 1580.704557466844,
       "exportMu": 0,
       "rules": [
        {
@@ -1119,8 +1119,8 @@
         "target": 0.9,
         "basis": "block",
         "achieved": 0,
-        "hoursMet": 0.9414383561643835,
-        "shortfallMu": 50.559416679763096,
+        "hoursMet": 0.9409246575342466,
+        "shortfallMu": 51.10239159805791,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -1129,20 +1129,20 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.30615425082710457,
-        "hoursMet": 0.9886986301369863,
-        "shortfallMu": 1.3689192922819649,
+        "achieved": 0.3084084346523736,
+        "hoursMet": 0.9866438356164383,
+        "shortfallMu": 1.5605011507386746,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 51.92833597204506
+      "blockShortfallMu": 52.6628927487966
      },
      {
       "year": 25,
-      "dfr": 0.8720004341761155,
-      "minMonthlyDfr": 0.675748245379177,
-      "deliveredMu": 1527.7447606765545,
+      "dfr": 0.8705853522496612,
+      "minMonthlyDfr": 0.6739820501825079,
+      "deliveredMu": 1525.265537141406,
       "exportMu": 0,
       "rules": [
        {
@@ -1151,8 +1151,8 @@
         "target": 0.9,
         "basis": "block",
         "achieved": 0,
-        "hoursMet": 0.9140410958904109,
-        "shortfallMu": 73.82171903567381,
+        "hoursMet": 0.9126712328767124,
+        "shortfallMu": 74.63972315856049,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -1161,14 +1161,14 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.24349019352871643,
+        "achieved": 0.27345142125274025,
         "hoursMet": 0.9797945205479452,
-        "shortfallMu": 2.4967621058411313,
+        "shortfallMu": 2.5366264051572576,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 76.31848114151495
+      "blockShortfallMu": 77.17634956371774
      }
     ],
     "dfrPricePerPoint": 0,
@@ -1182,247 +1182,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 20.67,
+    "seconds": 19.17,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 1752000,
-      "deliveredMwh": 1581523.5191904441,
+      "deliveredMwh": 1580704.557466844,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 51928.33597204506
+      "blockShortfallMwh": 52662.8927487966
      },
      {
       "year": 2,
       "demandMwh": 1752000,
-      "deliveredMwh": 1579282.7375856987,
+      "deliveredMwh": 1578394.5982866175,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 52944.59202077297
+      "blockShortfallMwh": 53684.286782751646
      },
      {
       "year": 3,
       "demandMwh": 1752000,
-      "deliveredMwh": 1577041.9559809533,
+      "deliveredMwh": 1576084.6391063908,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 53960.848069500884
+      "blockShortfallMwh": 54705.68081670669
      },
      {
       "year": 4,
       "demandMwh": 1752000,
-      "deliveredMwh": 1574801.1743762079,
+      "deliveredMwh": 1573774.6799261642,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 54977.104118228795
+      "blockShortfallMwh": 55727.07485066174
      },
      {
       "year": 5,
       "demandMwh": 1752000,
-      "deliveredMwh": 1572560.3927714627,
+      "deliveredMwh": 1571464.7207459377,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 55993.36016695671
+      "blockShortfallMwh": 56748.46888461679
      },
      {
       "year": 6,
       "demandMwh": 1752000,
-      "deliveredMwh": 1570319.611166717,
+      "deliveredMwh": 1569154.7615657111,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 57009.61621568462
+      "blockShortfallMwh": 57769.86291857184
      },
      {
       "year": 7,
       "demandMwh": 1752000,
-      "deliveredMwh": 1568078.8295619716,
+      "deliveredMwh": 1566844.8023854846,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 58025.87226441253
+      "blockShortfallMwh": 58791.256952526885
      },
      {
       "year": 8,
       "demandMwh": 1752000,
-      "deliveredMwh": 1565838.0479572262,
+      "deliveredMwh": 1564534.8432052578,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 59042.12831314044
+      "blockShortfallMwh": 59812.65098648193
      },
      {
       "year": 9,
       "demandMwh": 1752000,
-      "deliveredMwh": 1563597.266352481,
+      "deliveredMwh": 1562224.8840250315,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 60058.38436186836
+      "blockShortfallMwh": 60834.045020436984
      },
      {
       "year": 10,
       "demandMwh": 1752000,
-      "deliveredMwh": 1561356.4847477356,
+      "deliveredMwh": 1559914.9248448047,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 61074.640410596265
+      "blockShortfallMwh": 61855.43905439203
      },
      {
       "year": 11,
       "demandMwh": 1752000,
-      "deliveredMwh": 1559115.70314299,
+      "deliveredMwh": 1557604.9656645781,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 62090.896459324176
+      "blockShortfallMwh": 62876.83308834707
      },
      {
       "year": 12,
       "demandMwh": 1752000,
-      "deliveredMwh": 1556874.9215382447,
+      "deliveredMwh": 1555295.0064843516,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 63107.152508052095
+      "blockShortfallMwh": 63898.22712230212
      },
      {
       "year": 13,
       "demandMwh": 1752000,
-      "deliveredMwh": 1554634.1399334993,
+      "deliveredMwh": 1552985.047304125,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 64123.40855678001
+      "blockShortfallMwh": 64919.62115625717
      },
      {
       "year": 14,
       "demandMwh": 1752000,
-      "deliveredMwh": 1552393.3583287538,
+      "deliveredMwh": 1550675.0881238983,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 65139.66460550791
+      "blockShortfallMwh": 65941.01519021222
      },
      {
       "year": 15,
       "demandMwh": 1752000,
-      "deliveredMwh": 1550152.5767240084,
+      "deliveredMwh": 1548365.1289436717,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 66155.92065423583
+      "blockShortfallMwh": 66962.40922416726
      },
      {
       "year": 16,
       "demandMwh": 1752000,
-      "deliveredMwh": 1547911.795119263,
+      "deliveredMwh": 1546055.1697634452,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 67172.17670296374
+      "blockShortfallMwh": 67983.80325812231
      },
      {
       "year": 17,
       "demandMwh": 1752000,
-      "deliveredMwh": 1545671.0135145176,
+      "deliveredMwh": 1543745.2105832186,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 68188.43275169165
+      "blockShortfallMwh": 69005.19729207736
      },
      {
       "year": 18,
       "demandMwh": 1752000,
-      "deliveredMwh": 1543430.2319097721,
+      "deliveredMwh": 1541435.2514029918,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 69204.68880041956
+      "blockShortfallMwh": 70026.5913260324
      },
      {
       "year": 19,
       "demandMwh": 1752000,
-      "deliveredMwh": 1541189.450305027,
+      "deliveredMwh": 1539125.2922227653,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 70220.94484914748
+      "blockShortfallMwh": 71047.98535998746
      },
      {
       "year": 20,
       "demandMwh": 1752000,
-      "deliveredMwh": 1538948.6687002815,
+      "deliveredMwh": 1536815.3330425387,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 71237.20089787539
+      "blockShortfallMwh": 72069.37939394251
      },
      {
       "year": 21,
       "demandMwh": 1752000,
-      "deliveredMwh": 1536707.887095536,
+      "deliveredMwh": 1534505.3738623122,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 72253.4569466033
+      "blockShortfallMwh": 73090.77342789755
      },
      {
       "year": 22,
       "demandMwh": 1752000,
-      "deliveredMwh": 1534467.1054907904,
+      "deliveredMwh": 1532195.4146820856,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 73269.71299533121
+      "blockShortfallMwh": 74112.1674618526
      },
      {
       "year": 23,
       "demandMwh": 1752000,
-      "deliveredMwh": 1532226.3238860453,
+      "deliveredMwh": 1529885.455501859,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 74285.96904405912
+      "blockShortfallMwh": 75133.56149580765
      },
      {
       "year": 24,
       "demandMwh": 1752000,
-      "deliveredMwh": 1529985.5422812996,
+      "deliveredMwh": 1527575.4963216323,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 75302.22509278703
+      "blockShortfallMwh": 76154.9555297627
      },
      {
       "year": 25,
       "demandMwh": 1752000,
-      "deliveredMwh": 1527744.7606765544,
+      "deliveredMwh": 1525265.5371414057,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 76318.48114151495
+      "blockShortfallMwh": 77176.34956371774
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹159.53 cr ₹9.68 lakh × 911 MW solar + ₹13.68 lakh × 0 MW wind + ₹2.40 lakh × 2,973 MWh PERFORMANCE BANK GUARANTEE ₹398.82 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,595.28 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹163.81 cr ₹9.68 lakh × 940 MW solar + ₹13.68 lakh × 0 MW wind + ₹2.40 lakh × 3,034 MWh PERFORMANCE BANK GUARANTEE ₹409.52 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,638.10 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 8.001,
+    "bid_tariff": 8.222,
     "equity_irr": 14.0,
     "project_irr": 9.96,
-    "text": "BID TARIFF ₹8.001/kWh HiGHS screening ₹7.995 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.16 average 1.55 PROJECT COST ₹7,572 cr ₹37.86 cr per contracted MW · LCOE ₹6.578/kWh at 10.0% YEAR-1 SUPPLY 1,582 MU 90.3% of contracted YEAR-1 OPERATING COST ₹94 cr O&M and insurance"
+    "text": "BID TARIFF ₹8.222/kWh HiGHS screening ₹8.216 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.16 average 1.55 PROJECT COST ₹7,771 cr ₹38.86 cr per contracted MW · LCOE ₹6.754/kWh at 10.0% YEAR-1 SUPPLY 1,581 MU 90.2% of contracted YEAR-1 OPERATING COST ₹96 cr O&M and insurance"
    },
    "workbook": "models/SECI_S4_financial_model.xlsx"
   },
@@ -1435,96 +1435,96 @@
    "shortfall": "penalty",
    "wind": true,
    "why": "The most one bidder may offer (RfS 5.1).",
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 6,000 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from th",
-   "seconds": 47.7,
-   "sizes_text": "SOLAR 1,276 MW 2.55 × contracted WIND 702 MW 1.40 × contracted BATTERY 1,054 MW / 4,216 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.857/kWh no design below ₹6.857",
-   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 86.3% of hours 84.3% of hours Off-peak floor (every block) 70.0% 99.1% of hours 99.0% of hours",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 6,000 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
+   "seconds": 49.6,
+   "sizes_text": "SOLAR 1,308 MWac 1,831 MWp (DC:AC 1.40) · 2.62 × contracted WIND 732 MW 1.46 × contracted BATTERY 1,057 MW / 4,229 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
+   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.9% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 98.9% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 1276.3570579652207,
-     "windMw": 702.4988869862095,
-     "bessMw": 1054.0030331798353,
-     "bessMwh": 4216.012132719341
+     "solarMw": 1307.7878579954233,
+     "windMw": 732.3155483158617,
+     "bessMw": 1057.3334651963064,
+     "bessMwh": 4229.333860785226
     },
-    "tariff": 6.857349180091002,
-    "lowerBound": 6.857340569353567,
+    "tariff": 7.037582326856201,
+    "lowerBound": 7.037574020905165,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 6.367107059201345,
-      "lowerBound": 6.084749587439192,
+      "tariff": 6.570929330281631,
+      "lowerBound": 6.192847202278705,
       "simplexIterations": 0,
-      "ipmIterations": 38,
-      "seconds": 29.94,
+      "ipmIterations": 36,
+      "seconds": 28.31,
       "sizes": {
-       "solarMw": 1006.2312829449518,
-       "windMw": 826.6488213404621,
-       "bessMw": 677.7808275155468,
-       "bessMwh": 2711.123310062187
+       "solarMw": 991.903633315382,
+       "windMw": 857.7520472206888,
+       "bessMw": 625.3954990283299,
+       "bessMwh": 2501.5819961133197
       }
      },
      {
       "iteration": 2,
-      "lambda": 6.367107059201345,
-      "tariff": 6.879620705381262,
-      "lowerBound": 6.7460338360202545,
-      "simplexIterations": 4479,
+      "lambda": 6.570929330281631,
+      "tariff": 7.041874688036896,
+      "lowerBound": 6.92067422352467,
+      "simplexIterations": 6155,
       "ipmIterations": 0,
-      "seconds": 9.15,
+      "seconds": 12.98,
       "sizes": {
-       "solarMw": 1138.9986179478879,
-       "windMw": 766.2405230322024,
-       "bessMw": 863.4181168649468,
-       "bessMwh": 3453.672467459787
+       "solarMw": 1177.99476684538,
+       "windMw": 788.533013670084,
+       "bessMw": 887.4636508747107,
+       "bessMwh": 3549.8546034988426
       }
      },
      {
       "iteration": 3,
-      "lambda": 6.879620705381262,
-      "tariff": 6.843313187266901,
-      "lowerBound": 6.831073877118191,
-      "simplexIterations": 3032,
+      "lambda": 7.041874688036896,
+      "tariff": 7.023156689808674,
+      "lowerBound": 7.0169158933900615,
+      "simplexIterations": 2665,
       "ipmIterations": 0,
-      "seconds": 5.95,
+      "seconds": 5.41,
       "sizes": {
-       "solarMw": 1279.3921806103688,
-       "windMw": 701.9131324172065,
-       "bessMw": 1057.9252996358118,
-       "bessMwh": 4231.701198543247
+       "solarMw": 1313.6878139396817,
+       "windMw": 728.9191068096674,
+       "bessMw": 1066.2722426726516,
+       "bessMwh": 4265.088970690606
       }
      },
      {
       "iteration": 4,
-      "lambda": 6.843313187266901,
-      "tariff": 6.857374910174485,
-      "lowerBound": 6.85454803838536,
-      "simplexIterations": 127,
+      "lambda": 7.023156689808674,
+      "tariff": 7.037607542310019,
+      "lowerBound": 7.034653652450677,
+      "simplexIterations": 257,
       "ipmIterations": 0,
-      "seconds": 0.32,
+      "seconds": 0.64,
       "sizes": {
-       "solarMw": 1272.7041057414156,
-       "windMw": 703.203877757954,
-       "bessMw": 1049.262932718157,
-       "bessMwh": 4197.051730872628
+       "solarMw": 1301.6052299531966,
+       "windMw": 736.8117784752646,
+       "bessMw": 1048.7235249452144,
+       "bessMwh": 4194.894099780858
       }
      },
      {
       "iteration": 5,
-      "lambda": 6.857374910174485,
-      "tariff": 6.857349180091002,
-      "lowerBound": 6.857340569353567,
-      "simplexIterations": 76,
+      "lambda": 7.037607542310019,
+      "tariff": 7.037582326856201,
+      "lowerBound": 7.037574020905165,
+      "simplexIterations": 149,
       "ipmIterations": 0,
-      "seconds": 0.21,
+      "seconds": 0.36,
       "sizes": {
-       "solarMw": 1276.3570579652207,
-       "windMw": 702.4988869862095,
-       "bessMw": 1054.0030331798353,
-       "bessMwh": 4216.012132719341
+       "solarMw": 1307.7878579954233,
+       "windMw": 732.3155483158617,
+       "bessMw": 1057.3334651963064,
+       "bessMwh": 4229.333860785226
       }
      }
     ],
@@ -1535,9 +1535,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.8901058857975596,
-      "minMonthlyDfr": 0.7821319650584013,
-      "deliveredMu": 3898.663779793311,
+      "dfr": 0.8888173342353546,
+      "minMonthlyDfr": 0.7791963435925381,
+      "deliveredMu": 3893.019923950853,
       "exportMu": 0,
       "rules": [
        {
@@ -1545,9 +1545,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.00952447990975903,
-        "hoursMet": 0.8625,
-        "shortfallMu": 234.04149113277353,
+        "achieved": 0.009232856070391437,
+        "hoursMet": 0.8594178082191781,
+        "shortfallMu": 240.23759558204262,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -1556,20 +1556,20 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.24527560244246172,
-        "hoursMet": 0.9914383561643836,
-        "shortfallMu": 0.9753237426175488,
+        "achieved": 0.5492989592482576,
+        "hoursMet": 0.9928082191780822,
+        "shortfallMu": 0.40957608345047436,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 235.01681487539105
+      "blockShortfallMu": 240.6471716654931
      },
      {
       "year": 25,
-      "dfr": 0.8648625224032229,
-      "minMonthlyDfr": 0.7165774072178595,
-      "deliveredMu": 3788.0978481261163,
+      "dfr": 0.8637172314497195,
+      "minMonthlyDfr": 0.7139029349629477,
+      "deliveredMu": 3783.0814737497712,
       "exportMu": 0,
       "rules": [
        {
@@ -1577,9 +1577,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.00667373942636899,
-        "hoursMet": 0.8428082191780822,
-        "shortfallMu": 267.11779459271065,
+        "achieved": 0.006791468881207598,
+        "hoursMet": 0.8383561643835616,
+        "shortfallMu": 273.01975732621486,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -1588,14 +1588,14 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.14888319227631222,
-        "hoursMet": 0.9900684931506849,
-        "shortfallMu": 2.0685283643728796,
+        "achieved": 0.2271606231231706,
+        "hoursMet": 0.9893835616438356,
+        "shortfallMu": 1.452043759750446,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 269.1863229570836
+      "blockShortfallMu": 274.47180108596524
      }
     ],
     "dfrPricePerPoint": 0,
@@ -1609,247 +1609,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 45.66,
+    "seconds": 47.8,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 4380000,
-      "deliveredMwh": 3898663.779793311,
+      "deliveredMwh": 3893019.923950853,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 235016.81487539105
+      "blockShortfallMwh": 240647.17166549308
      },
      {
       "year": 2,
       "demandMwh": 4380000,
-      "deliveredMwh": 3894056.8659738447,
+      "deliveredMwh": 3888439.1551924744,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 236440.5443787949
+      "blockShortfallMwh": 242056.53122467943
      },
      {
       "year": 3,
       "demandMwh": 4380000,
-      "deliveredMwh": 3889449.952154378,
+      "deliveredMwh": 3883858.386434096,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 237864.27388219876
+      "blockShortfallMwh": 243465.89078386576
      },
      {
       "year": 4,
       "demandMwh": 4380000,
-      "deliveredMwh": 3884843.0383349117,
+      "deliveredMwh": 3879277.617675718,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 239288.0033856026
+      "blockShortfallMwh": 244875.2503430521
      },
      {
       "year": 5,
       "demandMwh": 4380000,
-      "deliveredMwh": 3880236.124515445,
+      "deliveredMwh": 3874696.8489173395,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 240711.73288900647
+      "blockShortfallMwh": 246284.60990223844
      },
      {
       "year": 6,
       "demandMwh": 4380000,
-      "deliveredMwh": 3875629.2106959783,
+      "deliveredMwh": 3870116.080158961,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 242135.46239241032
+      "blockShortfallMwh": 247693.96946142477
      },
      {
       "year": 7,
       "demandMwh": 4380000,
-      "deliveredMwh": 3871022.296876512,
+      "deliveredMwh": 3865535.3114005825,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 243559.19189581418
+      "blockShortfallMwh": 249103.32902061113
      },
      {
       "year": 8,
       "demandMwh": 4380000,
-      "deliveredMwh": 3866415.3830570453,
+      "deliveredMwh": 3860954.542642204,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 244982.92139921803
+      "blockShortfallMwh": 250512.68857979745
      },
      {
       "year": 9,
       "demandMwh": 4380000,
-      "deliveredMwh": 3861808.4692375795,
+      "deliveredMwh": 3856373.773883826,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 246406.6509026219
+      "blockShortfallMwh": 251922.0481389838
      },
      {
       "year": 10,
       "demandMwh": 4380000,
-      "deliveredMwh": 3857201.555418113,
+      "deliveredMwh": 3851793.005125447,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 247830.38040602574
+      "blockShortfallMwh": 253331.40769817014
      },
      {
       "year": 11,
       "demandMwh": 4380000,
-      "deliveredMwh": 3852594.641598646,
+      "deliveredMwh": 3847212.2363670687,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 249254.1099094296
+      "blockShortfallMwh": 254740.76725735646
      },
      {
       "year": 12,
       "demandMwh": 4380000,
-      "deliveredMwh": 3847987.72777918,
+      "deliveredMwh": 3842631.4676086907,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 250677.83941283348
+      "blockShortfallMwh": 256150.12681654285
      },
      {
       "year": 13,
       "demandMwh": 4380000,
-      "deliveredMwh": 3843380.813959713,
+      "deliveredMwh": 3838050.6988503123,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 252101.56891623733
+      "blockShortfallMwh": 257559.48637572915
      },
      {
       "year": 14,
       "demandMwh": 4380000,
-      "deliveredMwh": 3838773.900140247,
+      "deliveredMwh": 3833469.930091934,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 253525.29841964119
+      "blockShortfallMwh": 258968.8459349155
      },
      {
       "year": 15,
       "demandMwh": 4380000,
-      "deliveredMwh": 3834166.98632078,
+      "deliveredMwh": 3828889.1613335554,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 254949.02792304504
+      "blockShortfallMwh": 260378.20549410183
      },
      {
       "year": 16,
       "demandMwh": 4380000,
-      "deliveredMwh": 3829560.072501314,
+      "deliveredMwh": 3824308.3925751774,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 256372.7574264489
+      "blockShortfallMwh": 261787.56505328818
      },
      {
       "year": 17,
       "demandMwh": 4380000,
-      "deliveredMwh": 3824953.1586818476,
+      "deliveredMwh": 3819727.623816799,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 257796.48692985275
+      "blockShortfallMwh": 263196.9246124745
      },
      {
       "year": 18,
       "demandMwh": 4380000,
-      "deliveredMwh": 3820346.244862381,
+      "deliveredMwh": 3815146.8550584204,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 259220.2164332566
+      "blockShortfallMwh": 264606.28417166084
      },
      {
       "year": 19,
       "demandMwh": 4380000,
-      "deliveredMwh": 3815739.3310429147,
+      "deliveredMwh": 3810566.086300042,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 260643.94593666046
+      "blockShortfallMwh": 266015.6437308472
      },
      {
       "year": 20,
       "demandMwh": 4380000,
-      "deliveredMwh": 3811132.4172234484,
+      "deliveredMwh": 3805985.3175416635,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 262067.6754400643
+      "blockShortfallMwh": 267425.00329003355
      },
      {
       "year": 21,
       "demandMwh": 4380000,
-      "deliveredMwh": 3806525.503403981,
+      "deliveredMwh": 3801404.548783285,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 263491.40494346817
+      "blockShortfallMwh": 268834.3628492199
      },
      {
       "year": 22,
       "demandMwh": 4380000,
-      "deliveredMwh": 3801918.589584515,
+      "deliveredMwh": 3796823.7800249066,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 264915.134446872
+      "blockShortfallMwh": 270243.7224084062
      },
      {
       "year": 23,
       "demandMwh": 4380000,
-      "deliveredMwh": 3797311.6757650487,
+      "deliveredMwh": 3792243.0112665286,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 266338.8639502759
+      "blockShortfallMwh": 271653.0819675926
      },
      {
       "year": 24,
       "demandMwh": 4380000,
-      "deliveredMwh": 3792704.761945582,
+      "deliveredMwh": 3787662.24250815,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 267762.5934536797
+      "blockShortfallMwh": 273062.4415267789
      },
      {
       "year": 25,
       "demandMwh": 4380000,
-      "deliveredMwh": 3788097.8481261157,
+      "deliveredMwh": 3783081.4737497717,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 269186.3229570836
+      "blockShortfallMwh": 274471.80108596524
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹320.84 cr ₹9.68 lakh × 1,276 MW solar + ₹13.68 lakh × 702 MW wind + ₹2.40 lakh × 4,216 MWh PERFORMANCE BANK GUARANTEE ₹802.09 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹3,208.38 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹328.28 cr ₹9.68 lakh × 1,308 MW solar + ₹13.68 lakh × 732 MW wind + ₹2.40 lakh × 4,229 MWh PERFORMANCE BANK GUARANTEE ₹820.70 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹3,282.79 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 6.863,
+    "bid_tariff": 7.043,
     "equity_irr": 14.0,
     "project_irr": 9.96,
-    "text": "BID TARIFF ₹6.863/kWh HiGHS screening ₹6.857 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹15,467 cr ₹30.93 cr per contracted MW · LCOE ₹5.406/kWh at 10.0% YEAR-1 SUPPLY 3,899 MU 89.0% of contracted YEAR-1 OPERATING COST ₹209 cr O&M and insurance"
+    "text": "BID TARIFF ₹7.043/kWh HiGHS screening ₹7.038 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹15,820 cr ₹31.64 cr per contracted MW · LCOE ₹5.534/kWh at 10.0% YEAR-1 SUPPLY 3,893 MU 88.9% of contracted YEAR-1 OPERATING COST ₹214 cr O&M and insurance"
    },
    "workbook": "models/SECI_S5_financial_model.xlsx"
   },
@@ -1862,96 +1862,96 @@
    "shortfall": "penalty",
    "wind": true,
    "why": "The least one bidder may offer after Amendment-01 (was 100 MW).",
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 600 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from the ",
-   "seconds": 47.7,
-   "sizes_text": "SOLAR 128 MW 2.55 × contracted WIND 70 MW 1.40 × contracted BATTERY 105 MW / 422 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.857/kWh no design below ₹6.857",
-   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 86.3% of hours 84.3% of hours Off-peak floor (every block) 70.0% 99.2% of hours 99.2% of hours",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 600 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX P",
+   "seconds": 50.1,
+   "sizes_text": "SOLAR 131 MWac 183 MWp (DC:AC 1.40) · 2.62 × contracted WIND 73 MW 1.46 × contracted BATTERY 106 MW / 423 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
+   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.8% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 99.1% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 127.63570579650927,
-     "windMw": 70.2498886986311,
-     "bessMw": 105.40030331796672,
-     "bessMwh": 421.60121327186687
+     "solarMw": 130.77878579954532,
+     "windMw": 73.23155483158249,
+     "bessMw": 105.7333465196337,
+     "bessMwh": 422.9333860785348
     },
-    "tariff": 6.857349180091029,
-    "lowerBound": 6.857340569353594,
+    "tariff": 7.037582326856202,
+    "lowerBound": 7.037574020905167,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 6.367107059201351,
-      "lowerBound": 6.084749587439196,
+      "tariff": 6.570929330281635,
+      "lowerBound": 6.192847202278708,
       "simplexIterations": 0,
-      "ipmIterations": 37,
-      "seconds": 31.53,
+      "ipmIterations": 36,
+      "seconds": 28.55,
       "sizes": {
-       "solarMw": 100.62312829449523,
-       "windMw": 82.66488213404614,
-       "bessMw": 67.77808275155475,
-       "bessMwh": 271.112331006219
+       "solarMw": 99.1903633315382,
+       "windMw": 85.77520472206889,
+       "bessMw": 62.539549902833,
+       "bessMwh": 250.158199611332
       }
      },
      {
       "iteration": 2,
-      "lambda": 6.367107059201351,
-      "tariff": 6.879620705381269,
-      "lowerBound": 6.746033836020261,
-      "simplexIterations": 3850,
+      "lambda": 6.570929330281635,
+      "tariff": 7.041874688036881,
+      "lowerBound": 6.920674223524661,
+      "simplexIterations": 6124,
       "ipmIterations": 0,
-      "seconds": 8.04,
+      "seconds": 13.06,
       "sizes": {
-       "solarMw": 113.89986179478845,
-       "windMw": 76.62405230322034,
-       "bessMw": 86.3418116864945,
-       "bessMwh": 345.367246745978
+       "solarMw": 117.7994766845371,
+       "windMw": 78.85330136700873,
+       "bessMw": 88.74636508747105,
+       "bessMwh": 354.9854603498842
       }
      },
      {
       "iteration": 3,
-      "lambda": 6.879620705381269,
-      "tariff": 6.843313187266882,
-      "lowerBound": 6.831073877118165,
-      "simplexIterations": 2751,
+      "lambda": 7.041874688036881,
+      "tariff": 7.023156689808659,
+      "lowerBound": 7.016915893390046,
+      "simplexIterations": 2750,
       "ipmIterations": 0,
-      "seconds": 5.6,
+      "seconds": 5.67,
       "sizes": {
-       "solarMw": 127.93921806103592,
-       "windMw": 70.19131324172034,
-       "bessMw": 105.79252996357941,
-       "bessMwh": 423.17011985431765
+       "solarMw": 131.36878139396782,
+       "windMw": 72.89191068096709,
+       "bessMw": 106.62722426726454,
+       "bessMwh": 426.50889706905815
       }
      },
      {
       "iteration": 4,
-      "lambda": 6.843313187266882,
-      "tariff": 6.857374910174514,
-      "lowerBound": 6.854548038385379,
-      "simplexIterations": 124,
+      "lambda": 7.023156689808659,
+      "tariff": 7.037607542310019,
+      "lowerBound": 7.034653652450673,
+      "simplexIterations": 199,
       "ipmIterations": 0,
-      "seconds": 0.35,
+      "seconds": 0.52,
       "sizes": {
-       "solarMw": 127.27041057414242,
-       "windMw": 70.32038777580468,
-       "bessMw": 104.92629327180454,
-       "bessMwh": 419.70517308721816
+       "solarMw": 130.16052299531938,
+       "windMw": 73.68117784752668,
+       "bessMw": 104.8723524945213,
+       "bessMwh": 419.4894099780852
       }
      },
      {
       "iteration": 5,
-      "lambda": 6.857374910174514,
-      "tariff": 6.857349180091029,
-      "lowerBound": 6.857340569353594,
-      "simplexIterations": 60,
+      "lambda": 7.037607542310019,
+      "tariff": 7.037582326856202,
+      "lowerBound": 7.037574020905167,
+      "simplexIterations": 105,
       "ipmIterations": 0,
-      "seconds": 0.21,
+      "seconds": 0.31,
       "sizes": {
-       "solarMw": 127.63570579650927,
-       "windMw": 70.2498886986311,
-       "bessMw": 105.40030331796672,
-       "bessMwh": 421.60121327186687
+       "solarMw": 130.77878579954532,
+       "windMw": 73.23155483158249,
+       "bessMw": 105.7333465196337,
+       "bessMwh": 422.9333860785348
       }
      }
     ],
@@ -1962,9 +1962,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.8901058857975404,
-      "minMonthlyDfr": 0.7821319650583668,
-      "deliveredMu": 389.8663779793227,
+      "dfr": 0.8888173342353559,
+      "minMonthlyDfr": 0.7791963435925419,
+      "deliveredMu": 389.3019923950858,
       "exportMu": 0,
       "rules": [
        {
@@ -1972,9 +1972,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.006673739426369955,
-        "hoursMet": 0.8625,
-        "shortfallMu": 23.430016964500144,
+        "achieved": 0.009232856070390974,
+        "hoursMet": 0.8580479452054794,
+        "shortfallMu": 23.985722788240835,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -1983,20 +1983,20 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.24527560244245514,
-        "hoursMet": 0.9921232876712329,
-        "shortfallMu": 0.07166452304427127,
+        "achieved": 0.24661662163628545,
+        "hoursMet": 0.9928082191780822,
+        "shortfallMu": 0.0789943783082376,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 23.50168148754441
+      "blockShortfallMu": 24.064717166549077
      },
      {
       "year": 25,
-      "dfr": 0.8648625224032038,
-      "minMonthlyDfr": 0.7187522614621438,
-      "deliveredMu": 378.80978481260325,
+      "dfr": 0.8637172314497154,
+      "minMonthlyDfr": 0.713902934962951,
+      "deliveredMu": 378.30814737497525,
       "exportMu": 0,
       "rules": [
        {
@@ -2004,9 +2004,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.006673739426369955,
-        "hoursMet": 0.8433219178082192,
-        "shortfallMu": 26.83224097152613,
+        "achieved": 0.009232856070390974,
+        "hoursMet": 0.8381849315068494,
+        "shortfallMu": 27.343677519069818,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -2015,14 +2015,14 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.2258243520247234,
-        "hoursMet": 0.9921232876712329,
-        "shortfallMu": 0.0863913241874473,
+        "achieved": 0.32538590849832066,
+        "hoursMet": 0.9907534246575342,
+        "shortfallMu": 0.10350258952654298,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 26.91863229571358
+      "blockShortfallMu": 27.447180108596363
      }
     ],
     "dfrPricePerPoint": 0,
@@ -2036,247 +2036,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 45.83,
+    "seconds": 48.19,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 438000,
-      "deliveredMwh": 389866.3779793227,
+      "deliveredMwh": 389301.9923950858,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 23501.68148754441
+      "blockShortfallMwh": 24064.717166549075
      },
      {
       "year": 2,
       "demandMwh": 438000,
-      "deliveredMwh": 389405.6865973761,
+      "deliveredMwh": 388843.9155192479,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 23644.05443788479
+      "blockShortfallMwh": 24205.653122467713
      },
      {
       "year": 3,
       "demandMwh": 438000,
-      "deliveredMwh": 388944.9952154294,
+      "deliveredMwh": 388385.8386434099,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 23786.427388225173
+      "blockShortfallMwh": 24346.589078386347
      },
      {
       "year": 4,
       "demandMwh": 438000,
-      "deliveredMwh": 388484.3038334828,
+      "deliveredMwh": 387927.76176757197,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 23928.800338565557
+      "blockShortfallMwh": 24487.525034304985
      },
      {
       "year": 5,
       "demandMwh": 438000,
-      "deliveredMwh": 388023.6124515361,
+      "deliveredMwh": 387469.68489173404,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24071.17328890594
+      "blockShortfallMwh": 24628.460990223623
      },
      {
       "year": 6,
       "demandMwh": 438000,
-      "deliveredMwh": 387562.92106958944,
+      "deliveredMwh": 387011.6080158961,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24213.54623924632
+      "blockShortfallMwh": 24769.39694614226
      },
      {
       "year": 7,
       "demandMwh": 438000,
-      "deliveredMwh": 387102.22968764283,
+      "deliveredMwh": 386553.5311400582,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24355.919189586704
+      "blockShortfallMwh": 24910.332902060898
      },
      {
       "year": 8,
       "demandMwh": 438000,
-      "deliveredMwh": 386641.53830569616,
+      "deliveredMwh": 386095.4542642202,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24498.292139927085
+      "blockShortfallMwh": 25051.268857979532
      },
      {
       "year": 9,
       "demandMwh": 438000,
-      "deliveredMwh": 386180.84692374954,
+      "deliveredMwh": 385637.37738838233,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24640.665090267466
+      "blockShortfallMwh": 25192.204813898174
      },
      {
       "year": 10,
       "demandMwh": 438000,
-      "deliveredMwh": 385720.15554180293,
+      "deliveredMwh": 385179.30051254435,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24783.038040607848
+      "blockShortfallMwh": 25333.140769816808
      },
      {
       "year": 11,
       "demandMwh": 438000,
-      "deliveredMwh": 385259.46415985626,
+      "deliveredMwh": 384721.2236367064,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 24925.41099094823
+      "blockShortfallMwh": 25474.076725735442
      },
      {
       "year": 12,
       "demandMwh": 438000,
-      "deliveredMwh": 384798.77277790965,
+      "deliveredMwh": 384263.1467608685,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25067.783941288613
+      "blockShortfallMwh": 25615.012681654083
      },
      {
       "year": 13,
       "demandMwh": 438000,
-      "deliveredMwh": 384338.081395963,
+      "deliveredMwh": 383805.0698850305,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25210.156891628994
+      "blockShortfallMwh": 25755.94863757272
      },
      {
       "year": 14,
       "demandMwh": 438000,
-      "deliveredMwh": 383877.3900140163,
+      "deliveredMwh": 383346.9930091926,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25352.529841969375
+      "blockShortfallMwh": 25896.884593491355
      },
      {
       "year": 15,
       "demandMwh": 438000,
-      "deliveredMwh": 383416.6986320697,
+      "deliveredMwh": 382888.91613335465,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25494.90279230976
+      "blockShortfallMwh": 26037.820549409993
      },
      {
       "year": 16,
       "demandMwh": 438000,
-      "deliveredMwh": 382956.007250123,
+      "deliveredMwh": 382430.8392575167,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25637.27574265014
+      "blockShortfallMwh": 26178.75650532863
      },
      {
       "year": 17,
       "demandMwh": 438000,
-      "deliveredMwh": 382495.3158681764,
+      "deliveredMwh": 381972.7623816788,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25779.648692990522
+      "blockShortfallMwh": 26319.69246124727
      },
      {
       "year": 18,
       "demandMwh": 438000,
-      "deliveredMwh": 382034.62448622973,
+      "deliveredMwh": 381514.6855058408,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 25922.021643330907
+      "blockShortfallMwh": 26460.628417165906
      },
      {
       "year": 19,
       "demandMwh": 438000,
-      "deliveredMwh": 381573.9331042832,
+      "deliveredMwh": 381056.6086300029,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26064.394593671284
+      "blockShortfallMwh": 26601.56437308454
      },
      {
       "year": 20,
       "demandMwh": 438000,
-      "deliveredMwh": 381113.2417223365,
+      "deliveredMwh": 380598.53175416496,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26206.767544011665
+      "blockShortfallMwh": 26742.50032900318
      },
      {
       "year": 21,
       "demandMwh": 438000,
-      "deliveredMwh": 380652.55034038983,
+      "deliveredMwh": 380140.45487832703,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26349.14049435205
+      "blockShortfallMwh": 26883.436284921812
      },
      {
       "year": 22,
       "demandMwh": 438000,
-      "deliveredMwh": 380191.8589584432,
+      "deliveredMwh": 379682.37800248904,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26491.51344469243
+      "blockShortfallMwh": 27024.37224084045
      },
      {
       "year": 23,
       "demandMwh": 438000,
-      "deliveredMwh": 379731.16757649655,
+      "deliveredMwh": 379224.3011266511,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26633.886395032812
+      "blockShortfallMwh": 27165.30819675909
      },
      {
       "year": 24,
       "demandMwh": 438000,
-      "deliveredMwh": 379270.47619454993,
+      "deliveredMwh": 378766.2242508132,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26776.259345373197
+      "blockShortfallMwh": 27306.244152677726
      },
      {
       "year": 25,
       "demandMwh": 438000,
-      "deliveredMwh": 378809.78481260326,
+      "deliveredMwh": 378308.14737497526,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 26918.632295713578
+      "blockShortfallMwh": 27447.180108596363
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹32.08 cr ₹9.68 lakh × 128 MW solar + ₹13.68 lakh × 70 MW wind + ₹2.40 lakh × 422 MWh PERFORMANCE BANK GUARANTEE ₹80.21 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹320.84 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹32.83 cr ₹9.68 lakh × 131 MW solar + ₹13.68 lakh × 73 MW wind + ₹2.40 lakh × 423 MWh PERFORMANCE BANK GUARANTEE ₹82.07 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹328.28 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 6.863,
+    "bid_tariff": 7.043,
     "equity_irr": 14.0,
     "project_irr": 9.96,
-    "text": "BID TARIFF ₹6.863/kWh HiGHS screening ₹6.857 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹1,547 cr ₹30.93 cr per contracted MW · LCOE ₹5.406/kWh at 10.0% YEAR-1 SUPPLY 390 MU 89.0% of contracted YEAR-1 OPERATING COST ₹21 cr O&M and insurance"
+    "text": "BID TARIFF ₹7.043/kWh HiGHS screening ₹7.038 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹1,582 cr ₹31.64 cr per contracted MW · LCOE ₹5.534/kWh at 10.0% YEAR-1 SUPPLY 389 MU 88.9% of contracted YEAR-1 OPERATING COST ₹21 cr O&M and insurance"
    },
    "workbook": "models/SECI_S6_financial_model.xlsx"
   },
@@ -2290,96 +2290,96 @@
    "wind": true,
    "why": "The bid filed in the forms: solar, wind and battery sized for whichever 6 Peak Hours are picked, a shortfall priced at 1.5 x tariff.",
    "bid": true,
-   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender DC:AC RATIO × Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX ₹ cr/MW Industry benchmark (CERC norms, 2025–26 market prices), not from th",
-   "seconds": 46.1,
-   "sizes_text": "SOLAR 511 MW 2.55 × contracted WIND 281 MW 1.40 × contracted BATTERY 422 MW / 1,686 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.857/kWh no design below ₹6.857",
-   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 86.4% of hours 84.5% of hours Off-peak floor (every block) 70.0% 99.3% of hours 99.1% of hours",
+   "sources_text": "SOLAR I HAVE IT Allowed by the tender Amendment-01 p. 1 OPTIMIZER SIZES IT Switch on to fix this size; the optimizer still sizes the other sources CAPACITY: OPTIMIZER MAY BUILD UP TO MWac Empty: up to 2,400 MW (12 × contracted) PARAMETERS CUF (AC) % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender · measured at: Inverter output (LV AC) (Losses to the billing meter) DC:AC RATIO MWp/MWac Industry benchmark (CERC norms, 2025–26 market prices), not from the tender ANNUAL DEGRADATION % Industry benchmark (CERC norms, 2025–26 market prices), not from the tender COSTS CAPEX",
+   "seconds": 50.7,
+   "sizes_text": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
+   "compliance_text": "SUPPLY FLOOR TARGET YEAR 1 YEAR 25 Peak Hours floor (every block) 90.0% 85.8% of hours 83.8% of hours Off-peak floor (every block) 70.0% 99.3% of hours 99.1% of hours",
    "lp": {
     "ok": true,
     "status": "Optimal",
     "stoppedEarly": false,
     "sizes": {
-     "solarMw": 510.542823186038,
-     "windMw": 280.9995547945182,
-     "bessMw": 421.6012132718809,
-     "bessMwh": 1686.4048530875236
+     "solarMw": 523.1151431981444,
+     "windMw": 292.92621932636683,
+     "bessMw": 422.93338607847454,
+     "bessMwh": 1691.7335443138982
     },
-    "tariff": 6.857349180091045,
-    "lowerBound": 6.857340569353607,
+    "tariff": 7.037582326856181,
+    "lowerBound": 7.037574020905137,
     "iterations": [
      {
       "iteration": 1,
       "lambda": 5.5,
-      "tariff": 6.367107059201352,
-      "lowerBound": 6.084749587439196,
+      "tariff": 6.570929330281635,
+      "lowerBound": 6.192847202278708,
       "simplexIterations": 0,
       "ipmIterations": 35,
-      "seconds": 29.43,
+      "seconds": 29.79,
       "sizes": {
-       "solarMw": 402.49251317798087,
-       "windMw": 330.6595285361846,
-       "bessMw": 271.1123310062188,
-       "bessMwh": 1084.4493240248753
+       "solarMw": 396.7614533261528,
+       "windMw": 343.1008188882755,
+       "bessMw": 250.158199611332,
+       "bessMwh": 1000.632798445328
       }
      },
      {
       "iteration": 2,
-      "lambda": 6.367107059201352,
-      "tariff": 6.879620705381268,
-      "lowerBound": 6.74603383602026,
-      "simplexIterations": 4103,
+      "lambda": 6.570929330281635,
+      "tariff": 7.041874688036879,
+      "lowerBound": 6.92067422352466,
+      "simplexIterations": 5916,
       "ipmIterations": 0,
-      "seconds": 8.51,
+      "seconds": 12.3,
       "sizes": {
-       "solarMw": 455.5994471791544,
-       "windMw": 306.4962092128806,
-       "bessMw": 345.36724674597866,
-       "bessMwh": 1381.4689869839146
+       "solarMw": 471.1979067381497,
+       "windMw": 315.4132054680343,
+       "bessMw": 354.98546034988465,
+       "bessMwh": 1419.9418413995386
       }
      },
      {
       "iteration": 3,
-      "lambda": 6.879620705381268,
-      "tariff": 6.843313187266886,
-      "lowerBound": 6.8310738771181665,
-      "simplexIterations": 2955,
+      "lambda": 7.041874688036879,
+      "tariff": 7.023156689808658,
+      "lowerBound": 7.016915893390046,
+      "simplexIterations": 2749,
       "ipmIterations": 0,
-      "seconds": 5.44,
+      "seconds": 5.88,
       "sizes": {
-       "solarMw": 511.7568722441478,
-       "windMw": 280.7652529668821,
-       "bessMw": 423.170119854326,
-       "bessMwh": 1692.680479417304
+       "solarMw": 525.4751255758711,
+       "windMw": 291.5676427238681,
+       "bessMw": 426.5088970690584,
+       "bessMwh": 1706.0355882762335
       }
      },
      {
       "iteration": 4,
-      "lambda": 6.843313187266886,
-      "tariff": 6.857374910174546,
-      "lowerBound": 6.854548038385405,
-      "simplexIterations": 136,
+      "lambda": 7.023156689808658,
+      "tariff": 7.037607542310024,
+      "lowerBound": 7.034653652450676,
+      "simplexIterations": 246,
       "ipmIterations": 0,
-      "seconds": 0.32,
+      "seconds": 0.56,
       "sizes": {
-       "solarMw": 509.081642296542,
-       "windMw": 281.2815511033273,
-       "bessMw": 419.7051730870973,
-       "bessMwh": 1678.8206923483892
+       "solarMw": 520.6420919812734,
+       "windMw": 294.72471139010844,
+       "bessMw": 419.4894099780793,
+       "bessMwh": 1677.9576399123173
       }
      },
      {
       "iteration": 5,
-      "lambda": 6.857374910174546,
-      "tariff": 6.857349180091045,
-      "lowerBound": 6.857340569353607,
-      "simplexIterations": 71,
+      "lambda": 7.037607542310024,
+      "tariff": 7.037582326856181,
+      "lowerBound": 7.037574020905137,
+      "simplexIterations": 120,
       "ipmIterations": 0,
-      "seconds": 0.21,
+      "seconds": 0.32,
       "sizes": {
-       "solarMw": 510.542823186038,
-       "windMw": 280.9995547945182,
-       "bessMw": 421.6012132718809,
-       "bessMwh": 1686.4048530875236
+       "solarMw": 523.1151431981444,
+       "windMw": 292.92621932636683,
+       "bessMw": 422.93338607847454,
+       "bessMwh": 1691.7335443138982
       }
      }
     ],
@@ -2390,9 +2390,9 @@
     "perYear": [
      {
       "year": 1,
-      "dfr": 0.8901058857975422,
-      "minMonthlyDfr": 0.7817608821138506,
-      "deliveredMu": 1559.465511917294,
+      "dfr": 0.8888173342353446,
+      "minMonthlyDfr": 0.7791963435925214,
+      "deliveredMu": 1557.2079695803234,
       "exportMu": 0,
       "rules": [
        {
@@ -2400,9 +2400,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.00907207062654102,
-        "hoursMet": 0.8635273972602739,
-        "shortfallMu": 93.82694921643916,
+        "achieved": 0.009232856070392136,
+        "hoursMet": 0.8575342465753425,
+        "shortfallMu": 96.11509104852368,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -2411,20 +2411,20 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.416249049824641,
-        "hoursMet": 0.9928082191780822,
-        "shortfallMu": 0.17977673373270825,
+        "achieved": 0.5492989592482626,
+        "hoursMet": 0.9931506849315068,
+        "shortfallMu": 0.14377761769400044,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 94.00672595017186
+      "blockShortfallMu": 96.25886866621768
      },
      {
       "year": 25,
-      "dfr": 0.8648625224031995,
-      "minMonthlyDfr": 0.7169881430876681,
-      "deliveredMu": 1515.2391392504055,
+      "dfr": 0.8637172314497117,
+      "minMonthlyDfr": 0.7126069406889118,
+      "deliveredMu": 1513.2325894998949,
       "exportMu": 0,
       "rules": [
        {
@@ -2432,9 +2432,9 @@
         "label": "Peak Hours floor (every block)",
         "target": 0.9,
         "basis": "block",
-        "achieved": 0.009524479909760193,
-        "hoursMet": 0.8445205479452055,
-        "shortfallMu": 107.2438650333508,
+        "achieved": 0.006791468881208112,
+        "hoursMet": 0.8376712328767123,
+        "shortfallMu": 109.27266254978989,
         "met": false,
         "penaltyMultiple": 1.5
        },
@@ -2443,14 +2443,14 @@
         "label": "Off-peak floor (every block)",
         "target": 0.7,
         "basis": "block",
-        "achieved": 0.37052446400170985,
-        "hoursMet": 0.9910958904109589,
-        "shortfallMu": 0.43066414950048304,
+        "achieved": 0.2050678835275954,
+        "hoursMet": 0.9907534246575342,
+        "shortfallMu": 0.5160578846138296,
         "met": false,
         "penaltyMultiple": 1.5
        }
       ],
-      "blockShortfallMu": 107.67452918285129
+      "blockShortfallMu": 109.7887204344037
      }
     ],
     "dfrPricePerPoint": 0,
@@ -2464,247 +2464,247 @@
     "exportSources": "all",
     "plants": [],
     "greenShareMin": null,
-    "evacuationEfficiency": 1,
+    "evacuationEfficiency": 0.99102,
     "sites": {
      "split": false
     },
-    "seconds": 44,
+    "seconds": 48.94,
     "lifetime": [
      {
       "year": 1,
       "demandMwh": 1752000,
-      "deliveredMwh": 1559465.511917294,
+      "deliveredMwh": 1557207.9695803234,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 94006.72595017185
+      "blockShortfallMwh": 96258.86866621768
      },
      {
       "year": 2,
       "demandMwh": 1752000,
-      "deliveredMwh": 1557622.746389507,
+      "deliveredMwh": 1555375.6620769722,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 94576.21775153349
+      "blockShortfallMwh": 96822.6124898921
      },
      {
       "year": 3,
       "demandMwh": 1752000,
-      "deliveredMwh": 1555779.98086172,
+      "deliveredMwh": 1553543.354573621,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 95145.70955289513
+      "blockShortfallMwh": 97386.3563135665
      },
      {
       "year": 4,
       "demandMwh": 1752000,
-      "deliveredMwh": 1553937.215333933,
+      "deliveredMwh": 1551711.04707027,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 95715.20135425677
+      "blockShortfallMwh": 97950.10013724092
      },
      {
       "year": 5,
       "demandMwh": 1752000,
-      "deliveredMwh": 1552094.4498061459,
+      "deliveredMwh": 1549878.7395669187,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 96284.69315561843
+      "blockShortfallMwh": 98513.84396091534
      },
      {
       "year": 6,
       "demandMwh": 1752000,
-      "deliveredMwh": 1550251.684278359,
+      "deliveredMwh": 1548046.4320635675,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 96854.18495698007
+      "blockShortfallMwh": 99077.58778458976
      },
      {
       "year": 7,
       "demandMwh": 1752000,
-      "deliveredMwh": 1548408.918750572,
+      "deliveredMwh": 1546214.1245602162,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 97423.67675834171
+      "blockShortfallMwh": 99641.33160826418
      },
      {
       "year": 8,
       "demandMwh": 1752000,
-      "deliveredMwh": 1546566.1532227849,
+      "deliveredMwh": 1544381.817056865,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 97993.16855970335
+      "blockShortfallMwh": 100205.07543193859
      },
      {
       "year": 9,
       "demandMwh": 1752000,
-      "deliveredMwh": 1544723.387694998,
+      "deliveredMwh": 1542549.509553514,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 98562.660361065
+      "blockShortfallMwh": 100768.81925561302
      },
      {
       "year": 10,
       "demandMwh": 1752000,
-      "deliveredMwh": 1542880.622167211,
+      "deliveredMwh": 1540717.2020501627,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 99132.15216242663
+      "blockShortfallMwh": 101332.56307928744
      },
      {
       "year": 11,
       "demandMwh": 1752000,
-      "deliveredMwh": 1541037.8566394239,
+      "deliveredMwh": 1538884.8945468115,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 99701.64396378827
+      "blockShortfallMwh": 101896.30690296185
      },
      {
       "year": 12,
       "demandMwh": 1752000,
-      "deliveredMwh": 1539195.091111637,
+      "deliveredMwh": 1537052.5870434602,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 100271.13576514993
+      "blockShortfallMwh": 102460.05072663627
      },
      {
       "year": 13,
       "demandMwh": 1752000,
-      "deliveredMwh": 1537352.3255838498,
+      "deliveredMwh": 1535220.279540109,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 100840.62756651157
+      "blockShortfallMwh": 103023.79455031069
      },
      {
       "year": 14,
       "demandMwh": 1752000,
-      "deliveredMwh": 1535509.5600560629,
+      "deliveredMwh": 1533387.972036758,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 101410.11936787321
+      "blockShortfallMwh": 103587.53837398511
      },
      {
       "year": 15,
       "demandMwh": 1752000,
-      "deliveredMwh": 1533666.7945282757,
+      "deliveredMwh": 1531555.6645334067,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 101979.61116923485
+      "blockShortfallMwh": 104151.28219765953
      },
      {
       "year": 16,
       "demandMwh": 1752000,
-      "deliveredMwh": 1531824.0290004886,
+      "deliveredMwh": 1529723.3570300555,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 102549.1029705965
+      "blockShortfallMwh": 104715.02602133394
      },
      {
       "year": 17,
       "demandMwh": 1752000,
-      "deliveredMwh": 1529981.2634727017,
+      "deliveredMwh": 1527891.0495267042,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 103118.59477195815
+      "blockShortfallMwh": 105278.76984500836
      },
      {
       "year": 18,
       "demandMwh": 1752000,
-      "deliveredMwh": 1528138.4979449147,
+      "deliveredMwh": 1526058.742023353,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 103688.08657331979
+      "blockShortfallMwh": 105842.51366868278
      },
      {
       "year": 19,
       "demandMwh": 1752000,
-      "deliveredMwh": 1526295.7324171278,
+      "deliveredMwh": 1524226.434520002,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 104257.57837468141
+      "blockShortfallMwh": 106406.2574923572
      },
      {
       "year": 20,
       "demandMwh": 1752000,
-      "deliveredMwh": 1524452.9668893407,
+      "deliveredMwh": 1522394.1270166507,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 104827.07017604307
+      "blockShortfallMwh": 106970.00131603162
      },
      {
       "year": 21,
       "demandMwh": 1752000,
-      "deliveredMwh": 1522610.2013615537,
+      "deliveredMwh": 1520561.8195132995,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 105396.56197740471
+      "blockShortfallMwh": 107533.74513970602
      },
      {
       "year": 22,
       "demandMwh": 1752000,
-      "deliveredMwh": 1520767.4358337666,
+      "deliveredMwh": 1518729.5120099485,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 105966.05377876635
+      "blockShortfallMwh": 108097.48896338044
      },
      {
       "year": 23,
       "demandMwh": 1752000,
-      "deliveredMwh": 1518924.6703059797,
+      "deliveredMwh": 1516897.204506597,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 106535.545580128
+      "blockShortfallMwh": 108661.23278705486
      },
      {
       "year": 24,
       "demandMwh": 1752000,
-      "deliveredMwh": 1517081.9047781925,
+      "deliveredMwh": 1515064.897003246,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 107105.03738148964
+      "blockShortfallMwh": 109224.97661072928
      },
      {
       "year": 25,
       "demandMwh": 1752000,
-      "deliveredMwh": 1515239.1392504056,
+      "deliveredMwh": 1513232.5894998948,
       "exportMwh": 0,
       "exportRevenueCr": 0,
       "biomassMwh": 0,
-      "blockShortfallMwh": 107674.52918285129
+      "blockShortfallMwh": 109788.7204344037
      }
     ],
     "market": null,
     "flatPrice": null
    },
-   "money_text": "EMD ₹128.34 cr ₹9.68 lakh × 511 MW solar + ₹13.68 lakh × 281 MW wind + ₹2.40 lakh × 1,686 MWh PERFORMANCE BANK GUARANTEE ₹320.84 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,283.35 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
+   "money_text": "EMD ₹131.31 cr ₹9.68 lakh × 523 MW solar + ₹13.68 lakh × 293 MW wind + ₹2.40 lakh × 1,692 MWh PERFORMANCE BANK GUARANTEE ₹328.28 cr ₹24.20 lakh/MW solar, ₹34.20 lakh/MW wind, ₹6.00 lakh/MWh storage MINIMUM NET WORTH ₹1,313.11 cr ₹96.8 lakh/MW solar, ₹1.368 cr/MW wind, ₹24 lakh/MWh storage",
    "finance": {
-    "bid_tariff": 6.863,
+    "bid_tariff": 7.043,
     "equity_irr": 14.0,
     "project_irr": 9.96,
-    "text": "BID TARIFF ₹6.863/kWh HiGHS screening ₹6.857 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹6,187 cr ₹30.93 cr per contracted MW · LCOE ₹5.406/kWh at 10.0% YEAR-1 SUPPLY 1,559 MU 89.0% of contracted YEAR-1 OPERATING COST ₹84 cr O&M and insurance"
+    "text": "BID TARIFF ₹7.043/kWh HiGHS screening ₹7.038 CEILING TARIFF Not stated RfS p. 60 EQUITY IRR 14.00% the target, by construction PROJECT IRR 9.96% post-tax, unlevered MINIMUM DSCR 1.13 average 1.56 PROJECT COST ₹6,328 cr ₹31.64 cr per contracted MW · LCOE ₹5.534/kWh at 10.0% YEAR-1 SUPPLY 1,557 MU 88.9% of contracted YEAR-1 OPERATING COST ₹86 cr O&M and insurance"
    },
    "workbook": "models/SECI_S1_financial_model.xlsx"
   }
@@ -2789,14 +2789,14 @@
       "value": "200"
      },
      {
-      "label": "Solar PV component (MW)",
+      "label": "Solar PV component (MWac, with its MWp)",
       "source": "FROM YOUR BID",
-      "value": "511"
+      "value": "523 MWac (732 MWp DC)"
      },
      {
       "label": "Wind power component (MW)",
       "source": "FROM YOUR BID",
-      "value": "281"
+      "value": "293"
      },
      {
       "label": "Other RE generating component (MW)",
@@ -2806,12 +2806,12 @@
      {
       "label": "ESS component (MW)",
       "source": "FROM YOUR BID",
-      "value": "422"
+      "value": "423"
      },
      {
       "label": "ESS component (MWh)",
       "source": "FROM YOUR BID",
-      "value": "1686"
+      "value": "1692"
      },
      {
       "label": "Project location(s): village, tehsil, district, state",
@@ -2831,7 +2831,7 @@
      {
       "label": "EMD amount (INR)",
       "source": "FROM YOUR BID",
-      "value": "INR 1,28,33,50,009"
+      "value": "INR 1,31,31,14,577"
      },
      {
       "label": "EMD instrument",
@@ -2992,7 +2992,7 @@
      {
       "label": "Amount (Rs), not less than cl. 16 formula; also in words",
       "source": "FROM YOUR BID",
-      "value": "INR 1,28,33,50,009"
+      "value": "INR 1,31,31,14,577"
      },
      {
       "label": "Valid up to",
@@ -3538,12 +3538,12 @@
      {
       "label": "First Round Tariff (Rs/kWh, 2 decimals; entered in the portal e-form)",
       "source": "YOUR PARTICULARS",
-      "value": "6.87"
+      "value": "7.05"
      },
      {
       "label": "Tariff in words (prevails over figures)",
       "source": "THIS FORMAT",
-      "value": "Rupees Six and Paise Eighty-Seven only per kWh"
+      "value": "Rupees Seven and Paise Five only per kWh"
      },
      {
       "label": "Dated (day, month, year)",
@@ -3581,7 +3581,7 @@
      {
       "label": "Cost break-up (any format)",
       "source": "THIS FORMAT",
-      "value": "Solar PV 511 MWac with modules, inverters, trackers and pooling: per the Capex sheet of the financial model.\nWind 281 MW with WTGs, foundations and 33 kV collection: per the Capex sheet.\nBattery energy storage 422 MW / 1686 MWh with PCS and fire protection: per the Capex sheet.\nISTS connectivity, land, development and pre-operative costs: per the Capex sheet.\nThe financial model (Excel) is enclosed with this format."
+      "value": "Solar PV 523 MWac with modules, inverters, trackers and pooling: per the Capex sheet of the financial model.\nWind 293 MW with WTGs, foundations and 33 kV collection: per the Capex sheet.\nBattery energy storage 423 MW / 1692 MWh with PCS and fire protection: per the Capex sheet.\nISTS connectivity, land, development and pre-operative costs: per the Capex sheet.\nThe financial model (Excel) is enclosed with this format."
      },
      {
       "label": "Dated",
@@ -3615,8 +3615,8 @@
     "blanks": "NOTHING TO FILL: SIGN AND STAMP THE RFS DOCUMENT"
    }
   ],
-  "tariff": 6.87,
-  "checks": "Contracted capacity 200 MW (50 to 500 MW) Amendment-01 p. 1 OK Tariff quoted At ₹6.87/kWh the equity IRR is 14.0% (target 14.0%), project IRR 10.0%. Standard Power Sale Agreement (PSA) p. 8 OK Storage in the project 422 MW / 1686 MWh Clarifications-01 p. 2 OK Battery co-located with RE With the solar site Amendment-02 p. 1 OK Delivery Point substation Fatehgarh-IV PS (ISTS), Jaisalmer, Rajasthan, SCD 31.12.2027 Amendment-01 p. 2 OK Net worth Need ₹1283.35 cr; you have ₹6500.00 cr Amendment-02 p. 3 OK Technical experience (cl. 34.3) Met by one plant of at least 160 MW. Amendment-02 marks 34.3 'Not used': confirm whether it still applies. Amendment-01 p. 4 OK EMD to furnish ₹128.34 crore Amendment-02 p. 3 OK PBG at PPA signing ₹320.84 crore Amendment-02 p. 3 OK Supply start SCSD 07.08.2028; Financial Closure 07.02.2028 Amendment-02 p. 2 OK RfS formats 11 of 11 reviewed; 0 blanks empty. Print each on the paper it names and sign it. OK",
+  "tariff": 7.05,
+  "checks": "Contracted capacity 200 MW (50 to 500 MW) Amendment-01 p. 1 OK Tariff quoted At ₹7.05/kWh the equity IRR is 14.0% (target 14.0%), project IRR 10.0%. Standard Power Sale Agreement (PSA) p. 8 OK Storage in the project 423 MW / 1692 MWh Clarifications-01 p. 2 OK Battery co-located with RE With the solar site Amendment-02 p. 1 OK Delivery Point substation Fatehgarh-IV PS (ISTS), Jaisalmer, Rajasthan, SCD 31.12.2027 Amendment-01 p. 2 OK Net worth Need ₹1313.11 cr; you have ₹6500.00 cr Amendment-02 p. 3 OK Technical experience (cl. 34.3) Met by one plant of at least 160 MW. Amendment-02 marks 34.3 'Not used': confirm whether it still applies. Amendment-01 p. 4 OK EMD to furnish ₹131.31 crore Amendment-02 p. 3 OK PBG at PPA signing ₹328.28 crore Amendment-02 p. 3 OK Supply start SCSD 07.08.2028; Financial Closure 07.02.2028 Amendment-02 p. 2 OK RfS formats 11 of 11 reviewed; 0 blanks empty. Print each on the paper it names and sign it. OK",
   "nav": "Your particulars done ENVELOPE I · TECHNO-COMMERCIAL 7.1 Covering Letter reviewed 7.3A Bank Guarantee for EMD reviewed 7.4 Board Resolutions reviewed 7.6 Financial Requirement reviewed 7.7 Undertaking (not a wilful defaulter or blacklisted) reviewed 7.8 Disclosure (no group company bidding) reviewed 7.8-annex Annexure to Format 7.8/7.8A: land-border declaration reviewed 7.9 Integrity Pact reviewed Annexure-B Special Instructions for e-Tendering and Reverse Auction reviewed ENVELOPE II · FINANCIAL 7.10 Financial Bid covering letter reviewed 7.11 Preliminary Estimate of Cost of RE Power Project reviewed AFTER THE AWARD 7.3D Performance Bank Guarantee after award 7.3E Payment on Order Instrument in lieu of PBG (REC/PFC) after award 7.3F Insurance Surety Bond in lieu of PBG after award NOT NEEDED FOR THIS BID 7.2 Power of Attorney not needed 7.3B Payment on Order Instrument for EMD (REC/PFC) not needed 7.3C Insurance Surety Bond for EMD not needed 7.5 Consortium Agreement not needed 7.8A Disclosure (common shareholder 10-26%) not needed Annexure-I Undertaking for utilisation of connectivity not needed",
   "bid_pack": "bid-pack/SECI_RTC_TM_V_bid_200MW.docx",
   "state_forms": {
@@ -3640,7 +3640,7 @@
    "netWorthCr": 6500,
    "netWorthYear": "2024-25",
    "experience": "Arkaja Solar Park I (Jaisalmer), 300 MW, 2023-03-31\nArkaja Wind Farm II (Kachchh), 150 MW, 2024-09-30\nArkaja Hybrid III (Bikaner), 250 MW, 2025-11-15",
-   "tariff": 6.87,
+   "tariff": 7.05,
    "7.1.refNo": "ARK/SECI/RTC-TM-V/2026/001",
    "7.1.groupDisclosure": "No group company has bid (Format 7.8)",
    "7.1.projects": "Project 1 | Solar + Wind + BESS | Pokaran (Rajasthan) and Bhuj (Gujarat) | Delivery Point: Fatehgarh-IV PS (ISTS)",
@@ -3702,9 +3702,9 @@
    "7.8-annex.att.1": true,
    "7.9.att.0": true,
    "7.10.refNo": "ARK/SECI/RTC-TM-V/2026/002",
-   "7.10.tariffWords": "Rupees Six and Paise Eighty-Seven only per kWh",
+   "7.10.tariffWords": "Rupees Seven and Paise Five only per kWh",
    "7.10.signatory": "Meera Raghavan, Director (Business Development), for Arkaja Renewables Private Limited (company seal)",
-   "7.11.costBreakup": "Solar PV 511 MWac with modules, inverters, trackers and pooling: per the Capex sheet of the financial model.\nWind 281 MW with WTGs, foundations and 33 kV collection: per the Capex sheet.\nBattery energy storage 422 MW / 1686 MWh with PCS and fire protection: per the Capex sheet.\nISTS connectivity, land, development and pre-operative costs: per the Capex sheet.\nThe financial model (Excel) is enclosed with this format.",
+   "7.11.costBreakup": "Solar PV 523 MWac with modules, inverters, trackers and pooling: per the Capex sheet of the financial model.\nWind 293 MW with WTGs, foundations and 33 kV collection: per the Capex sheet.\nBattery energy storage 423 MW / 1692 MWh with PCS and fire protection: per the Capex sheet.\nISTS connectivity, land, development and pre-operative costs: per the Capex sheet.\nThe financial model (Excel) is enclosed with this format.",
    "7.11.signatory": "Meera Raghavan, Director (Business Development)",
    "Annexure-B.att.0": true
   }
@@ -3715,7 +3715,7 @@
     "id": "7.1",
     "title": "Covering Letter",
     "struck": 2,
-    "words": 1558,
+    "words": 1561,
     "word": "letters/word/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.docx",
     "pdf": "letters/pdf/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
    },
@@ -3723,7 +3723,7 @@
     "id": "7.3A",
     "title": "Bank Guarantee for EMD",
     "struck": 0,
-    "words": 808,
+    "words": 812,
     "word": "letters/word/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.docx",
     "pdf": "letters/pdf/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.pdf"
    },
@@ -3811,18 +3811,34 @@
   "all_pdf": "letters/SECI_RTC_TM_V_Bid_letters_Arkaja_Renewables_Private_Limited.pdf",
   "saved": "Saved “Arkaja Renewables Private Limited: SECI RTC-TM-V bid” version 1: the particulars, every format's blanks, the letters with their edits and the sizing."
  },
+ "extras": {
+  "meter_cuf": "Billed here: CUF 24.41%",
+  "sizes": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no design below ₹7.038",
+  "sankey": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Transformer & line losses · 2 MW Peak floor 90%: met · 180 MW Above the floor · 0 MW",
+  "d15_verdict": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose.",
+  "d15_xlsx": "models/SECI_bid_dispatch_25_years.xlsx"
+ },
+ "team": {
+  "steps": [],
+  "condition": "condition.dfrPeak",
+  "accepted_cost": "Accepted “Solar: Capex per MWac” from Procurement desk: saved as version 2.",
+  "history": "History (5)24 Oct 2026, 7:25 pm Tender manager created: Who chooses the Peak Hours and when? Does the 90% floor apply to all 16 candidate hours?24 Oct 2026, 7:25 pm Legal desk submitted: SECI declares the Peak Hours; we must be able to supply 90% in any of them.24 Oct 2026, 7:25 pm Tender manager returned: Please cite the amendment clause that says so24 Oct 2026, 7:25 pm Legal desk submitted: Amen",
+  "signed": "Signed copy: SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf · Finance desk",
+  "reading": "Our reading (Legal desk): Amendment-01 cl. 8.1 as amended by Amendment-02: SECI declares the Peak Hours a day ahead within 18:00-10:00; the 90% floor applies to each declared hour.",
+  "resized": "SOLAR 534 MWac 748 MWp (DC:AC 1.40) · 2.67 × contracted WIND 281 MW 1.41 × contracted BATTERY 433 MW / 1,733 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.957/kWh no design below ₹6.957"
+ },
  "rtc": {
   "stats": "TARIFF FOR TARGET IRR ₹4.189 flat, ₹/kWh LCOE ₹3.635 @ 10.0% discount EQUITY IRR 14.00% NPV @ target ₹0 cr PROJECT IRR 9.98% post-tax, unlevered DSCR MIN / AVG 1.10 / 1.56 15-yr equal principal EQUITY PAYBACK Year 9 equity ₹1,337 cr · debt ₹3,120 cr",
   "workbook": "models/Round_the_clock_285MW_financial_model.xlsx"
  },
  "page_errors": [],
- "finished": "2026-10-24T16:57:50+00:00",
+ "finished": "2026-10-24T19:26:35+00:00",
  "steps": [
   {
    "section": "Start",
    "name": "Open TenderOS (demo, no sign-in)",
    "status": "pass",
-   "seconds": 0.88,
+   "seconds": 0.85,
    "screenshot": "screens/start-00.jpg",
    "note": ""
   },
@@ -3846,15 +3862,15 @@
    "section": "Tender to Bid",
    "name": "Read the tender set (scan screen, Docling tables, amendments applied)",
    "status": "pass",
-   "seconds": 7.57,
+   "seconds": 105.1,
    "screenshot": "screens/t2b-02-read.jpg",
-   "note": "read in 8 s"
+   "note": "read in 105 s"
   },
   {
    "section": "Tender to Bid",
    "name": "Tender set panel: Amended terms",
    "status": "pass",
-   "seconds": 0.84,
+   "seconds": 0.7,
    "screenshot": "screens/t2b-set-amended.jpg",
    "note": "11 rows"
   },
@@ -3862,7 +3878,7 @@
    "section": "Tender to Bid",
    "name": "Tender set panel: Documents",
    "status": "pass",
-   "seconds": 0.54,
+   "seconds": 0.53,
    "screenshot": "screens/t2b-set-documents.jpg",
    "note": "5 rows"
   },
@@ -3870,15 +3886,15 @@
    "section": "Tender to Bid",
    "name": "Tender set panel: Changes",
    "status": "pass",
-   "seconds": 0.79,
+   "seconds": 0.69,
    "screenshot": "screens/t2b-set-changes.jpg",
-   "note": "50 rows"
+   "note": "51 rows"
   },
   {
    "section": "Tender to Bid",
    "name": "Tender set panel: Clarifications",
    "status": "pass",
-   "seconds": 0.67,
+   "seconds": 0.64,
    "screenshot": "screens/t2b-set-clarifications.jpg",
    "note": "19 rows"
   },
@@ -3894,7 +3910,7 @@
    "section": "Tender to Bid",
    "name": "Tender set panel: Bid process",
    "status": "pass",
-   "seconds": 0.62,
+   "seconds": 0.6,
    "screenshot": "screens/t2b-set-process.jpg",
    "note": "11 rows"
   },
@@ -3902,7 +3918,7 @@
    "section": "Tender to Bid",
    "name": "Search every page: 'e-reverse auction'",
    "status": "pass",
-   "seconds": 0.36,
+   "seconds": 0.38,
    "screenshot": "screens/t2b-set-search.jpg",
    "note": "12 passages"
   },
@@ -3910,7 +3926,7 @@
    "section": "Tender to Bid",
    "name": "What the tender requires (amended values, quoted)",
    "status": "pass",
-   "seconds": 0.08,
+   "seconds": 0.09,
    "screenshot": "screens/t2b-requirements.jpg",
    "note": ""
   },
@@ -3942,15 +3958,15 @@
    "section": "Tender to Bid",
    "name": "Size the plant with HiGHS (the tender as read)",
    "status": "pass",
-   "seconds": 150.26,
+   "seconds": 149.75,
    "screenshot": "screens/t2b-size.jpg",
-   "note": "150.2 s"
+   "note": "149.6 s"
   },
   {
    "section": "Tender to Bid",
    "name": "Compliance with the tender's floors",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.1,
    "screenshot": "screens/t2b-compliance.jpg",
    "note": ""
   },
@@ -3958,7 +3974,7 @@
    "section": "Tender to Bid",
    "name": "15-minute dispatch for every PPA year",
    "status": "pass",
-   "seconds": 204.26,
+   "seconds": 216.81,
    "screenshot": "screens/t2b-d15.jpg",
    "note": ""
   },
@@ -3974,7 +3990,7 @@
    "section": "Tender to Bid",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.17,
    "screenshot": null,
    "note": "models/TenderToBid_SECI-set_financial_model.xlsx"
   },
@@ -3982,7 +3998,7 @@
    "section": "SECI RTC tender",
    "name": "Open the tab",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.19,
    "screenshot": "screens/seci-00-tab.jpg",
    "note": ""
   },
@@ -3990,7 +4006,7 @@
    "section": "SECI RTC tender",
    "name": "Tender & amendments: documents, bid process, changes, clarifications",
    "status": "pass",
-   "seconds": 0.53,
+   "seconds": 0.52,
    "screenshot": "screens/seci-01-documents.jpg",
    "note": "5 documents, 23 changes"
   },
@@ -3998,7 +4014,7 @@
    "section": "SECI RTC tender",
    "name": "Bid conditions (in force after the amendments)",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.16,
    "screenshot": "screens/seci-02-conditions.jpg",
    "note": "61 conditions: 20 amended, 1 removed, 1 unclear. Under each amended rule, “RfS as issued” shows the original wording."
   },
@@ -4006,7 +4022,7 @@
    "section": "SECI scenario S2",
    "name": "What you bid: 200 MW, Peak Hours 'any', shortfall 'hard'",
    "status": "pass",
-   "seconds": 0.54,
+   "seconds": 0.58,
    "screenshot": "screens/seci-S2-bid.jpg",
    "note": ""
   },
@@ -4014,7 +4030,7 @@
    "section": "SECI scenario S2",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.58,
    "screenshot": "screens/seci-S2-sources.jpg",
    "note": ""
   },
@@ -4022,9 +4038,9 @@
    "section": "SECI scenario S2",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 34.16,
+   "seconds": 36.69,
    "screenshot": "screens/seci-S2-sizes.jpg",
-   "note": "34.1 s"
+   "note": "36.6 s"
   },
   {
    "section": "SECI scenario S2",
@@ -4046,15 +4062,15 @@
    "section": "SECI scenario S2",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.77,
+   "seconds": 1.79,
    "screenshot": "screens/seci-S2-finance.jpg",
-   "note": "tariff ₹7.894/kWh, equity IRR 14.0%, project IRR 9.99%"
+   "note": "tariff ₹8.101/kWh, equity IRR 14.0%, project IRR 9.99%"
   },
   {
    "section": "SECI scenario S2",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.13,
+   "seconds": 0.18,
    "screenshot": null,
    "note": "models/SECI_S2_financial_model.xlsx"
   },
@@ -4062,7 +4078,7 @@
    "section": "SECI scenario S3",
    "name": "What you bid: 200 MW, Peak Hours 'evening', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.51,
    "screenshot": "screens/seci-S3-bid.jpg",
    "note": ""
   },
@@ -4070,7 +4086,7 @@
    "section": "SECI scenario S3",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.57,
    "screenshot": "screens/seci-S3-sources.jpg",
    "note": ""
   },
@@ -4078,9 +4094,9 @@
    "section": "SECI scenario S3",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 47.74,
+   "seconds": 54.79,
    "screenshot": "screens/seci-S3-sizes.jpg",
-   "note": "47.7 s"
+   "note": "54.7 s"
   },
   {
    "section": "SECI scenario S3",
@@ -4104,13 +4120,13 @@
    "status": "pass",
    "seconds": 1.79,
    "screenshot": "screens/seci-S3-finance.jpg",
-   "note": "tariff ₹6.366/kWh, equity IRR 14.0%, project IRR 9.96%"
+   "note": "tariff ₹6.53/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
   {
    "section": "SECI scenario S3",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.15,
+   "seconds": 0.16,
    "screenshot": null,
    "note": "models/SECI_S3_financial_model.xlsx"
   },
@@ -4126,7 +4142,7 @@
    "section": "SECI scenario S4",
    "name": "Supply sources: solar, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.53,
+   "seconds": 0.61,
    "screenshot": "screens/seci-S4-sources.jpg",
    "note": ""
   },
@@ -4134,9 +4150,9 @@
    "section": "SECI scenario S4",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 22.67,
+   "seconds": 21.08,
    "screenshot": "screens/seci-S4-sizes.jpg",
-   "note": "22.6 s"
+   "note": "21.0 s"
   },
   {
    "section": "SECI scenario S4",
@@ -4158,15 +4174,15 @@
    "section": "SECI scenario S4",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.8,
+   "seconds": 1.79,
    "screenshot": "screens/seci-S4-finance.jpg",
-   "note": "tariff ₹8.001/kWh, equity IRR 14.0%, project IRR 9.96%"
+   "note": "tariff ₹8.222/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
   {
    "section": "SECI scenario S4",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.13,
+   "seconds": 0.17,
    "screenshot": null,
    "note": "models/SECI_S4_financial_model.xlsx"
   },
@@ -4174,7 +4190,7 @@
    "section": "SECI scenario S5",
    "name": "What you bid: 500 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.55,
    "screenshot": "screens/seci-S5-bid.jpg",
    "note": ""
   },
@@ -4182,7 +4198,7 @@
    "section": "SECI scenario S5",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.55,
+   "seconds": 0.62,
    "screenshot": "screens/seci-S5-sources.jpg",
    "note": ""
   },
@@ -4190,9 +4206,9 @@
    "section": "SECI scenario S5",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 47.76,
+   "seconds": 49.75,
    "screenshot": "screens/seci-S5-sizes.jpg",
-   "note": "47.7 s"
+   "note": "49.6 s"
   },
   {
    "section": "SECI scenario S5",
@@ -4214,15 +4230,15 @@
    "section": "SECI scenario S5",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.79,
+   "seconds": 1.76,
    "screenshot": "screens/seci-S5-finance.jpg",
-   "note": "tariff ₹6.863/kWh, equity IRR 14.0%, project IRR 9.96%"
+   "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
   {
    "section": "SECI scenario S5",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.13,
    "screenshot": null,
    "note": "models/SECI_S5_financial_model.xlsx"
   },
@@ -4230,7 +4246,7 @@
    "section": "SECI scenario S6",
    "name": "What you bid: 50 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.55,
+   "seconds": 0.51,
    "screenshot": "screens/seci-S6-bid.jpg",
    "note": ""
   },
@@ -4246,9 +4262,9 @@
    "section": "SECI scenario S6",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 47.74,
+   "seconds": 50.22,
    "screenshot": "screens/seci-S6-sizes.jpg",
-   "note": "47.7 s"
+   "note": "50.1 s"
   },
   {
    "section": "SECI scenario S6",
@@ -4270,15 +4286,15 @@
    "section": "SECI scenario S6",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.81,
+   "seconds": 1.79,
    "screenshot": "screens/seci-S6-finance.jpg",
-   "note": "tariff ₹6.863/kWh, equity IRR 14.0%, project IRR 9.96%"
+   "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
   {
    "section": "SECI scenario S6",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.13,
+   "seconds": 0.15,
    "screenshot": null,
    "note": "models/SECI_S6_financial_model.xlsx"
   },
@@ -4286,7 +4302,7 @@
    "section": "SECI scenario S1",
    "name": "What you bid: 200 MW, Peak Hours 'any', shortfall 'penalty'",
    "status": "pass",
-   "seconds": 0.52,
+   "seconds": 0.57,
    "screenshot": "screens/seci-S1-bid.jpg",
    "note": ""
   },
@@ -4294,7 +4310,7 @@
    "section": "SECI scenario S1",
    "name": "Supply sources: solar, wind, battery; benchmarks filled",
    "status": "pass",
-   "seconds": 0.5,
+   "seconds": 0.53,
    "screenshot": "screens/seci-S1-sources.jpg",
    "note": ""
   },
@@ -4302,15 +4318,15 @@
    "section": "SECI scenario S1",
    "name": "Size with HiGHS against every peak and off-peak block",
    "status": "pass",
-   "seconds": 46.23,
+   "seconds": 50.75,
    "screenshot": "screens/seci-S1-sizes.jpg",
-   "note": "46.1 s"
+   "note": "50.7 s"
   },
   {
    "section": "SECI scenario S1",
    "name": "Compliance, block by block",
    "status": "pass",
-   "seconds": 0.11,
+   "seconds": 0.12,
    "screenshot": "screens/seci-S1-compliance.jpg",
    "note": ""
   },
@@ -4318,7 +4334,7 @@
    "section": "SECI scenario S1",
    "name": "Money at stake: EMD, PBG, net worth",
    "status": "pass",
-   "seconds": 0.51,
+   "seconds": 0.5,
    "screenshot": "screens/seci-S1-money.jpg",
    "note": ""
   },
@@ -4326,15 +4342,15 @@
    "section": "SECI scenario S1",
    "name": "Financials: tariff for the target IRR, equity and project IRR",
    "status": "pass",
-   "seconds": 1.81,
+   "seconds": 1.8,
    "screenshot": "screens/seci-S1-finance.jpg",
-   "note": "tariff ₹6.863/kWh, equity IRR 14.0%, project IRR 9.96%"
+   "note": "tariff ₹7.043/kWh, equity IRR 14.0%, project IRR 9.96%"
   },
   {
    "section": "SECI scenario S1",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.13,
+   "seconds": 0.12,
    "screenshot": null,
    "note": "models/SECI_S1_financial_model.xlsx"
   },
@@ -4342,7 +4358,7 @@
    "section": "SECI bid agent",
    "name": "Open the bid agent (GPT-Live) panel",
    "status": "pass",
-   "seconds": 0.48,
+   "seconds": 0.41,
    "screenshot": "screens/seci-agent-panel.jpg",
    "note": "voice not configured on this server"
   },
@@ -4350,7 +4366,7 @@
    "section": "SECI bid agent",
    "name": "Agent chart: peak window",
    "status": "pass",
-   "seconds": 1.1,
+   "seconds": 1.06,
    "screenshot": "screens/seci-chart-peak_window.jpg",
    "note": ""
   },
@@ -4358,7 +4374,7 @@
    "section": "SECI bid agent",
    "name": "Agent chart: typical day",
    "status": "pass",
-   "seconds": 1.1,
+   "seconds": 1.09,
    "screenshot": "screens/seci-chart-typical_day.jpg",
    "note": ""
   },
@@ -4366,7 +4382,7 @@
    "section": "SECI bid agent",
    "name": "Agent chart: monthly energy",
    "status": "pass",
-   "seconds": 1.05,
+   "seconds": 1.06,
    "screenshot": "screens/seci-chart-monthly_energy.jpg",
    "note": ""
   },
@@ -4406,7 +4422,7 @@
    "section": "SECI bid forms",
    "name": "Particulars: the bidder, signing, the offer, the project, eligibility",
    "status": "pass",
-   "seconds": 1.1,
+   "seconds": 1.17,
    "screenshot": "screens/seci-forms-00-particulars.jpg",
    "note": ""
   },
@@ -4414,15 +4430,15 @@
    "section": "SECI bid forms",
    "name": "Quote the tariff for the target IRR (Use ₹…/kWh)",
    "status": "pass",
-   "seconds": 0.18,
+   "seconds": 0.2,
    "screenshot": "screens/seci-forms-01-tariff.jpg",
-   "note": "₹6.87/kWh"
+   "note": "₹7.05/kWh"
   },
   {
    "section": "SECI bid forms",
    "name": "Format 7.1: Covering Letter",
    "status": "pass",
-   "seconds": 2.28,
+   "seconds": 2.35,
    "screenshot": "screens/seci-forms-7.1.jpg",
    "note": "37 OF 37 BLANKS FILLED; reviewed"
   },
@@ -4430,7 +4446,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.3A: Bank Guarantee for EMD",
    "status": "pass",
-   "seconds": 1.81,
+   "seconds": 1.85,
    "screenshot": "screens/seci-forms-7.3A.jpg",
    "note": "17 OF 17 BLANKS FILLED; reviewed"
   },
@@ -4438,7 +4454,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.4: Board Resolutions",
    "status": "pass",
-   "seconds": 1.66,
+   "seconds": 1.75,
    "screenshot": "screens/seci-forms-7.4.jpg",
    "note": "5 OF 5 BLANKS FILLED; reviewed"
   },
@@ -4446,7 +4462,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.6: Financial Requirement",
    "status": "pass",
-   "seconds": 2.15,
+   "seconds": 2.26,
    "screenshot": "screens/seci-forms-7.6.jpg",
    "note": "20 OF 20 BLANKS FILLED; reviewed"
   },
@@ -4454,7 +4470,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.7: Undertaking (not a wilful defaulter or blacklisted)",
    "status": "pass",
-   "seconds": 1.52,
+   "seconds": 1.5,
    "screenshot": "screens/seci-forms-7.7.jpg",
    "note": "5 OF 5 BLANKS FILLED; reviewed"
   },
@@ -4462,7 +4478,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.8: Disclosure (no group company bidding)",
    "status": "pass",
-   "seconds": 1.73,
+   "seconds": 1.69,
    "screenshot": "screens/seci-forms-7.8.jpg",
    "note": "15 OF 15 BLANKS FILLED; reviewed"
   },
@@ -4470,7 +4486,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.8-annex: Annexure to Format 7.8/7.8A: land-border declaration",
    "status": "pass",
-   "seconds": 1.65,
+   "seconds": 1.68,
    "screenshot": "screens/seci-forms-7.8-annex.jpg",
    "note": "11 OF 11 BLANKS FILLED; reviewed"
   },
@@ -4478,7 +4494,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.9: Integrity Pact",
    "status": "pass",
-   "seconds": 1.49,
+   "seconds": 1.57,
    "screenshot": "screens/seci-forms-7.9.jpg",
    "note": "NOTHING TO FILL: SIGN AND STAMP THE RFS DOCUMENT; reviewed"
   },
@@ -4486,7 +4502,7 @@
    "section": "SECI bid forms",
    "name": "Format 7.10: Financial Bid covering letter",
    "status": "pass",
-   "seconds": 1.54,
+   "seconds": 1.62,
    "screenshot": "screens/seci-forms-7.10.jpg",
    "note": "15 OF 15 BLANKS FILLED; reviewed"
   },
@@ -4502,7 +4518,7 @@
    "section": "SECI bid forms",
    "name": "Format Annexure-B: Special Instructions for e-Tendering and Reverse Auction",
    "status": "pass",
-   "seconds": 1.49,
+   "seconds": 1.51,
    "screenshot": "screens/seci-forms-Annexure-B.jpg",
    "note": "NOTHING TO FILL: SIGN AND STAMP THE RFS DOCUMENT; reviewed"
   },
@@ -4518,7 +4534,7 @@
    "section": "SECI bid forms",
    "name": "Formats navigator: every needed format reviewed",
    "status": "pass",
-   "seconds": 0.12,
+   "seconds": 0.11,
    "screenshot": "screens/seci-forms-nav.jpg",
    "note": "07 BID FORMS 11 of 11 formats reviewed"
   },
@@ -4526,7 +4542,7 @@
    "section": "SECI bid forms",
    "name": "Download the bid pack (Word)",
    "status": "pass",
-   "seconds": 0.07,
+   "seconds": 0.11,
    "screenshot": null,
    "note": "bid-pack/SECI_RTC_TM_V_bid_200MW.docx"
   },
@@ -4534,15 +4550,15 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.1: Covering Letter",
    "status": "pass",
-   "seconds": 0.36,
+   "seconds": 0.38,
    "screenshot": "screens/seci-letter-7.1.jpg",
-   "note": "1558 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
+   "note": "1561 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
   },
   {
    "section": "SECI RTC tender: the letters",
    "name": "Change a paragraph's wording in place (Format 7.1)",
    "status": "pass",
-   "seconds": 0.62,
+   "seconds": 0.71,
    "screenshot": "screens/seci-letter-edit.jpg",
    "note": "paragraph 8: marked as your wording; the format's review asks to be redone (CHANGED SINCE REVIEW: MARK REVIEWED AGAIN)"
   },
@@ -4550,23 +4566,23 @@
    "section": "SECI RTC tender: the letters",
    "name": "Revert the paragraph to the RfS wording",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.17,
    "screenshot": "screens/seci-letter-revert.jpg",
-   "note": "back to the RfS wording; the review stands again: REVIEWED 24 OCT 2026, 4:57 PM UNDO"
+   "note": "back to the RfS wording; the review stands again: REVIEWED 24 OCT 2026, 7:23 PM UNDO"
   },
   {
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.3A: Bank Guarantee for EMD",
    "status": "pass",
-   "seconds": 0.28,
+   "seconds": 0.35,
    "screenshot": "screens/seci-letter-7.3A.jpg",
-   "note": "808 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.pdf"
+   "note": "812 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.3A_Arkaja_Renewables_Private_Limited.pdf"
   },
   {
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.4: Board Resolutions",
    "status": "pass",
-   "seconds": 0.27,
+   "seconds": 0.3,
    "screenshot": "screens/seci-letter-7.4.jpg",
    "note": "695 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.4_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.4_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4574,7 +4590,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.6: Financial Requirement",
    "status": "pass",
-   "seconds": 0.3,
+   "seconds": 0.34,
    "screenshot": "screens/seci-letter-7.6.jpg",
    "note": "1070 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.6_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.6_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4582,7 +4598,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.7: Undertaking (not a wilful defaulter or blacklisted)",
    "status": "pass",
-   "seconds": 0.27,
+   "seconds": 0.28,
    "screenshot": "screens/seci-letter-7.7.jpg",
    "note": "215 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.7_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.7_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4590,7 +4606,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.8: Disclosure (no group company bidding)",
    "status": "pass",
-   "seconds": 0.28,
+   "seconds": 0.33,
    "screenshot": "screens/seci-letter-7.8.jpg",
    "note": "615 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.8_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.8_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4606,7 +4622,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.9: Integrity Pact",
    "status": "pass",
-   "seconds": 0.26,
+   "seconds": 0.3,
    "screenshot": "screens/seci-letter-7.9.jpg",
    "note": "103 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.9_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.9_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4614,7 +4630,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.10: Financial Bid covering letter",
    "status": "pass",
-   "seconds": 0.29,
+   "seconds": 0.32,
    "screenshot": "screens/seci-letter-7.10.jpg",
    "note": "379 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.10_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.10_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4622,7 +4638,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "Letter 7.11: Preliminary Estimate of Cost of RE Power Project",
    "status": "pass",
-   "seconds": 0.26,
+   "seconds": 0.33,
    "screenshot": "screens/seci-letter-7.11.jpg",
    "note": "198 words, every blank filled; letters/word/SECI_RTC_TM_V_Format_7.11_Arkaja_Renewables_Private_Limited.docx, letters/pdf/SECI_RTC_TM_V_Format_7.11_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4638,7 +4654,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "All letters in one Word file",
    "status": "pass",
-   "seconds": 0.09,
+   "seconds": 0.07,
    "screenshot": null,
    "note": "letters/SECI_RTC_TM_V_Bid_letters_Arkaja_Renewables_Private_Limited.docx"
   },
@@ -4646,7 +4662,7 @@
    "section": "SECI RTC tender: the letters",
    "name": "All letters in one PDF",
    "status": "pass",
-   "seconds": 0.14,
+   "seconds": 0.15,
    "screenshot": null,
    "note": "letters/SECI_RTC_TM_V_Bid_letters_Arkaja_Renewables_Private_Limited.pdf"
   },
@@ -4654,15 +4670,183 @@
    "section": "SECI RTC tender: the letters",
    "name": "Save the bid to the scenario library (forms, reviews and letters)",
    "status": "pass",
-   "seconds": 0.48,
+   "seconds": 0.49,
    "screenshot": "screens/seci-saved.jpg",
    "note": "Saved “Arkaja Renewables Private Limited: SECI RTC-TM-V bid” version 1: the particulars, every format's blanks, the letters with their edits and the sizing."
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "Losses to the billing meter: solar, each part with its loss (CUF measured at the inverter output)",
+   "status": "pass",
+   "seconds": 0.63,
+   "screenshot": "screens/seci-losses-solar.jpg",
+   "note": "Billed here: CUF 24.41%"
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "Losses: wind (WTG step-up transformers) and the battery (PCS, MV transformers, both ways)",
+   "status": "pass",
+   "seconds": 0.26,
+   "screenshot": "screens/seci-losses-bess.jpg",
+   "note": "each technology's own transformer applied after where its CUF is measured"
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "Solar capex per MWac, shown per MWp",
+   "status": "pass",
+   "seconds": 0.14,
+   "screenshot": "screens/seci-solar-mwp.jpg",
+   "note": "= ₹2.857 cr/MWp at DC:AC 1.40"
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "The plant in MWac and MWp",
+   "status": "pass",
+   "seconds": 0.54,
+   "screenshot": "screens/seci-sizes-mwp.jpg",
+   "note": "SOLAR 523 MWac 732 MWp (DC:AC 1.40) · 2.62 × contracted WIND 293 MW 1.46 × contracted BATTERY 423 MW / 1,692 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹7.038/kWh no desi"
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "Hover an hour of the year-1 dispatch: the hour as a see-through Sankey against its block's floor",
+   "status": "pass",
+   "seconds": 0.54,
+   "screenshot": "screens/seci-sankey.jpg",
+   "note": "Jan 18h Peak block · floor 90% of 200 MW = 180 MW · delivered 180 MW · met Wind · 145 MW Battery · 37 MW To the PPA · 180 MW Transformer & line losses · 2 MW Peak floor 90%: met · 180 MW Above the flo"
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "The 25-year dispatch in 15-minute blocks, the time-block floors in every block",
+   "status": "pass",
+   "seconds": 84.52,
+   "screenshot": "screens/seci-d15.jpg",
+   "note": "In 15-minute blocks the plant is short of the time-block floors in 25 of 25 years: 2,575.4 MU in all, paid at 1.5 × the tariff, as the sizing chose."
+  },
+  {
+   "section": "SECI RTC tender: losses, dispatch",
+   "name": "Download the 25-year dispatch (Excel: summary, months, every year hour by hour)",
+   "status": "pass",
+   "seconds": 0.57,
+   "screenshot": null,
+   "note": "models/SECI_bid_dispatch_25_years.xlsx"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Open the Team panel: the tender's seats (demo: View as)",
+   "status": "pass",
+   "seconds": 1.07,
+   "screenshot": "screens/team-00-panel.jpg",
+   "note": "Tender manager Tender management Finance desk Finance REMOVE Legal desk Legal REMOVE Procurement desk Procurement REMOVE Technical desk Technical REMOVE Tender management Finance Procurement Legal Tec"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Assign the solar capex to procurement",
+   "status": "pass",
+   "seconds": 1.22,
+   "screenshot": "screens/team-01-assign-cost.jpg",
+   "note": "to Procurement"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Send Format 7.1 to finance for the signed copy",
+   "status": "pass",
+   "seconds": 1.01,
+   "screenshot": "screens/team-02-assign-format.jpg",
+   "note": "to Finance"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Ask legal for a reading of the Peak Hours condition",
+   "status": "pass",
+   "seconds": 0.71,
+   "screenshot": "screens/team-03-assign-condition.jpg",
+   "note": "to Legal: condition.dfrPeak"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Procurement answers with its figure",
+   "status": "pass",
+   "seconds": 1.1,
+   "screenshot": "screens/team-04-procurement.jpg",
+   "note": "₹3.85 cr/MWac"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Finance downloads the filled letter and uploads the signed copy",
+   "status": "pass",
+   "seconds": 0.87,
+   "screenshot": "screens/team-05-finance.jpg",
+   "note": "SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Legal gives its reading",
+   "status": "pass",
+   "seconds": 0.85,
+   "screenshot": "screens/team-06-legal.jpg",
+   "note": ""
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "The tender manager sees three answers to accept",
+   "status": "pass",
+   "seconds": 0.84,
+   "screenshot": "screens/team-07-manager.jpg",
+   "note": "3 waiting"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Accept the capex into the bid (a new saved version)",
+   "status": "pass",
+   "seconds": 0.22,
+   "screenshot": "screens/team-08-accept-cost.jpg",
+   "note": "Accepted “Solar: Capex per MWac” from Procurement desk: saved as version 2."
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Accept the signed copy of Format 7.1",
+   "status": "pass",
+   "seconds": 0.17,
+   "screenshot": "screens/team-09-accept-signed.jpg",
+   "note": "Accepted “Format 7.1: Covering Letter (signed copy)” from Finance desk: saved as version 3."
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Return legal's reading with a note",
+   "status": "pass",
+   "seconds": 0.21,
+   "screenshot": "screens/team-10-return.jpg",
+   "note": ""
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "Legal answers again; the manager accepts",
+   "status": "pass",
+   "seconds": 1.64,
+   "screenshot": "screens/team-11-accepted.jpg",
+   "note": "ARKAJA RENEWABLES PRIVATE LIMITED: SECI RTC-TM-V BID · V4"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "In the bid: the signed copy on Format 7.1, our reading under the condition",
+   "status": "pass",
+   "seconds": 1.36,
+   "screenshot": "screens/team-12-in-bid.jpg",
+   "note": "Signed copy: SECI_RTC_TM_V_Format_7.1_Arkaja_Renewables_Private_Limited.pdf · Finance desk · Our reading (Legal desk): Amendment-01 cl. 8.1 as amended by Amendment-02: SECI declares the Peak Hours a day ahead with"
+  },
+  {
+   "section": "SECI RTC tender: the team",
+   "name": "The new capex cleared the sizing: size again",
+   "status": "pass",
+   "seconds": 45.21,
+   "screenshot": "screens/team-13-resized.jpg",
+   "note": "SOLAR 534 MWac 748 MWp (DC:AC 1.40) · 2.67 × contracted WIND 281 MW 1.41 × contracted BATTERY 433 MW / 1,733 MWh 4.0 h 25-YEAR TARIFF (HIGHS) ₹6.957/kWh no design below ₹6.957"
   },
   {
    "section": "Round the Clock",
    "name": "Open the tab: default plant, tariff and returns",
    "status": "pass",
-   "seconds": 2.12,
+   "seconds": 2.26,
    "screenshot": "screens/rtc-00.jpg",
    "note": "TARIFF FOR TARGET IRR ₹4.189 flat, ₹/kWh LCOE ₹3.635 @ 10.0% discount EQUITY IRR 14.00% NPV @ target ₹0 cr PROJECT IRR 9.98% post-tax, unlevered DSCR MIN / AVG "
   },
@@ -4678,7 +4862,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Supply type",
    "status": "pass",
-   "seconds": 0.69,
+   "seconds": 0.68,
    "screenshot": "screens/rtc-supply.jpg",
    "note": ""
   },
@@ -4686,7 +4870,7 @@
    "section": "Round the Clock",
    "name": "Chapter: DFR",
    "status": "pass",
-   "seconds": 0.65,
+   "seconds": 0.67,
    "screenshot": "screens/rtc-dfr.jpg",
    "note": ""
   },
@@ -4702,7 +4886,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Wind",
    "status": "pass",
-   "seconds": 0.69,
+   "seconds": 0.73,
    "screenshot": "screens/rtc-wind.jpg",
    "note": ""
   },
@@ -4710,7 +4894,7 @@
    "section": "Round the Clock",
    "name": "Chapter: Battery storage",
    "status": "pass",
-   "seconds": 0.67,
+   "seconds": 0.7,
    "screenshot": "screens/rtc-battery.jpg",
    "note": ""
   },
@@ -4718,7 +4902,7 @@
    "section": "Round the Clock",
    "name": "Download the financial model (Excel)",
    "status": "pass",
-   "seconds": 0.16,
+   "seconds": 0.18,
    "screenshot": null,
    "note": "models/Round_the_clock_285MW_financial_model.xlsx"
   },
@@ -4726,7 +4910,7 @@
    "section": "BESS Tender",
    "name": "Open the tab",
    "status": "pass",
-   "seconds": 0.22,
+   "seconds": 0.26,
    "screenshot": "screens/bess-00.jpg",
    "note": ""
   },
@@ -4734,7 +4918,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Tender",
    "status": "pass",
-   "seconds": 0.8,
+   "seconds": 0.81,
    "screenshot": "screens/bess-tender.jpg",
    "note": ""
   },
@@ -4742,7 +4926,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Requirements",
    "status": "pass",
-   "seconds": 0.82,
+   "seconds": 0.81,
    "screenshot": "screens/bess-requirements.jpg",
    "note": ""
   },
@@ -4766,7 +4950,7 @@
    "section": "BESS Tender",
    "name": "Chapter: Finance",
    "status": "pass",
-   "seconds": 0.8,
+   "seconds": 0.81,
    "screenshot": "screens/bess-finance.jpg",
    "note": ""
   },
@@ -4774,7 +4958,7 @@
    "section": "BESS Tender",
    "name": "Optimize: the battery and augmentation plan with the lowest capacity charge",
    "status": "pass",
-   "seconds": 5.55,
+   "seconds": 5.53,
    "screenshot": "screens/bess-optimized.jpg",
    "note": "01 TENDER Upload the RfS 02 REQUIREMENTS 250 MW / 500 MWh · 2×/day 03 BATTERY LFP · DoD 90% · RTE 88.6% 04 COSTS DC ₹0.78 cr/MWh · PCS ₹0.28 cr/MW 05 FINANCE Equity IRR 14.0% · debt 70% 06 OPTIMIZE lo"
   },
@@ -4790,7 +4974,7 @@
    "section": "CfD Bid",
    "name": "Open the tab",
    "status": "pass",
-   "seconds": 0.18,
+   "seconds": 0.17,
    "screenshot": "screens/cfd-00.jpg",
    "note": ""
   },
@@ -4806,7 +4990,7 @@
    "section": "CfD Bid",
    "name": "Next step (2)",
    "status": "pass",
-   "seconds": 0.82,
+   "seconds": 0.81,
    "screenshot": "screens/cfd-02.jpg",
    "note": ""
   },
@@ -4814,7 +4998,7 @@
    "section": "CfD Bid",
    "name": "Next step (3)",
    "status": "pass",
-   "seconds": 0.93,
+   "seconds": 0.97,
    "screenshot": "screens/cfd-03.jpg",
    "note": ""
   },
@@ -4822,7 +5006,7 @@
    "section": "CfD Bid",
    "name": "Next step (4)",
    "status": "pass",
-   "seconds": 0.88,
+   "seconds": 0.91,
    "screenshot": "screens/cfd-04.jpg",
    "note": ""
   },
@@ -4830,7 +5014,7 @@
    "section": "CfD Bid",
    "name": "Next step (5)",
    "status": "pass",
-   "seconds": 0.92,
+   "seconds": 0.89,
    "screenshot": "screens/cfd-05.jpg",
    "note": ""
   },
