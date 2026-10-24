@@ -6,6 +6,8 @@ flowchart LR
   W -->|SQL| D[(Postgres 16)]
   W -->|/api/* forwarded when the<br/>user's tabs allow the family| E[engine: FastAPI<br/>extraction, HiGHS sizing,<br/>15-min dispatch]
   E -->|PDF pages, only with a key| A[Anthropic API<br/>claude-fable-5-1]
+  E -->|amendment and clarification<br/>PDFs, tables back| DL[docling: docling-serve<br/>layout and table models]
+  E -.->|scanned pages, only with a key| LP[LlamaParse]
   W -->|creates the voice session,<br/>only with a key| O[OpenAI GPT-Live<br/>gpt-live-1]
   B <-.->|WebRTC audio and events:<br/>the bid agent's tools run in the browser| O
 ```
@@ -14,6 +16,7 @@ flowchart LR
 | --- | --- | --- |
 | Web app | `web/` | The TenderOS interface (the jouleWise design). It holds the shell with its tabs, sign-in, users and tab access, saved scenarios, the activity log, tender readings and the Excel exports. The browser computes the financial models (`web/src/rtc/engine.js`, `web/src/bid/model.js`, `web/src/cfd/`). |
 | Engine | `engine/` | A stateless FastAPI service. It reads tenders (`extraction/`), runs the BESS tender adapter (`bess/`), sizes plants with the HiGHS LP (`sizing/rtc_lp.py`) and runs the 15-minute dispatch (`sizing/dispatch15.py`). |
+| Docling | `docling` service (image `docling-serve-cpu`) | Reads the tables of a tender set's amendments and clarifications for the engine (`DOCLING_URL`); not published. Without it the engine uses PyMuPDF's table finder. |
 | Database | Postgres | Holds users, sessions, tab access, scenarios, activity, resource profiles and tender readings (`web/db/migrations`, applied by the web app on start). |
 
 On a VM, Caddy (`deploy/docker-compose.vm.yml`, `deploy/Caddyfile`) terminates HTTPS in front of
@@ -38,6 +41,11 @@ only the web app is published, and `ANTHROPIC_API_KEY` lives only on the engine.
 
 1. On the start screen, upload a tender, or open the prefilled simulation or a tender read before.
    * An upload goes to `POST /api/bid/tender/read` (a job), then `GET …/read/{id}`.
+   * Several files at once (the RfS with its amendments, clarifications and PPA/PSA) go to
+     `POST /api/bid/tender/read-set` (`engine/extraction/tenderset`). The reading that comes back
+     is the RfS with the amendments applied, and the Tender step shows the set: documents,
+     amended terms, changes, clarifications, formats, bid process and search
+     (`GET …/search`, Haystack BM25) (`TenderSet.jsx`, `docs/EXTRACTION.md`).
    * The scan screen shows the job's `preview`, the tender's own lines per agent, while the reading
      runs.
    * The reading comes back with a page and a quote for every value.
@@ -82,7 +90,7 @@ tabs, the bid forms and the agent.
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`), the SECI tender pack's quotes (`tests/test_seci_pack.py`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
 | `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, and the BESS hand-off; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack, with the agent panel (`tests/e2e/test_seci_tab.py`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack, with the agent panel (`tests/e2e/test_seci_tab.py`) |
 
 ## What is not here
 

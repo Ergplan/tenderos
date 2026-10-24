@@ -193,6 +193,28 @@ Tested here against a stand-in for the old app: a compose project `fdre-dashboar
 
 The real old app has not been run behind the router here.
 
+### Docling for tender sets
+
+`docker-compose.yml` runs a `docling` service with the image
+`quay.io/docling-project/docling-serve-cpu:v1.35.0`. ekbill's `ekbill-docling-1` already pulled
+it on the tariff-order VM. The engine reads a tender set's amendment and clarification tables
+through it at `http://docling:5001`. The service needs about 2 GB of memory. The first conversion
+after a start loads its models (a minute or two).
+
+* To run without it, put `DOCLING_URL=` (empty) in `.env` and stop the service:
+  `docker compose -p tenderos stop docling`.
+* The engine then uses PyMuPDF's table finder and says so in the set's warnings.
+* To read scanned pages with LlamaParse, add `LLAMA_CLOUD_API_KEY=` to `.env`.
+
+On the shared VM, update the code and start the new service with the rest:
+
+```
+cd <tenderos folder>
+git pull
+docker compose -p tenderos up -d --build
+docker compose -p tenderos ps docling engine
+```
+
 ## 7. Removing it
 
 Delete the VM, the static IP and the firewall rules:

@@ -23,8 +23,21 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       EXTRACTION_MODEL: ${EXTRACTION_MODEL:-}
       EXTRACTION_REQUIRE_LLM: ${EXTRACTION_REQUIRE_LLM:-}
+      # tender sets: amendment and clarification tables (Docling), scanned pages (LlamaParse)
+      DOCLING_URL: ${DOCLING_URL-http://docling:5001}
+      LLAMA_CLOUD_API_KEY: ${LLAMA_CLOUD_API_KEY:-}
     volumes:
       - extraction_jobs:/data/extraction_jobs
+    restart: unless-stopped
+
+  # Docling (IBM) layout and table models behind docling-serve, CPU build; the engine reads a
+  # tender set's tables through it and falls back to PyMuPDF when it is down. Not published.
+  docling:
+    image: quay.io/docling-project/docling-serve-cpu:v1.35.0
+    environment:
+      DOCLING_SERVE_ENABLE_UI: "false"
+      DOCLING_SERVE_MAX_SYNC_WAIT: "600"
+      UVICORN_WORKERS: "1"
     restart: unless-stopped
 
   web:
