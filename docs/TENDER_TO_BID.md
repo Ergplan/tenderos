@@ -7,7 +7,14 @@ BESS tender and CfD bid, and does not change them.
 
 1. **Start screen** (`StartScreen.jsx`). The start screen offers four ways in:
    * **Upload a tender:** any power tender (PDF, Word or text, up to 60 MB). The type is detected,
-     or you choose it.
+     or you choose it. Choose several files at once (the RfS with its amendments, clarifications
+     and draft PPA/PSA; up to 20 files, 120 MB) and they are read as a tender set:
+     * the amendments are applied to the RfS, so every later step uses the amended terms;
+     * a page chip shows the amendment's name ("Amd-1 p. 1") when the value comes from one;
+     * the Tender step opens with a **Tender set** panel: documents, amended terms (was → now,
+       with the amendment's quote), every change with a word diff, clarifications with their
+       verdicts, the bid formats with their blanks, the Bid Information Sheet and the bid steps,
+       and a search over every page.
    * **Run the prefilled simulation:** WBSEDCL/PT&P/RE-RTC/2026/01, whose reading ships built
      in. It opens straight in the workflow.
    * **Continue** the tender in progress.

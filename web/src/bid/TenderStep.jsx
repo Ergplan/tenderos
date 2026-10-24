@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, FilePlus2, FolderOpen, Loader2, Sparkles } f
 import { Section, nf } from "../rtc/ui";
 import { AllFields, PROVIDER_LABEL, ReadingBanner, TenderRequirements } from "./RequirementsStep";
 import PreBidQueries from "./PreBidQueries";
+import TenderSet from "./TenderSet";
 import { getJson, readTenderFile } from "./readTender";
 
 /** Step 1: the tender, every requirement on one page, and opening another tender. */
@@ -122,6 +123,8 @@ export default function TenderStep({ state, setState, onRead, onModelRead, goto,
           </div>
         )}
       </Section>
+
+      {last?.tender_set && <TenderSet result={last} />}
 
       {last && (
         <Section index="1.1" title="What the tender requires" note="Every requirement the sizing applies, with the page and quote it comes from">

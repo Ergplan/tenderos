@@ -10,7 +10,7 @@ import { handOff } from "../handoff";
 import TenderStep from "./TenderStep";
 import StartScreen, { PREFILLED_TENDER } from "./StartScreen";
 import ScanStage from "./ScanStage";
-import { getJson, openSavedTender, readTenderFile } from "./readTender";
+import { getJson, openSavedTender, readTenderFile, readTenderSet } from "./readTender";
 import CapacityStep from "./CapacityStep";
 import DatesStep from "./DatesStep";
 import SourcesStep from "./SourcesStep";
@@ -135,14 +135,19 @@ export default function BidTab({ user = null, openTab = null }) {
   }
 
   /** Read an uploaded tender on the scan screen; the scan opens the workflow when it closes. */
-  function startUpload(file, opts) {
+  function startUpload(upload, opts) {
     const id = ++scanId.current;
-    lastUpload = file;
+    const files = Array.isArray(upload) ? upload : [upload];
+    const isSet = files.length > 1;
+    lastUpload = isSet ? null : files[0];
     setStartError("");
+    // a set shows on the scan screen as one item; the RfS's name replaces it once read
+    const file = isSet ? { name: `tender set (${files.length} documents)`, size: files.reduce((n, f) => n + f.size, 0) } : files[0];
     setScan({ id, file, opts, job: null, outcome: null, error: null });
     setView("scan");
     const mine = (fn) => setScan((sc) => (sc && sc.id === id ? fn(sc) : sc));
-    readTenderFile(file, { mode: opts.mode, type: opts.type, onUpdate: (job) => mine((sc) => ({ ...sc, job })), isCancelled: () => scanId.current !== id })
+    const read = isSet ? readTenderSet : (f, o) => readTenderFile(f[0], o);
+    read(files, { mode: opts.mode, type: opts.type, onUpdate: (job) => mine((sc) => ({ ...sc, job })), isCancelled: () => scanId.current !== id })
       .then((outcome) => { if (outcome) mine((sc) => ({ ...sc, outcome })); })
       .catch((err) => mine((sc) => ({ ...sc, error: err.message })));
   }
@@ -151,7 +156,7 @@ export default function BidTab({ user = null, openTab = null }) {
   scanRef.current = scan;
   function finishScan() {
     const sc = scanRef.current;
-    if (sc?.outcome) onRead({ name: sc.file.name, readAt: new Date().toISOString(), result: sc.outcome.result, savedId: sc.outcome.savedId });
+    if (sc?.outcome) onRead({ name: sc.outcome.name || sc.file.name, readAt: new Date().toISOString(), result: sc.outcome.result, savedId: sc.outcome.savedId });
     setScan(null);
     setView(sc?.outcome ? "work" : "start");
   }

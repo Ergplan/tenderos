@@ -16,13 +16,19 @@ export function StatusChip({ status }) {
   return <span className={`bid-status ${s.cls}`}><Icon size={11} /> {s.label}</span>;
 }
 
+/** "p. 4", or "Amd-1 p. 1" for a page of another document of a tender set (an amendment). */
+export function pageLabel(page, doc) {
+  const where = doc && doc !== "rfs" ? `${doc.replace(/^amd(\d+)$/, "Amd-$1").replace(/^clar(\d+)$/, "Clar-$1")} ` : "";
+  return `${where}p. ${page}`;
+}
+
 /** Page chip with the quote it rests on (title); used next to every value taken from the tender. */
 export function SourceChip({ source, compact = false }) {
   if (!source) return null;
   const tip = [source.label, source.quote ? `“${source.quote}”` : null, source.located ? null : "Quote not found on the page: check it"].filter(Boolean).join("\n");
   return (
     <span className={`bid-src ${source.located ? "" : "unlocated"} ${source.status === "needs_review" ? "review" : ""}`} title={tip}>
-      <FileSearch size={10} /> {source.page ? `p. ${source.page}` : "tender"}{!compact && source.status === "needs_review" ? " · review" : ""}
+      <FileSearch size={10} /> {source.page ? pageLabel(source.page, source.doc) : "tender"}{!compact && source.status === "needs_review" ? " · review" : ""}
     </span>
   );
 }
@@ -33,7 +39,7 @@ function Quote({ evidence }) {
     <ul className="bid-quotes">
       {evidence.map((e, i) => (
         <li key={i} className={e.located ? "" : "unlocated"}>
-          <span className="bid-src"><FileSearch size={10} /> p. {e.page}</span>
+          <span className="bid-src"><FileSearch size={10} /> {pageLabel(e.page, e.doc)}</span>
           <q>{e.quote}</q>
           {!e.located && <em>not found on the page</em>}
         </li>
@@ -148,7 +154,7 @@ export function AllFields({ result }) {
                       <button type="button" className="bid-field-row" onClick={() => setOpenField(openField === f.path ? null : f.path)}>
                         <span>{f.label}{f.required ? " *" : ""}{f.reader === "model" ? <em className="bid-reader"> model</em> : null}</span>
                         <span className="bid-field-value">{f.display || (f.value === null ? "–" : String(f.value))}</span>
-                        <span>{f.evidence?.[0]?.page ? <span className="bid-src"><FileSearch size={10} /> p. {f.evidence[0].page}</span> : null}</span>
+                        <span>{f.evidence?.[0]?.page ? <span className="bid-src"><FileSearch size={10} /> {pageLabel(f.evidence[0].page, f.evidence[0].doc)}</span> : null}</span>
                         <StatusChip status={f.status} />
                       </button>
                       {openField === f.path && (

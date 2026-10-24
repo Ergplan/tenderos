@@ -9,6 +9,9 @@
 * test_prefilled_simulation: the prefilled WBSEDCL tender opens straight in the workflow.
 * test_skip_and_reduced_motion: both reach the workflow without the animation.
 * test_bess_tender_goes_to_the_bess_tab: a standalone battery tender is handed to the BESS tab.
+* test_tender_set: the SECI RTC-TM-V set (RfS, two amendments, clarifications, PSA) uploaded at
+  once: the amendments are applied to the RfS (bid size 100 -> 50 MW), and the Tender set panel
+  lists the documents, changes, clarifications, formats and bid process, and searches every page.
 
 Needs the whole stack running (database, engine, web; see README) and a user who may use
 the Tender to Bid tab:
@@ -301,6 +304,54 @@ def test_skip_and_reduced_motion(how):
         assert page.locator("[data-testid=scan-agent-dates]").count() == 0, "no animation"
         page.wait_for_selector("[data-testid=bid-tender-head]", timeout=240_000)
         assert page.locator("[data-testid=scan-summary]").count() == 0
+
+
+SECI_SET = ROOT / "web" / "public" / "tenders" / "seci-rtc-tm-v"
+
+
+def test_tender_set(tmp_path):
+    files = [SECI_SET / name for name in ("RfS.pdf", "Amendment-01.pdf", "Amendment-02.pdf", "Clarifications-01.pdf", "Standard-PSA.pdf")]
+    if not all(f.exists() for f in files):
+        pytest.skip("the SECI RTC-TM-V set is not in web/public/tenders")
+    shots = Path(os.environ.get("E2E_SHOTS") or tmp_path)
+    with _session(reduced_motion="reduce") as page:
+        page.set_input_files("[data-testid=bid-file]", [str(f) for f in files])
+        assert page.locator("[data-testid=start-set-files] li").count() == 5
+        assert "tender set (5)" in page.locator("[data-testid=bid-read]").inner_text().lower()
+        page.click("[data-testid=bid-read]")
+        page.wait_for_selector("[data-testid=tender-set]", timeout=600_000)
+        page.screenshot(path=str(shots / "set-00-amended.png"), full_page=True)
+        # the RfS opens with the amendments applied: Amendment-01 lowers the least bid to 50 MW
+        amended = page.locator("[data-testid=set-amended-row]")
+        assert amended.count() >= 8
+        rows = [_flat(t) for t in amended.all_inner_texts()]
+        assert any("50" in r and "100" in r and "Amendment-01" in r for r in rows), rows[:4]
+        page.click("[data-testid=set-tab-documents]")
+        docs = [_flat(t) for t in page.locator("[data-testid=set-doc-row]").all_inner_texts()]
+        assert [d.split(" ")[0] for d in docs] == ["RfS", "Amendment-01", "Amendment-02", "Clarifications-01", "Draft"]
+        page.click("[data-testid=set-tab-changes]")
+        assert page.locator("[data-testid=set-change-row]").count() >= 45
+        page.locator("[data-testid=set-change-row]").first.click()
+        detail = _flat(page.locator("[data-testid=set-change-detail]").inner_text())
+        assert "100 MW" in detail and "50 MW" in detail and "p. 1 · Amendment-01" in detail
+        page.select_option("[data-testid=set-change-target]", "PSA")
+        assert page.locator("[data-testid=set-change-row]").count() == 3
+        page.click("[data-testid=set-tab-clarifications]")
+        assert page.locator("[data-testid=set-clar-row]").count() >= 18
+        page.click("[data-testid=set-tab-formats]")
+        assert page.locator("[data-testid=set-format-row]").count() >= 20
+        first = page.locator("[data-testid=set-format-row]").first
+        assert "COVERING LETTER" in first.inner_text().upper()
+        first.click()
+        assert "p. 68 · RfS" in page.locator("[data-testid=set-format-detail]").inner_text()
+        page.click("[data-testid=set-tab-process]")
+        assert page.locator("[data-testid=set-step]").count() >= 10 and page.locator("[data-testid=set-bis]").count() == 1
+        page.click("[data-testid=set-tab-search]")
+        page.fill("[data-testid=set-search-input]", "e-reverse auction")
+        page.click("[data-testid=set-search-go]")
+        page.wait_for_selector("[data-testid=set-search-hit]", timeout=60_000)
+        assert "reverse auction" in page.locator("[data-testid=set-search-hit]").first.inner_text().lower()
+        page.screenshot(path=str(shots / "set-01-search.png"), full_page=True)
 
 
 def test_bess_tender_goes_to_the_bess_tab(tmp_path):

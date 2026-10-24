@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, FileSearch, FolderOpen, Gavel, Loader2, PlayCircle, Upload } from "lucide-react";
 import { nf } from "../rtc/ui";
-import { MAX_UPLOAD_BYTES, getJson } from "./readTender";
+import { MAX_SET_BYTES, MAX_UPLOAD_BYTES, getJson } from "./readTender";
 
 // the tender the prefilled simulation opens: the WBSEDCL RE-RTC RfQ/RfP reading built into the app
 export const PREFILLED_TENDER = "wbsedcl-re-rtc-2026-01";
@@ -28,7 +28,7 @@ export const TYPE_LABEL = {
 export default function StartScreen({ current, onUpload, onOpenSaved, onContinue, error }) {
   const [status, setStatus] = useState(null);
   const [recent, setRecent] = useState(null);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [type, setType] = useState("auto");
   const [mode, setMode] = useState("auto");
   const [opening, setOpening] = useState("");
@@ -44,12 +44,20 @@ export default function StartScreen({ current, onUpload, onOpenSaved, onContinue
   const others = (recent || []).filter((t) => t.seed_key !== PREFILLED_TENDER).slice(0, 6);
   const currentNumber = current?.tender?.result?.values?.["core.identity.tender_number"] || current?.tender?.name;
 
-  function choose(f) {
+  // one file is read as a tender; several as a tender set (the RfS with its amendments,
+  // clarifications and agreements), the amendments applied to the RfS
+  function choose(list) {
     setLocalError("");
-    if (!f) return;
-    if (f.size > MAX_UPLOAD_BYTES) { setLocalError("The file is larger than 60 MB."); return; }
-    setFile(f);
+    const picked = Array.from(list || []);
+    if (!picked.length) return;
+    if (picked.some((f) => f.size > MAX_UPLOAD_BYTES)) { setLocalError("Each file must be at most 60 MB."); return; }
+    if (picked.reduce((n, f) => n + f.size, 0) > MAX_SET_BYTES) { setLocalError("The set is larger than 120 MB."); return; }
+    if (picked.length > (status?.set?.max_files || 20)) { setLocalError(`A tender set takes at most ${status?.set?.max_files || 20} files.`); return; }
+    setFiles(picked);
   }
+  const file = files[0] || null;
+  const isSet = files.length > 1;
+  const totalMb = files.reduce((n, f) => n + f.size, 0) / 1024 / 1024;
 
   async function open(item, how) {
     setOpening(item.id);
@@ -68,7 +76,7 @@ export default function StartScreen({ current, onUpload, onOpenSaved, onContinue
         <div>
           <div className="eyebrow"><Gavel size={13} /> TenderOS · Tender to bid</div>
           <h1>Start with a tender</h1>
-          <p>Upload any power tender (RfS, RfQ, RfP or NIT) and TenderOS reads it: every date, condition and figure, each with the page it is printed on. Or run the prefilled simulation on a tender that has already been read.</p>
+          <p>Upload any power tender (RfS, RfQ, RfP or NIT) and TenderOS reads it: every date, condition and figure, each with the page it is printed on. Add its amendments, clarifications and draft PPA/PSA and the amendments are applied to the RfS. Or run the prefilled simulation on a tender that has already been read.</p>
         </div>
       </section>
 
@@ -85,13 +93,18 @@ export default function StartScreen({ current, onUpload, onOpenSaved, onContinue
           <h2>Upload a tender</h2>
           <button type="button" className="bid-drop" onClick={() => inputRef.current?.click()}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => { e.preventDefault(); choose(e.dataTransfer.files?.[0]); }}>
+            onDrop={(e) => { e.preventDefault(); choose(e.dataTransfer.files); }}>
             <Upload size={24} />
-            <strong>{file ? file.name : "Choose the RfS / RfP document"}</strong>
-            <small>{file ? `${nf(file.size / 1024 / 1024, 1)} MB` : "or drop it here · PDF, Word or text, up to 60 MB"}</small>
+            <strong>{isSet ? `${files.length} documents: a tender set` : file ? file.name : "Choose the RfS / RfP, with its amendments"}</strong>
+            <small>{file ? `${nf(totalMb, 1)} MB` : "or drop them here · one tender, or the RfS with its amendments, clarifications and PPA/PSA · PDF, Word or text"}</small>
           </button>
-          <input ref={inputRef} type="file" accept=".pdf,.docx,.txt" hidden data-testid="bid-file"
-            onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ""; }} />
+          <input ref={inputRef} type="file" accept=".pdf,.docx,.txt" multiple hidden data-testid="bid-file"
+            onChange={(e) => { choose(e.target.files); e.target.value = ""; }} />
+          {isSet && (
+            <ul className="bid-set-files" data-testid="start-set-files">
+              {files.map((f) => <li key={f.name}>{f.name} <small>{nf(f.size / 1024 / 1024, 1)} MB</small></li>)}
+            </ul>
+          )}
           <div className="bid-start-options">
             <label className="rtc-field">
               <div className="rtc-field-top"><span>Tender type</span></div>
@@ -107,8 +120,8 @@ export default function StartScreen({ current, onUpload, onOpenSaved, onContinue
               </select>
             </label>
           </div>
-          <button type="button" className="primary" disabled={!file} onClick={() => onUpload(file, { type, mode })} data-testid="bid-read">
-            <FileSearch size={15} /> Read tender
+          <button type="button" className="primary" disabled={!file} onClick={() => onUpload(isSet ? files : file, { type, mode })} data-testid="bid-read">
+            <FileSearch size={15} /> {isSet ? `Read the tender set (${files.length})` : "Read tender"}
           </button>
           <p className="rtc-note">Solar, wind, hybrid, FDRE, RE-RTC, battery storage, transmission, EPC and other power tenders.</p>
         </section>

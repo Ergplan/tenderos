@@ -53,6 +53,7 @@ export function sourceOf(hit) {
     status: hit.field.status,
     confidence: hit.field.confidence,
     page: ev?.page ?? null,
+    doc: ev?.doc ?? null, // a tender set: "amd1" when an amendment set the value
     quote: ev?.quote ?? null,
     located: Boolean(ev?.located),
   };
