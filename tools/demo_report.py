@@ -380,6 +380,8 @@ def build(run_dir: Path) -> Path:
   <div class="half">{img(run_dir, shot_of(steps, 'team-01-assign-form'))}{img(run_dir, shot_of(steps, 'team-04-procurement-answer'))}</div>
   <div class="half">{img(run_dir, shot_of(steps, 'team-07-manager'))}{img(run_dir, shot_of(steps, 'team-11-accepted'))}</div>
   <div class="half">{img(run_dir, shot_of(steps, 'team-12-signed'))}{img(run_dir, shot_of(steps, 'team-12-in-bid'))}</div>
+  <p class="small">Email: {esc(team.get('mail_mode'))} {esc(team.get('emails'))} emails were written for this bid.</p>
+  {img(run_dir, shot_of(steps, 'team-11b-outbox'), "shot mid")}
 </section>""")
 
     # ------------------------------------------------------------------ other tabs
@@ -418,7 +420,7 @@ def build(run_dir: Path) -> Path:
     <li>Costs, CUFs and financing are the app's benchmarks, not quotes; the tariffs follow from them.</li>
     <li>Tender reading ran in {esc(reading_mode)}. The model reading (Claude) is not part of this run.</li>
     <li>The GPT-Live voice agent was {'not configured on this server; its panel and charts were opened by click' if not any('voice available' in (s.get('note') or '') for s in steps) else 'available'}.</li>
-    <li>Email was off in this run (no SMTP on the test server): the team saw their work in the Team panel. The signed copy uploaded by finance is the filled letter standing in for a scan.</li>
+    <li>Email ran in demo mode (no mail server): each email was written and kept in the outbox, to fictional .example addresses, not sent. The signed copy uploaded by finance is the filled letter standing in for a scan.</li>
     <li>The bid pack and the letters are drafts for the bidder to print on letterhead or stamp paper, sign and stamp; the EMD instrument and enclosures are the bidder's to obtain. The letters follow the RfS wording as extracted from the RfS PDF; check them against the RfS before signing.</li>
   </ul>
 </section>""")

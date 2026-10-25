@@ -9,6 +9,15 @@ export function mailEnabled() {
   return Boolean(process.env.SMTP_HOST && process.env.MAIL_FROM);
 }
 
+/**
+ * How team emails go out: "smtp" (sent), "demo" (a demo deployment without SMTP: composed and
+ * kept in the outbox, shown in the Team panel, not sent), or "off".
+ */
+export function mailMode() {
+  if (mailEnabled()) return "smtp";
+  return process.env.DEMO_MODE === "1" ? "demo" : "off";
+}
+
 function transport() {
   if (!globalRef.__tenderosMail) {
     globalRef.__tenderosMail = nodemailer.createTransport({

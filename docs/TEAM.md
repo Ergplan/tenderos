@@ -73,9 +73,16 @@ the super admin, and when their answer is accepted or returned. Email is off unl
 | `MAIL_FROM` | The sender, for example `TenderOS <tenders@yourcompany.com>` |
 | `APP_URL` | The address people open TenderOS at; each mail links to the bid and opens the Team panel |
 
-Then rebuild or restart the web service. Each mail sent, and each failure with its reason, is
-recorded in the assignment's history. Without SMTP the Team panel says email is off, and people
-see their work in the panel.
+Then rebuild or restart the web service.
+
+* **The Outbox.** Every email is kept in the Team panel's **Outbox** tab (`team_outbox`,
+  migration 009): to, subject, the full text, and whether it was sent. Each mail sent, and each
+  failure with its reason, is also in the assignment's history.
+* **Demo mode.** On a demo deployment without SMTP, the emails are written exactly as they would be
+  sent and kept in the Outbox as "Demo outbox", not sent. The demo seats have fictional
+  `@arkaja-renewables.example` addresses (`.example` is never delivered).
+* **Neither.** On a signed-in deployment without SMTP, email is off and people see their work in the
+  panel.
 
 ## Files
 

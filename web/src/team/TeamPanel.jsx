@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle2, Download, FileUp, Inbox, Loader2, Mail, MailX, MessageSquare, RotateCcw, Send, ShieldCheck, UserPlus, Users, X, XCircle } from "lucide-react";
+import { CheckCircle2, Download, FileUp, Inbox, Loader2, Mail, MailX, MessageSquare, RotateCcw, Save, Send, ShieldCheck, UserPlus, Users, X, XCircle } from "lucide-react";
 import { KIND_LABEL, currentValue, restOf } from "./apply";
 
 const STATUS = { open: "Assigned", submitted: "Answered: to accept", returned: "Returned", accepted: "Accepted", cancelled: "Cancelled" };
@@ -128,6 +128,27 @@ function Card({ a, team, state, onAccept, letterFor, focus }) {
   );
 }
 
+/** The emails team sharing composed for this bid: sent through SMTP, or kept as the demo outbox. */
+function Outbox({ team }) {
+  const list = team.outbox || [];
+  if (!list.length) return <p className="rtc-note">No emails yet. Each assignment, answer, acceptance and return emails the people concerned.</p>;
+  return (
+    <div className="team-outbox" data-testid="team-outbox">
+      {list.map((m) => (
+        <article key={m.id} className={`team-mail-card ${m.status}`} data-testid="team-mail">
+          <header>
+            <span><b>{m.subject}</b></span>
+            <em className={`team-status ${m.status === "failed" ? "returned" : "accepted"}`}>{m.status === "sent" ? "Sent" : m.status === "failed" ? "Not sent" : "Demo outbox"}</em>
+          </header>
+          <small>To: {m.to_name} &lt;{m.to_email}&gt; · {when(m.created_at)}</small>
+          <pre>{m.body}</pre>
+          {m.error && <small className="team-mail-error">{m.error}</small>}
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function Members({ team }) {
   const [draft, setDraft] = useState({ name: "", email: "", team: "finance", superAdmin: false });
   const [error, setError] = useState("");
@@ -196,19 +217,26 @@ export default function TeamPanel({ team, state, bidName, onAccept, letterFor, o
         </div>
         <button type="button" className="rtc-icon-btn" onClick={onClose} aria-label="Close the team panel"><X size={16} /></button>
       </header>
-      <p className="rtc-note team-mail">{team.mail ? <><Mail size={12} /> Email is on: people with an address are told of each assignment and answer.</> : <><MailX size={12} /> Email is off on this server (no SMTP): people see their work here.</>}
-        {team.demo ? " Demo: “View as” switches between the team's seats without signing in." : ""}</p>
+      <p className="rtc-note team-mail" data-testid="team-mail-mode">
+        {team.mailMode === "smtp" && <><Mail size={12} /> Email on: everyone concerned is emailed at each assignment, answer, acceptance and return (Outbox).</>}
+        {team.mailMode === "demo" && <><Mail size={12} /> Email in demo mode: every email the team gets is written and shown under Outbox, addressed to the demo seats.</>}
+        {team.mailMode === "off" && <><MailX size={12} /> Email not set up yet: people see their work in this panel.</>}
+        {team.demo ? " “View as” switches between the seats." : ""}</p>
       {team.error && <div className="alert">{team.error}</div>}
       {!team.scenarioId ? (
-        <p className="rtc-note" data-testid="team-need-save">Save the bid to the library (Save, at the top of the tab) to share it with the team: assignments belong to a saved bid.</p>
+        <div className="team-need-save" data-testid="team-need-save">
+          <p>Save this bid to share it: the team works on one saved bid.</p>
+          <button type="button" className="primary" onClick={() => team.needSave?.()} data-testid="team-save-bid"><Save size={13} /> Save the bid</button>
+        </div>
       ) : (
         <>
           <div className="seg team-tabs">
             <button type="button" className={tab === "todo" ? "active" : ""} onClick={() => setTab("todo")} data-testid="team-tab-todo"><Inbox size={12} /> For you ({todo.length})</button>
             <button type="button" className={tab === "all" ? "active" : ""} onClick={() => setTab("all")} data-testid="team-tab-all">All ({team.assignments.length})</button>
+            <button type="button" className={tab === "outbox" ? "active" : ""} onClick={() => setTab("outbox")} data-testid="team-tab-outbox"><Mail size={12} /> Outbox ({(team.outbox || []).length})</button>
             <button type="button" className={tab === "members" ? "active" : ""} onClick={() => setTab("members")} data-testid="team-tab-members"><Users size={12} /> Team</button>
           </div>
-          {tab === "members" ? <Members team={team} /> : (
+          {tab === "members" ? <Members team={team} /> : tab === "outbox" ? <Outbox team={team} /> : (
             <div className="team-list">
               {list.length === 0 && <p className="rtc-note">{tab === "todo" ? "Nothing waiting for you." : "Nothing assigned yet: use Assign beside any value, cost, format or condition."}</p>}
               {list.map((a) => <Card key={a.id} a={a} team={team} state={state} onAccept={onAccept} letterFor={letterFor} focus={a.id === focusId} />)}
@@ -216,7 +244,7 @@ export default function TeamPanel({ team, state, bidName, onAccept, letterFor, o
           )}
         </>
       )}
-      <p className="rtc-note"><FileUp size={12} /> Files up to 25 MB: PDF, images, Word, Excel. They stay on this server.</p>
+      {team.scenarioId && <p className="rtc-note"><FileUp size={12} /> Signed copies and papers: PDF, images, Word or Excel up to 25 MB.</p>}
     </aside>
   );
 }

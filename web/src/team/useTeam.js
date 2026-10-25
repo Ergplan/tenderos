@@ -21,14 +21,21 @@ async function call(path, { method = "GET", body, form } = {}) {
 export default function useTeam(scenarioId) {
   const [team, setTeam] = useState(null); // { me, members, teams, demo, mail }
   const [assignments, setAssignments] = useState([]);
+  const [outbox, setOutbox] = useState([]); // the emails composed for this bid (sent, or the demo outbox)
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
     try {
       const t = await call("/api/team");
       setTeam(t);
-      if (t.me && scenarioId) setAssignments((await call(`/api/team/assignments?scenario=${scenarioId}`)).assignments);
-      else setAssignments([]);
+      if (t.me && scenarioId) {
+        const [a, o] = await Promise.all([call(`/api/team/assignments?scenario=${scenarioId}`), call(`/api/team/outbox?scenario=${scenarioId}`)]);
+        setAssignments(a.assignments);
+        setOutbox(o.outbox);
+      } else {
+        setAssignments([]);
+        setOutbox([]);
+      }
       setError("");
     } catch (err) {
       setError(err.message);
@@ -74,5 +81,5 @@ export default function useTeam(scenarioId) {
   const me = team?.me || null;
   const forMe = assignments.filter((a) => ["open", "returned"].includes(a.status) && (a.assignee_id ? a.assignee_id === me?.id : a.team === me?.team));
   const toAccept = me?.super_admin ? assignments.filter((a) => a.status === "submitted") : [];
-  return { ...(team || {}), me, assignments, targets, forMe, toAccept, error, refresh, actAs, assign, act, saveMember, scenarioId };
+  return { ...(team || {}), me, assignments, outbox, targets, forMe, toAccept, error, refresh, actAs, assign, act, saveMember, scenarioId };
 }

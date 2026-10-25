@@ -14,7 +14,7 @@ import { cookies } from "next/headers";
 import { query, tx } from "./db";
 import { HttpError } from "./auth";
 import { DEMO_MODE } from "./demo";
-import { mailEnabled, sendMail } from "./mail";
+import { mailMode, sendMail } from "./mail";
 
 export const TEAMS = {
   management: "Tender management",
@@ -32,13 +32,14 @@ export function assertUuid(id, what = "Not found.") {
   if (!UUID.test(String(id))) throw new HttpError(404, what);
 }
 
-// the demo's seats: one per team, no email until someone adds one
+// the demo's seats: one per team, each with a fictional address (.example is reserved, never
+// delivered) so the demo outbox shows who would be emailed
 const DEMO_SEATS = [
-  { name: "Tender manager", team: "management", super_admin: true },
-  { name: "Finance desk", team: "finance" },
-  { name: "Procurement desk", team: "procurement" },
-  { name: "Legal desk", team: "legal" },
-  { name: "Technical desk", team: "technical" },
+  { name: "Tender manager", team: "management", super_admin: true, email: "tender.manager@arkaja-renewables.example" },
+  { name: "Finance desk", team: "finance", email: "finance@arkaja-renewables.example" },
+  { name: "Procurement desk", team: "procurement", email: "procurement@arkaja-renewables.example" },
+  { name: "Legal desk", team: "legal", email: "legal@arkaja-renewables.example" },
+  { name: "Technical desk", team: "technical", email: "technical@arkaja-renewables.example" },
 ];
 
 const MEMBER_COLS = "id, name, email, team, super_admin, user_id, active, created_at";
@@ -50,9 +51,15 @@ export async function listMembers({ all = false } = {}) {
 
 async function seedDemo() {
   const { rows } = await query("SELECT count(*)::int AS n FROM team_members");
-  if (rows[0].n > 0) return;
+  if (rows[0].n === 0) {
+    for (const s of DEMO_SEATS) {
+      await query("INSERT INTO team_members (name, email, team, super_admin) VALUES ($1, $2, $3, $4)", [s.name, s.email, s.team, Boolean(s.super_admin)]);
+    }
+    return;
+  }
+  // seats made before they had addresses get theirs (an address someone typed is kept)
   for (const s of DEMO_SEATS) {
-    await query("INSERT INTO team_members (name, team, super_admin) VALUES ($1, $2, $3)", [s.name, s.team, Boolean(s.super_admin)]);
+    await query("UPDATE team_members SET email = $2 WHERE name = $1 AND team = $3 AND email = ''", [s.name, s.email, s.team]);
   }
 }
 
@@ -175,15 +182,38 @@ async function superAdmins() {
 
 const link = (a) => `${(process.env.APP_URL || "").replace(/\/$/, "")}/?open=${a.scenario_id}&team=${a.id}`;
 
-/** Email people about an assignment; each send is recorded as an event. No-op without SMTP. */
+/**
+ * Email people about an assignment. Every mail is composed the same way and kept in team_outbox:
+ * sent through SMTP when it is set, or, on a demo deployment without SMTP, kept as the demo outbox
+ * (shown in the Team panel, not sent). Each one is also an event in the assignment's history.
+ */
 async function notify(a, to, subject, lines) {
-  if (!mailEnabled() || !to.length) return;
-  const text = [...lines, "", process.env.APP_URL ? `Open it in TenderOS: ${link(a)}` : "Open the bid in TenderOS: Team panel.", "", "TenderOS"].join("\n");
+  const mode = mailMode();
+  if (mode === "off" || !to.length) return;
+  const text = [`Dear ${"{name}"},`, "", ...lines, "", `Bid: ${a.scenario_name}`,
+    process.env.APP_URL ? `Open it in TenderOS: ${link(a)}` : "Open the bid in TenderOS and click Team.", "", "TenderOS"].join("\n");
   for (const r of to) {
-    const res = await sendMail({ to: r.email, subject, text });
+    const body = text.replace("{name}", r.name);
+    const res = mode === "smtp" ? await sendMail({ to: r.email, subject, text: body }) : { sent: false, error: null };
+    const status = mode === "demo" ? "demo" : res.sent ? "sent" : "failed";
+    await query("INSERT INTO team_outbox (assignment_id, scenario_id, to_name, to_email, subject, body, status, error) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      [a.id, a.scenario_id, r.name, r.email, subject, body, status, res.error]);
     await query("INSERT INTO assignment_events (assignment_id, kind, note) VALUES ($1, $2, $3)",
-      [a.id, res.sent ? "emailed" : "email_failed", res.sent ? `${r.name} <${r.email}>: ${subject}` : `${r.email}: ${res.error}`]);
+      [a.id, status === "failed" ? "email_failed" : "emailed",
+        status === "failed" ? `${r.email}: ${res.error}` : `${r.name} <${r.email}>: ${subject}${status === "demo" ? " (demo outbox)" : ""}`]);
   }
+}
+
+/** The emails composed for a saved bid, newest first. */
+export async function listOutbox(scenarioId) {
+  assertUuid(scenarioId, "Bid not found.");
+  const { rows } = await query(
+    `SELECT o.id, o.assignment_id, o.to_name, o.to_email, o.subject, o.body, o.status, o.error, o.created_at, a.target_label
+       FROM team_outbox o LEFT JOIN assignments a ON a.id = o.assignment_id
+      WHERE o.scenario_id = $1 ORDER BY o.created_at DESC LIMIT 300`,
+    [scenarioId],
+  );
+  return rows;
 }
 
 export async function createAssignment(me, body) {
@@ -302,5 +332,6 @@ export async function fileRow(id) {
 
 export async function teamState(user) {
   const me = await actingMember(user);
-  return { me, members: me ? await listMembers({ all: Boolean(me.super_admin) }) : [], teams: TEAMS, demo: DEMO_MODE, mail: mailEnabled() };
+  const mode = mailMode();
+  return { me, members: me ? await listMembers({ all: Boolean(me.super_admin) }) : [], teams: TEAMS, demo: DEMO_MODE, mail: mode === "smtp", mailMode: mode };
 }

@@ -691,6 +691,13 @@ def seci_team(page, run: Run, letters: dict) -> dict:
         page.wait_for_function(f"() => document.querySelector('[data-testid=\"team-card-{key}\"]').className.includes('accepted')")
         out["history"] = _flat(page.locator(f'[data-testid="team-card-{key}"] .team-events').text_content())[:400]
         e["note"] = _flat(page.locator("[data-testid=seci-linked]").inner_text())
+    with run.step(S, "Email: every email the team got, in the demo outbox", "team-11b-outbox", "[data-testid=team-panel]") as e:
+        page.click("[data-testid=team-tab-outbox]")
+        n = page.locator("[data-testid=team-mail]").count()
+        assert n >= 7, n
+        out["emails"] = n
+        out["mail_mode"] = _flat(page.locator("[data-testid=team-mail-mode]").inner_text())
+        e["note"] = f"{n} emails · {out['mail_mode'][:120]}"
     with run.step(S, "In the bid: the signed copy on Format 7.1, our reading under the condition", "team-12-in-bid") as e:
         _close_team(page)
         page.click("[data-testid=seci-step-forms]")

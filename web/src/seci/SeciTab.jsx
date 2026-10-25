@@ -99,7 +99,7 @@ export default function SeciTab({ initialScenario = null }) {
   const teamCtx = useMemo(() => ({
     ...team,
     openPanel: (id) => { setTeamFocus(id || null); setTeamOpen(true); },
-    needSave: () => { setSaveMessage("Save the bid to the library first: assignments belong to a saved bid, so the whole team sees the same one."); setShowSave(true); },
+    needSave: () => { setSaveMessage("Name the bid to share it: the whole team then works on this saved bid."); setShowSave(true); },
   }), [team]);
   const teamCount = team.forMe.length + team.toAccept.length;
 

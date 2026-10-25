@@ -146,6 +146,14 @@ def test_assign_answer_accept_and_return(tmp_path):
         page.wait_for_function(f"() => document.querySelector('[data-testid=\"team-card-{cond_key}\"]').className.includes('accepted')")
         history = _card(page, cond_key).locator(".team-events").text_content()
         assert "returned" in history and history.count("submitted") == 2
+        # email in demo mode: every email is written and kept in the outbox, addressed to the seats
+        assert "Email in demo mode" in page.locator("[data-testid=team-mail-mode]").inner_text()
+        page.click("[data-testid=team-tab-outbox]")
+        mails = page.locator("[data-testid=team-mail]")
+        assert mails.count() >= 7, "assigned x3, answered x4 (to the manager), accepted x3, returned x1"
+        outbox = page.locator("[data-testid=team-outbox]").inner_text()
+        assert "procurement@arkaja-renewables.example" in outbox and "Dear Procurement desk" in outbox
+        assert "Demo outbox" in outbox and "EPC quote for the solar plant" in outbox
         _close(page)
 
         # the answers are in the bid
