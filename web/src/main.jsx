@@ -14,6 +14,7 @@ import BidTab from "./bid/BidTab";
 import SeciTab from "./seci/SeciTab";
 import CfdTab from "./cfd/CfdTab.jsx";
 import Brand from "./Brand";
+import ThemeToggle from "./ThemeToggle";
 import { ALL_TAB_IDS } from "../lib/tabs";
 import { authApi } from "./scenarios/client";
 
@@ -52,6 +53,7 @@ function Sidebar({ activeTab, setActiveTab, user, allowed }) {
           {user?.role === "admin" && <a href="/admin/activity"><Activity size={15} /> Activity</a>}
         </nav>
       </div>
+      <div className="side-section side-theme"><ThemeToggle /></div>
       {user?.switchUrl && (
         <div className="side-section">
           <nav className="side-nav"><a href={user.switchUrl}><ArrowLeftRight size={15} /> Switch app</a></nav>

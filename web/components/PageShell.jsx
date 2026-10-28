@@ -1,6 +1,7 @@
 import { Activity, FolderOpen, LayoutDashboard, UserRound, Users } from "lucide-react";
 import Brand from "@/src/Brand";
 import SignOutButton from "./SignOutButton";
+import ThemeToggle from "@/src/ThemeToggle";
 import ActivityPing from "./ActivityPing";
 
 /** Frame for the non-dashboard pages (library, compare, users, account). */
@@ -22,6 +23,7 @@ export default function PageShell({ user, active, title, eyebrow, actions, child
           ))}
         </nav>
         <div className="topbar-user">
+          <ThemeToggle className="compact" />
           <span>{user?.name || user?.email}</span>
           <SignOutButton />
         </div>

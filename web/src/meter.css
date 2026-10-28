@@ -1,11 +1,11 @@
 /* Round the clock: from the plant to the billing meter (MeterView.jsx) */
 .iso-card { padding: 6px 8px; margin-top: 12px; }
 .iso-svg { display: block; width: 100%; height: auto; }
-.iso-pad { fill: #101010; stroke: var(--line-2); stroke-width: 1; }
-.iso-pad.park { fill: #11140d; }
-.iso-pad.yard { fill: #121212; stroke-dasharray: 4 3; }
+.iso-pad { fill: var(--iso-pad); stroke: var(--line-2); stroke-width: 1; }
+.iso-pad.park { fill: var(--iso-park); }
+.iso-pad.yard { fill: var(--iso-yard); stroke-dasharray: 4 3; }
 .iso-pad.gss { stroke: color-mix(in srgb, var(--signal) 55%, transparent); }
-.iso-box polygon { stroke: #0a0a0a; stroke-width: 0.6; stroke-linejoin: round; }
+.iso-box polygon { stroke: var(--iso-edge); stroke-width: 0.6; stroke-linejoin: round; }
 .iso-steel .f-top, .iso-post .f-top { fill: #8e8e88; } .iso-steel .f-right, .iso-post .f-right { fill: #5f5f5a; } .iso-steel .f-front, .iso-post .f-front { fill: #74746e; }
 .iso-inverter .f-top { fill: #d9d9d3; } .iso-inverter .f-right { fill: #9a9a94; } .iso-inverter .f-front { fill: #b8b8b2; }
 .iso-idt .f-top { fill: #6f8fb0; } .iso-idt .f-right { fill: #3f5a76; } .iso-idt .f-front { fill: #536f8e; }
@@ -23,26 +23,26 @@
 .iso-wire.dc { stroke: var(--solar); stroke-width: 1; }
 .iso-wire.mv { stroke: var(--signal); stroke-width: 1.2; opacity: 0.85; }
 .iso-tower line { stroke: #9a9a94; stroke-width: 1.3; }
-.iso-turbine line { stroke: #c2c2bc; stroke-width: 1.4; }
+.iso-turbine line { stroke: var(--iso-turbine); stroke-width: 1.4; }
 .iso-turbine .iso-turbine-tower { stroke-width: 2.2; }
 .iso-turbine circle { fill: #f4f4f1; }
-.iso-callout rect { fill: #151515; stroke: var(--line-3); }
-.iso-callout.loss rect { stroke: #c08420; }
+.iso-callout rect { fill: var(--surface); stroke: var(--line-3); }
+.iso-callout.loss rect { stroke: var(--loss-line); }
 .iso-callout.meter rect { stroke: var(--signal); }
 .iso-callout.bus rect { stroke: #8fae1f; }
 .iso-leader { stroke: var(--line-3); stroke-width: 1; stroke-dasharray: 3 3; }
-.iso-callout.loss .iso-leader { stroke: #c08420; }
+.iso-callout.loss .iso-leader { stroke: var(--loss-line); }
 .iso-callout.meter .iso-leader { stroke: var(--signal); }
 .iso-dot { fill: var(--ink); }
-.iso-callout.loss .iso-dot { fill: #c08420; }
+.iso-callout.loss .iso-dot { fill: var(--loss-line); }
 .iso-callout.meter .iso-dot { fill: var(--signal); }
 .iso-callout-title { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
 .iso-callout-line { fill: var(--ink-2); font-size: 12px; }
 .iso-callout-line.muted { fill: var(--muted); }
-.iso-callout-line.loss { fill: #e0a040; font-weight: 600; }
+.iso-callout-line.loss { fill: var(--loss); font-weight: 600; }
 .iso-callout-line.meter { fill: var(--signal); font-weight: 600; }
 .meter-grid { margin-top: 12px; }
-.rtc-loss { color: #e0a040; }
+.rtc-loss { color: var(--loss); }
 .rtc-model-group-row td { color: var(--ink); font-weight: 600; }
 .rtc-model-total.meter td { color: var(--signal); }
 .meter-notes { display: grid; gap: 10px; align-content: start; }
@@ -52,7 +52,7 @@
 .meter-def p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
 
 /* loss chains (LossChain.jsx): one row per part, the wire running top to bottom through the icons */
-.loss-chain { --wire-dc: #f5b83d; --wire-lv: #b8b8b2; --wire-mv: #d4ff3f; --wire-hv: #f4f4f1; display: grid; border: 1px solid var(--line); background: var(--surface); padding: 6px 0; }
+.loss-chain { --wire-dc: #f5b83d; --wire-lv: #b8b8b2; --wire-mv: var(--signal); --wire-hv: var(--ink); display: grid; border: 1px solid var(--line); background: var(--surface); padding: 6px 0; }
 .loss-row, .loss-point { display: grid; grid-template-columns: 150px minmax(0, 1fr) 210px; gap: 14px; align-items: center; padding-right: 14px; }
 .loss-row { min-height: 98px; }
 .loss-icon { position: relative; align-self: stretch; display: grid; place-items: center; }
@@ -65,7 +65,7 @@
 .loss-body > strong { font-size: 14px; }
 .loss-body > small { color: var(--muted); font-size: 12px; line-height: 1.4; }
 .loss-side { text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; }
-.loss-mu { color: #e0a040; font-weight: 600; }
+.loss-mu { color: var(--loss); font-weight: 600; }
 .loss-value { color: var(--ink); font-weight: 700; }
 .loss-value.meter { color: var(--signal); }
 .loss-muted { color: var(--muted); font-size: 12px; }

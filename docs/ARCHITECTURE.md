@@ -89,13 +89,29 @@ The bid agent works as follows:
 `web/src/bid/quote.js` gives a quoted tariff's equity and project IRR, for Financials on both
 tabs, the bid forms and the agent.
 
+## Day and night mode
+
+The switch is at the foot of the sidebar, in the top bar of the library pages and on the sign-in
+page. Night is the default; the choice is kept per browser (`localStorage`, key `tenderos-theme`).
+
+| Part | File | What it does |
+| --- | --- | --- |
+| Mode | `web/src/theme.js` | `<html data-theme="dark\|light">`; `setTheme()`, and `useTheme()` for components that redraw |
+| First paint | `web/src/themeScript.js` | Inlined in `app/layout.js`; applies the remembered mode before the page paints, so it never flashes the other one |
+| Tokens | `web/src/styles.css` | One token set for night (`:root, .theatre`) and one for day (`:root[data-theme="light"]`); the other stylesheets use only tokens for page colours |
+| Charts | `web/src/themeColors.js`, `web/src/chartTheme.js` | ECharts draws on a canvas, so `LiveChart`, `PaintChart` and `FlowChart` (`web/src/rtc/charts.jsx`) map each option's night colours to day ones (`chartColors`) and re-create the chart on a switch; the hour Sankey (`web/src/bid/hourSankey.js`) takes the mode too |
+| Logo | `web/src/Brand.jsx` | The light-type logo at night, the dark-type one by day |
+
+Kept the same in both modes: the solver theatre (night), the letters (paper), the viridis heat
+maps, and chapter colours as fills. Chapter colours used as text are darkened by day.
+
 ## Tests
 
 | Command | Covers |
 | --- | --- |
 | `make test` | engine unit and API tests (`tests/engine`), the SECI tender pack's quotes (`tests/test_seci_pack.py`) and the NHPC reading end to end (`tests/e2e/test_nhpc_tender.py`) |
-| `make check-web` | the browser models in node (`tools/check_*.mjs`) |
-| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack and the letters, with the agent panel (`tests/e2e/test_seci_tab.py`); and team sharing: assign, answer, accept and return (`tests/e2e/test_team.py`) |
+| `make check-web` | the browser models in node (`tools/check_*.mjs`), with day mode's chart colours (`tools/check_theme.mjs`) |
+| `make e2e` | the browser journey against a running stack (`tests/e2e/test_tender_to_bid.py`), with `TENDEROS_DEMO=1` for a demo deployment: the start screen, the scan of the NHPC RfS, sizing to the Excel model, the prefilled simulation, Skip and reduced motion, the BESS hand-off, and the SECI tender set uploaded at once; the Round the clock workbook (`tests/e2e/test_round_the_clock.py`); and the SECI RTC tab from documents to the bid pack and the letters, with the agent panel (`tests/e2e/test_seci_tab.py`); and team sharing: assign, answer, accept and return (`tests/e2e/test_team.py`); and day and night mode with its charts (`tests/e2e/test_theme.py`) |
 
 ## What is not here
 

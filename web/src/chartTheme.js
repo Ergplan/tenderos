@@ -1,10 +1,13 @@
-// Dark ECharts theme matching styles.css, plus the energy-flow-chart theme for the
+// ECharts themes matching styles.css (night and day), plus the energy-flow-chart theme for the
 // Ergplan/charting library. Colour is reserved for data; chrome stays grey.
 import * as echarts from "echarts";
 import { registerTheme as registerFlowTheme } from "energy-flow-chart";
 import { DATA_COLORS } from "./dataColors.js";
+import { chartColors } from "./themeColors.js";
 
 export const THEME_NAME = "fdre-dark";
+/** The registered ECharts theme for a mode ("dark" or "light"). */
+export const chartThemeName = (mode) => (mode === "light" ? "fdre-light" : THEME_NAME);
 
 export { DATA_COLORS };
 
@@ -17,7 +20,7 @@ const axis = {
   nameTextStyle: { color: "#86867f", fontFamily: MONO, fontSize: 10.5 },
 };
 
-echarts.registerTheme(THEME_NAME, {
+const NIGHT = {
   color: ["#5ab4e8", "#f5b83d", "#a98bff", "#6fcf97", "#ff6b5f", "#e07b39", "#d4ff3f", "#f4f4f1"],
   backgroundColor: "transparent",
   textStyle: { color: "#c2c2bc", fontFamily: '"Inter Tight", Inter, ui-sans-serif, system-ui, sans-serif' },
@@ -48,7 +51,10 @@ echarts.registerTheme(THEME_NAME, {
   markLine: { label: { color: "#c2c2bc" } },
   bar: { itemStyle: { borderRadius: 0 } },
   line: { symbol: "none", lineStyle: { width: 1.6 } },
-});
+};
+
+echarts.registerTheme(THEME_NAME, NIGHT);
+echarts.registerTheme("fdre-light", chartColors(NIGHT, "light"));
 
 registerFlowTheme({
   name: "fdre",
@@ -66,5 +72,20 @@ registerFlowTheme({
     accent: "#d4ff3f",
     roles: { demand: "ink" },
     palette: ["#f5b83d", "#5ab4e8", "#a98bff", "#6fcf97", "#ff6b5f"],
+  },
+  light: {
+    surface: "#ffffff",
+    page: "#fafaf7",
+    ink: "#141414",
+    ink2: "#45453f",
+    muted: "#6b6b64",
+    grid: "#e8e8e2",
+    axis: "#c8c8c0",
+    border: "rgba(0,0,0,0.12)",
+    tooltip: "#ffffff",
+    band: "rgba(0,0,0,0.04)",
+    accent: "#5e7d00",
+    roles: { demand: "ink" },
+    palette: ["#d4930c", "#1f86c7", "#7b5ce0", "#2b9460", "#dc4437"],
   },
 });

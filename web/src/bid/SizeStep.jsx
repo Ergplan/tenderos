@@ -9,6 +9,7 @@ import { SOURCE_COLORS } from "./SourcesStep";
 import Checklist, { BidderInputs } from "./Checklist";
 import Dispatch15 from "./Dispatch15";
 import { hourSankeyHtml } from "./hourSankey";
+import { getTheme } from "../theme";
 
 function ComplianceTable({ lp }) {
   const years = lp.perYear || [];
@@ -80,7 +81,7 @@ function DispatchWeek({ hourly, peak, market, peakAny, sizes, rules = [] }) {
         return hourSankeyHtml(hourly, t, {
           gens, titles: { ...Object.fromEntries(gens.map((k) => [k, title(k)])), bess: "Battery" },
           colors: { ...SOURCE_COLORS, ppa: "#d4ff3f", surplus: DATA_COLORS.surplus },
-          rules, peakHour: (h) => ph.has(E.HOUR_OF_DAY[h]), label: labels[t - start],
+          rules, peakHour: (h) => ph.has(E.HOUR_OF_DAY[h]), label: labels[t - start], mode: getTheme(),
         });
       }
       const parts = [`<b>${labels[t - start]}</b>`, head("Output")];

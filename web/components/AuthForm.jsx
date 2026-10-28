@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import Brand from "@/src/Brand";
+import ThemeToggle from "@/src/ThemeToggle";
 
 /** Sign-in and first-run administrator forms. */
 export default function AuthForm({ mode = "login", next = "/" }) {
@@ -33,6 +34,7 @@ export default function AuthForm({ mode = "login", next = "/" }) {
 
   return (
     <div className="auth">
+      <ThemeToggle className="auth-theme" />
       <div className="auth-art">
         <Brand size="lg" product={false} className="auth-logo" />
         <div className="eyebrow">FDRE · Hybrid RE optimization</div>

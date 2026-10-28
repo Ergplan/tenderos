@@ -7,6 +7,8 @@
 // discharge and sales at the 220 kV meter; generation, charging and curtailment at the 33 kV bus;
 // the transformer and line losses between them.
 
+import { chartColor } from "../themeColors.js";
+
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const mw = (v) => `${Math.round(v).toLocaleString("en-IN")} MW`;
 const MIN = 0.5; // MW: smaller flows are left out
@@ -82,7 +84,8 @@ export function hourFlows(hourly, t, { gens, titles, colors, rules = [], peakHou
 }
 
 /** The flows laid out as an SVG string: translucent bands, nodes with their MW. */
-export function sankeySvg(flows, { width = 640, height = 220 } = {}) {
+export function sankeySvg(flows, { width = 640, height = 220, mode = "dark" } = {}) {
+  const tone = (c) => chartColor(c, mode);
   const { columns, links, cond } = flows;
   const xs = [120, 286, 470];
   const nodeW = 9;
@@ -120,28 +123,29 @@ export function sankeySvg(flows, { width = 640, height = 220 } = {}) {
     a.out += h;
     b.in += h;
     const mx = (x0 + x1) / 2;
-    parts.push(`<path d="M${x0},${y0} C${mx},${y0} ${mx},${y1} ${x1},${y1} L${x1},${y1 + h} C${mx},${y1 + h} ${mx},${y0 + h} ${x0},${y0 + h} Z" fill="${esc(l.color)}" fill-opacity="0.32"/>`);
+    parts.push(`<path d="M${x0},${y0} C${mx},${y0} ${mx},${y1} ${x1},${y1} L${x1},${y1 + h} C${mx},${y1 + h} ${mx},${y0 + h} ${x0},${y0 + h} Z" fill="${esc(tone(l.color))}" fill-opacity="0.32"/>`);
   }
   const text = (x, y, s, anchor, extra = "") => `<text x="${x}" y="${y}" text-anchor="${anchor}" dominant-baseline="middle" ${extra}>${esc(s)}</text>`;
   for (const { x, y, h, n, value } of Object.values(pos)) {
     const ci = xs.indexOf(x);
     parts.push(n.ghost
-      ? `<rect x="${x}" y="${y}" width="${nodeW}" height="${h}" fill="none" stroke="${esc(n.color)}" stroke-dasharray="3 2"/>`
-      : `<rect x="${x}" y="${y}" width="${nodeW}" height="${h}" fill="${esc(n.color)}" fill-opacity="0.85"/>`);
+      ? `<rect x="${x}" y="${y}" width="${nodeW}" height="${h}" fill="none" stroke="${esc(tone(n.color))}" stroke-dasharray="3 2"/>`
+      : `<rect x="${x}" y="${y}" width="${nodeW}" height="${h}" fill="${esc(tone(n.color))}" fill-opacity="0.85"/>`);
     const label = `${n.label} · ${mw(value)}`;
     parts.push(ci === 0 ? text(x - 6, y + h / 2, label, "end") : text(x + nodeW + 6, y + h / 2, label, "start"));
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;font:11px var(--font-sans, system-ui);fill:#f4f4f1;paint-order:stroke;stroke-linejoin:round" data-sankey="1"><g style="stroke:none">${parts.filter((p) => p.startsWith("<path")).join("")}</g><g style="stroke:rgba(10,10,10,0.55);stroke-width:3px">${parts.filter((p) => !p.startsWith("<path")).join("")}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;font:11px var(--font-sans, system-ui);fill:${tone("#f4f4f1")};paint-order:stroke;stroke-linejoin:round" data-sankey="1"><g style="stroke:none">${parts.filter((p) => p.startsWith("<path")).join("")}</g><g style="stroke:${mode === "light" ? "rgba(255,255,255,0.75)" : "rgba(10,10,10,0.55)"};stroke-width:3px">${parts.filter((p) => !p.startsWith("<path")).join("")}</g></svg>`;
 }
 
 /** The tooltip for one hour: the hour, the condition's verdict, the Sankey. */
 export function hourSankeyHtml(hourly, t, opts) {
   const flows = hourFlows(hourly, t, opts);
   const c = flows.cond;
+  const tone = (col) => chartColor(col, opts.mode);
   const verdict = c.short > MIN
-    ? `<span style="color:#ff6b5f">short ${mw(c.short)}${c.rule?.penaltyMultiple != null ? `, paid at ${c.rule.penaltyMultiple}× the tariff` : ""}</span>`
-    : `<span style="color:#7ddc9a">met</span>`;
+    ? `<span style="color:${tone("#ff6b5f")}">short ${mw(c.short)}${c.rule?.penaltyMultiple != null ? `, paid at ${c.rule.penaltyMultiple}× the tariff` : ""}</span>`
+    : `<span style="color:${tone("#7ddc9a")}">met</span>`;
   const rule = c.rule ? `${c.peak ? "Peak" : "Off-peak"} block · floor ${Math.round(c.rule.target * 100)}% of ${mw(c.contracted)} = ${mw(c.need)}` : `Contract ${mw(c.contracted)}`;
   return `<div style="min-width:640px"><div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:4px"><b>${esc(opts.label || "")}</b>`
-    + `<span style="opacity:.85">${esc(rule)} · delivered ${mw(c.delivered)} · ${verdict}</span></div>${sankeySvg(flows)}</div>`;
+    + `<span style="opacity:.85">${esc(rule)} · delivered ${mw(c.delivered)} · ${verdict}</span></div>${sankeySvg(flows, { mode: opts.mode })}</div>`;
 }

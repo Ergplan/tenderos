@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import * as echarts from "echarts";
 import { EnergyFlowChartView } from "energy-flow-chart/react";
-import { THEME_NAME, DATA_COLORS } from "../chartTheme";
+import { chartThemeName, DATA_COLORS } from "../chartTheme";
+import { chartColors, useTheme } from "../theme";
 
 /** ECharts instance that persists across renders; option changes are applied in place. */
 export function LiveChart({ option, height = 320, onEvents, notMerge = true }) {
   const ref = useRef(null);
   const inst = useRef(null);
+  const mode = useTheme();
   useEffect(() => {
-    const chart = echarts.init(ref.current, THEME_NAME, { renderer: "canvas" });
+    const chart = echarts.init(ref.current, chartThemeName(mode), { renderer: "canvas" });
     inst.current = chart;
     const ro = new ResizeObserver(() => chart.resize());
     ro.observe(ref.current);
@@ -17,17 +19,17 @@ export function LiveChart({ option, height = 320, onEvents, notMerge = true }) {
       chart.dispose();
       inst.current = null;
     };
-  }, []);
+  }, [mode]);
   useEffect(() => {
-    inst.current?.setOption(option, { notMerge });
-  }, [option, notMerge]);
+    inst.current?.setOption(chartColors(option, mode), { notMerge });
+  }, [option, notMerge, mode]);
   useEffect(() => {
     const chart = inst.current;
     if (!chart || !onEvents) return undefined;
     const entries = Object.entries(onEvents);
     entries.forEach(([name, fn]) => chart.on(name, fn));
     return () => entries.forEach(([name, fn]) => chart.off(name, fn));
-  }, [onEvents]);
+  }, [onEvents, mode]);
   return <div ref={ref} className="echart" style={{ height }} />;
 }
 
@@ -60,8 +62,9 @@ export function PaintChart({
   const lastIdx = useRef(null);
   const cfg = useRef({});
   cfg.current = { locked, min, max, step, onChange, labels };
+  const mode = useTheme();
 
-  const buildOption = (data) => ({
+  const buildOption = (data) => chartColors({
     animation: false,
     grid: { left: 52, right: 16, top: 26, bottom: 30 },
     tooltip: { trigger: "axis", valueFormatter: (v) => (Number.isFinite(v) ? `${valueFormatter(v)}${unit}` : "–") },
@@ -88,10 +91,10 @@ export function PaintChart({
       },
       ...overlays.map((o) => ({ name: o.name, type: o.type || "line", data: o.data, silent: true, showSymbol: false, lineStyle: { color: o.color, width: 1.4, type: o.dash ? "dashed" : "solid" }, itemStyle: { color: o.color }, z: 1 })),
     ],
-  });
+  }, mode);
 
   useEffect(() => {
-    const chart = echarts.init(ref.current, THEME_NAME, { renderer: "canvas" });
+    const chart = echarts.init(ref.current, chartThemeName(mode), { renderer: "canvas" });
     inst.current = chart;
     const zr = chart.getZr();
     const paintAt = (x, y) => {
@@ -139,14 +142,14 @@ export function PaintChart({
       chart.dispose();
       inst.current = null;
     };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     if (painting.current) return;
     local.current = [...values];
     inst.current?.setOption(buildOption(local.current), { notMerge: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, labels, min, max, color, type, markValue, overlays, locked]);
+  }, [values, labels, min, max, color, type, markValue, overlays, locked, mode]);
 
   return (
     <div className={`paint-chart ${locked ? "is-locked" : ""}`}>
@@ -171,6 +174,8 @@ const FLOW_TOOLBAR = { range: true, stepper: true, view: false, todScale: false,
 
 /** Hourly supply stack using the Ergplan/charting energy-flow-chart library. */
 export function FlowChart({ hourly, year = 2026, height = 440, rangeMode = "day" }) {
+  const mode = useTheme();
+  const series = useMemo(() => chartColors(FLOW_SERIES, mode), [mode]);
   const data = useMemo(() => {
     if (!hourly) return null;
     const n = hourly.demand.length;
@@ -198,9 +203,9 @@ export function FlowChart({ hourly, year = 2026, height = 440, rangeMode = "day"
     <div className="rtc-flow">
       <EnergyFlowChartView
         data={data}
-        series={FLOW_SERIES}
+        series={series}
         theme="fdre"
-        mode="dark"
+        mode={mode}
         unit="MW"
         yLabel="Power (MW)"
         height={height}
